@@ -1,0 +1,60 @@
+apply plugin: 'com.android.application'
+
+apply plugin: 'me.tatarka.retrolambda'
+
+retrolambda {
+    javaVersion JavaVersion.VERSION_1_7
+}
+
+apply plugin: 'realm-android'
+
+android {
+    compileSdkVersion 23
+    buildToolsVersion "23.0.3"
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    defaultConfig {
+        applicationId "com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia"
+        minSdkVersion 19
+        targetSdkVersion 23
+        versionCode 1
+        versionName "1.0"
+        vectorDrawables.useSupportLibrary = true
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    packagingOptions {
+        exclude 'META-INF/notice.txt' // will not include NOTICE file
+        exclude 'META-INF/license.txt' // will not include LICENSE file
+        exclude 'META-INF/NOTICE' // will not include LICENSE file
+        exclude 'META-INF/LICENSE' // will not include LICENSE file
+        exclude 'META-INF/LICENSE.txt' // will not include LICENSE file
+        exclude 'META-INF/NOTICE.txt' // will not include LICENSE file
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    testCompile 'junit:junit:4.12'
+
+    compile 'co.trikita:log:1.1.5'
+    compile 'com.android.support:support-v4:23.4.0'
+    compile 'com.android.support:appcompat-v7:23.4.0'
+    compile 'com.android.support:design:23.4.0'
+    compile 'io.reactivex:rxjava:1.1.2'
+    compile 'com.annimon:stream:1.0.9'
+    compile 'com.squareup.retrofit2:retrofit:2.0.1'
+    compile 'com.squareup.retrofit2:converter-gson:2.0.0'
+    compile 'com.squareup.retrofit2:adapter-rxjava:2.0.0'
+    compile 'net.danlew:android.joda:2.9.3'
+    compile 'com.android.support:support-v4:23.4.0'
+}
