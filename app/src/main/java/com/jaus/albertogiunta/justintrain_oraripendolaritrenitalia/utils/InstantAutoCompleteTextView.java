@@ -1,4 +1,4 @@
-package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeys;
+package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils;
 
 import android.content.Context;
 import android.graphics.Rect;
@@ -6,7 +6,8 @@ import android.util.AttributeSet;
 import android.widget.AutoCompleteTextView;
 
 /**
- * Created by albertogiunta on 27/05/16.
+ * This class was overridden in order to have an AutocompleteTextView that could perform a query even when it only got focused
+ * (hence before any input from the user)
  */
 public class InstantAutoCompleteTextView extends AutoCompleteTextView {
     public InstantAutoCompleteTextView(Context context) {
@@ -29,6 +30,7 @@ public class InstantAutoCompleteTextView extends AutoCompleteTextView {
     @Override
     protected void onFocusChanged(boolean focused, int direction,
                                   Rect previouslyFocusedRect) {
+        // performFiltering is called also when the text view just got focused
         if (focused) {
             performFiltering("", 0);
         }

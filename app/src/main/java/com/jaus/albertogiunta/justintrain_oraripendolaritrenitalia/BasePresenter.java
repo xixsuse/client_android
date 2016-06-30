@@ -5,8 +5,8 @@ package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia;
  */
 public interface BasePresenter {
 
-    void subscribe();
-
-    void unsubscribe();
+//    void subscribe();
+//
+//    void unsubscribe();
 
 }

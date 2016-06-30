@@ -1,4 +1,4 @@
-package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeys;
+package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeys.search;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -18,19 +18,15 @@ import android.widget.Filterable;
 import android.widget.SeekBar;
 
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.R;
-
-import org.joda.time.LocalTime;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.Station4Database;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.InstantAutoCompleteTextView;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeys.JourneyContract;
 
 import java.util.List;
 
 import trikita.log.Log;
 
 public class JourneySearchFragment extends Fragment implements JourneyContract.Search.View {
-
-//    private static final String ARG_PARAM1 = "param1";
-//    private static final String ARG_PARAM2 = "param2";
-//    private String mParam1;
-//    private String mParam2;
 
     private JourneyContract.Search.Presenter mPresenter;
 
@@ -43,16 +39,14 @@ public class JourneySearchFragment extends Fragment implements JourneyContract.S
     private Button mSearchButton;
     private SeekBar mDepartureTime;
     // TODO implement invert stations button
-    private int departureTime = LocalTime.now().getHourOfDay();
+    private int departureHourOfDay;
 
 
     public JourneySearchFragment() {}
 
-    public static JourneySearchFragment newInstance(String param1, String param2) {
+    public static JourneySearchFragment newInstance() {
         JourneySearchFragment fragment = new JourneySearchFragment();
         Bundle args = new Bundle();
-//        args.putString(ARG_PARAM1, param1);
-//        args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
@@ -60,17 +54,15 @@ public class JourneySearchFragment extends Fragment implements JourneyContract.S
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // initializing presenter
         mPresenter = new JourneySearchPresenter(this); //TODO inject this from activity
-
-//        if (getArguments() != null) {
-//            mParam1 = getArguments().getString(ARG_PARAM1);
-//            mParam2 = getArguments().getString(ARG_PARAM2);
-//        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        // VIEW BINDING
         View root = inflater.inflate(R.layout.fragment_journey_search, container, false);
 
         this.mDepartureStationInputLayout = (TextInputLayout) root.findViewById(R.id.input_layout_departure_station);
@@ -94,13 +86,14 @@ public class JourneySearchFragment extends Fragment implements JourneyContract.S
         setOnTouchListener(this.mArrivalStation);
 
         // SEEK BAR
-        this.mDepartureTime.setProgress(LocalTime.now().getHourOfDay());
+        //TODO substitute with another kind of widget
+        this.mDepartureTime.setProgress(mPresenter.getHourOfDay());
         this.mDepartureTime.incrementProgressBy(1);
         this.mDepartureTime.setMax(23);
         this.mDepartureTime.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                departureTime = progress;
+                departureHourOfDay = progress;
             }
 
             @Override
@@ -112,12 +105,61 @@ public class JourneySearchFragment extends Fragment implements JourneyContract.S
 
         // BUTTON
         // TODO should button be activated only when both autocompletetextview are !empty?
-        this.mSearchButton.setOnClickListener(v -> mPresenter.search(mDepartureStation.getText().toString(),
-                                                                    mArrivalStation.getText().toString(),
-                                                                    departureTime));
+        this.mSearchButton.setOnClickListener(v -> {
+            if (mPresenter.search(mDepartureStation.getText().toString(), mArrivalStation.getText().toString(), departureHourOfDay)) {
+                mListener.onFragmentInteraction(mPresenter.getSearchedStations(), mPresenter.getHourOfDay());
+            } else {
+                Log.d("search not fired due to some errors");
+            }
+        });
 
         return root;
     }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        if (context instanceof OnFragmentInteractionListener) {
+            mListener = (OnFragmentInteractionListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+//        mPresenter.subscribe();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+//        mPresenter.unsubscribe();
+    }
+
+    @Override
+    public void showArrivalStationNameError(String error) {
+        Log.d(error);
+        this.mArrivalStationInputLayout.setError(error);
+    }
+
+    @Override
+    public void showDepartureStationNameError(String error) {
+        Log.d(error);
+        this.mDepartureStationInputLayout.setError(error);
+    }
+
+
+
 
     private void takeOffError(TextInputLayout textInputLayout) {
         //noinspection ConstantConditions
@@ -150,56 +192,10 @@ public class JourneySearchFragment extends Fragment implements JourneyContract.S
 
 
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        mPresenter.subscribe();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        mPresenter.unsubscribe();
-    }
-
-    @Override
-    public void setPresenter(JourneyContract.Search.Presenter presenter) {
-        mPresenter = presenter;
-    }
-
-    @Override
-    public void showArrivalStationNameError(String error) {
-        Log.d(error);
-        this.mArrivalStationInputLayout.setError(error);
-    }
-
-    @Override
-    public void showDepartureStationNameError(String error) {
-        Log.d(error);
-        this.mDepartureStationInputLayout.setError(error);
-    }
 
     private class AutocompleteAdapter extends ArrayAdapter<String> implements Filterable {
 
-        List<String> stringList;
+        List<String> stationNames;
         public AutocompleteAdapter(Context context, InstantAutoCompleteTextView resource) {
             super(context, android.R.layout.simple_list_item_1, 0);
             resource.setAdapter(this);
@@ -207,12 +203,12 @@ public class JourneySearchFragment extends Fragment implements JourneyContract.S
 
         @Override
         public int getCount() {
-            return stringList == null ? 0 : stringList.size();
+            return stationNames == null ? 0 : stationNames.size();
         }
 
         @Override
         public String getItem(int position) {
-            return stringList == null ? null : stringList.get(position);
+            return stationNames == null ? null : stationNames.get(position);
         }
 
 
@@ -230,11 +226,11 @@ public class JourneySearchFragment extends Fragment implements JourneyContract.S
                 // querying the DB and retrieving the stations names
                 @Override
                 protected void publishResults(@NonNull CharSequence constraint, FilterResults results) {
-                    if (results.count == 1) {
-                        stringList = mPresenter.getLastSearchedStations();
-                    } else {
-                        stringList = mPresenter.searchDbForMatchingStation(String.valueOf(constraint));
-                    }
+//                    if (results.count == 1) {
+//                        stationNames = mPresenter.getLastSearchedStations();
+//                    } else {
+                        stationNames = mPresenter.searchDbForMatchingStation(String.valueOf(constraint));
+//                    }
                     notifyDataSetChanged();
                 }
             };
@@ -246,7 +242,8 @@ public class JourneySearchFragment extends Fragment implements JourneyContract.S
         }
     }
 
+
     public interface OnFragmentInteractionListener {
-        void onFragmentInteraction();
+        void onFragmentInteraction(List<Station4Database> stationList, int hourOfDay);
     }
 }

@@ -1,19 +1,19 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
              xmlns:tools="http://schemas.android.com/tools"
              android:layout_width="match_parent"
-             android:layout_height="match_parent"
-             tools:context="com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeys.JourneySearchFragment">
+             android:layout_height="wrap_content"
+             tools:context=".journeys.search.JourneySearchFragment">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
 
         <android.support.design.widget.TextInputLayout
             android:id="@+id/input_layout_departure_station"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 
-            <com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeys.InstantAutoCompleteTextView
+            <com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.InstantAutoCompleteTextView
                 android:id="@+id/departure_station"
                 android:hint="@string/atv_departure"
 
@@ -32,7 +32,7 @@
             android:layout_height="wrap_content"
             android:layout_toEndOf="@id/input_layout_departure_station">
 
-            <com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeys.InstantAutoCompleteTextView
+            <com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.InstantAutoCompleteTextView
                 android:id="@+id/arrival_station"
                 android:hint="@string/atv_arrival"
 

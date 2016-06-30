@@ -1,8 +1,11 @@
-package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeys;
+package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeys.search;
 
 import com.annimon.stream.Collectors;
 import com.annimon.stream.Stream;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.Station4Database;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeys.JourneyContract;
+
+import org.joda.time.LocalTime;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,26 +21,29 @@ import trikita.log.Log;
 public class JourneySearchPresenter implements JourneyContract.Search.Presenter {
 
     private JourneyContract.Search.View mJourneySearchView;
+
     private List<Station4Database> mObjectList;
     private RealmResults<Station4Database> mRealmObjectList;
     private List<Station4Database> mSearchedStations;
+    private int hourOfDay;
 
     public JourneySearchPresenter(JourneyContract.Search.View journeySearchView) {
         mJourneySearchView = journeySearchView;
         Realm realm = Realm.getDefaultInstance();
         mRealmObjectList = realm.where(Station4Database.class).findAll();
         mSearchedStations = new ArrayList<>(2);
+        hourOfDay = LocalTime.now().getHourOfDay();
     }
 
-    @Override
-    public void subscribe() {
-
-    }
-
-    @Override
-    public void unsubscribe() {
-
-    }
+//    @Override
+//    public void subscribe() {
+//
+//    }
+//
+//    @Override
+//    public void unsubscribe() {
+//
+//    }
 
     // TODO modify database to save info about searched stations
     @Override
@@ -53,24 +59,23 @@ public class JourneySearchPresenter implements JourneyContract.Search.Presenter 
     }
 
     @Override
-    public void search(String departureStationName, String arrivalStationName, int hourOfDay) {
+    public boolean search(String departureStationName, String arrivalStationName, int hourOfDay) {
         mSearchedStations.clear();
-        boolean foundError = false;
+
         if (!validateStationName(departureStationName)) {
             mJourneySearchView.showDepartureStationNameError(departureStationName + " Not found!");
             Log.d(arrivalStationName + " not found!");
-            foundError = true;
+            return false;
         }
+
         if (!validateStationName(arrivalStationName)) {
             mJourneySearchView.showArrivalStationNameError(arrivalStationName + " Not found!");
             Log.d(departureStationName + " not found!");
-            foundError = true;
+            return false;
         }
-        if (!foundError) {
-            // TODO save in database data for searched stations
-            // TODO fire search
-            Log.d("searching for: " + mSearchedStations.toString());
-        }
+
+        Log.d("searching for: " + mSearchedStations.toString());
+        return true;
     }
 
     private boolean validateStationName(String stationName) {
@@ -81,4 +86,15 @@ public class JourneySearchPresenter implements JourneyContract.Search.Presenter 
         }
         return false;
     }
- }
+
+    @Override
+    public List<Station4Database> getSearchedStations() {
+        return mSearchedStations;
+    }
+
+    @Override
+    public int getHourOfDay() {
+        return hourOfDay;
+    }
+
+}

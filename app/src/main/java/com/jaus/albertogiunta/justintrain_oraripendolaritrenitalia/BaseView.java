@@ -5,6 +5,6 @@ package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia;
  */
 public interface BaseView<T> {
 
-    void setPresenter(T presenter);
+//    void setPresenter(T presenter);
 
 }
