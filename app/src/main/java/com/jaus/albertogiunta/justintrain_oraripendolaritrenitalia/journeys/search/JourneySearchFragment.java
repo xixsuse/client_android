@@ -3,6 +3,7 @@ package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeys.sea
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
@@ -15,12 +16,14 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Filter;
 import android.widget.Filterable;
-import android.widget.SeekBar;
+import android.widget.TextView;
 
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.R;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.Station4Database;
-import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.InstantAutoCompleteTextView;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeys.JourneyContract;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.InstantAutoCompleteTextView;
+
+import org.joda.time.LocalDateTime;
 
 import java.util.List;
 
@@ -36,10 +39,18 @@ public class JourneySearchFragment extends Fragment implements JourneyContract.S
     private TextInputLayout mArrivalStationInputLayout;
     private InstantAutoCompleteTextView mDepartureStation;
     private InstantAutoCompleteTextView mArrivalStation;
-    private Button mSearchButton;
-    private SeekBar mDepartureTime;
+    private Button mClearDeparture;
+    private Button mClearArrival;
+    private Button mSwapStations;
+    private FloatingActionButton mSearchButton;
+    private TextView mMinusHour;
+    private TextView mMinusMinusHour;
+    private TextView mPlusHour;
+    private TextView mPlusPlusHour;
+    private TextView mDepartureTime;
     // TODO implement invert stations button
     private int departureHourOfDay;
+
 
 
     public JourneySearchFragment() {}
@@ -69,8 +80,16 @@ public class JourneySearchFragment extends Fragment implements JourneyContract.S
         this.mArrivalStationInputLayout = (TextInputLayout) root.findViewById(R.id.input_layout_arrival_station);
         this.mDepartureStation = (InstantAutoCompleteTextView) root.findViewById(R.id.departure_station);
         this.mArrivalStation = (InstantAutoCompleteTextView) root.findViewById(R.id.arrival_station);
-        this.mDepartureTime = (SeekBar) root.findViewById(R.id.time_selector);
-        this.mSearchButton = (Button) root.findViewById(R.id.search_journey);
+        this.mClearDeparture = (Button) root.findViewById(R.id.calc_clear_departure);
+        this.mClearArrival = (Button) root.findViewById(R.id.calc_clear_arrival);
+        this.mSwapStations = (Button) root.findViewById(R.id.swap_stations);
+        this.mMinusHour = (TextView) root.findViewById(R.id.arrow_left);
+        this.mMinusMinusHour = (TextView) root.findViewById(R.id.arrow_left_left);
+        this.mDepartureTime = (TextView) root.findViewById(R.id.time);
+        this.mPlusHour = (TextView) root.findViewById(R.id.arrow_right);
+        this.mPlusPlusHour = (TextView) root.findViewById(R.id.arrow_right_right);
+        this.mSearchButton = (FloatingActionButton) root.findViewById(R.id.search_journey);
+
 
         // TEXT INPUT LAYOUT
         mDepartureStationInputLayout.setErrorEnabled(true);
@@ -85,27 +104,83 @@ public class JourneySearchFragment extends Fragment implements JourneyContract.S
         setOnTouchListener(this.mDepartureStation);
         setOnTouchListener(this.mArrivalStation);
 
-        // SEEK BAR
-        //TODO substitute with another kind of widget
-        this.mDepartureTime.setProgress(mPresenter.getHourOfDay());
-        this.mDepartureTime.incrementProgressBy(1);
-        this.mDepartureTime.setMax(23);
-        this.mDepartureTime.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        this.mClearDeparture.setOnClickListener(v -> this.mDepartureStation.setText(""));
+        this.mClearArrival.setOnClickListener(v -> this.mArrivalStation.setText(""));
+
+        this.mDepartureStation.addTextChangedListener(new TextWatcher() {
             @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                departureHourOfDay = progress;
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
             }
 
             @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {}
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if (charSequence.length() == 0) {
+                    mClearDeparture.setVisibility(View.GONE);
+                } else {
+                    mClearDeparture.setVisibility(View.VISIBLE);
+                }
+            }
 
             @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {}
+            public void afterTextChanged(Editable editable) {
+
+            }
         });
+
+        this.mArrivalStation.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if (charSequence.length() == 0) {
+                    mClearArrival.setVisibility(View.GONE);
+                } else {
+                    mClearArrival.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+
+        this.mSwapStations.setOnClickListener(v -> {
+            String temp = mDepartureStation.getText().toString();
+            mDepartureStation.setText(mArrivalStation.getText().toString());
+            mArrivalStation.setText(temp);
+        });
+
+        int time = LocalDateTime.now().getHourOfDay();
+        String times = time < 10 ? "0" + time : Integer.toString(time);
+        mDepartureTime.setText(times + ":00");
+
+        // TIME
+        mMinusHour.setOnClickListener(v -> {
+            mDepartureTime.setText(changeTime(-1));
+        });
+
+        mMinusMinusHour.setOnClickListener(v -> {
+            mDepartureTime.setText(changeTime(-4));
+        });
+
+        mPlusHour.setOnClickListener(v -> {
+            mDepartureTime.setText(changeTime(1));
+        });
+
+        mPlusPlusHour.setOnClickListener(v -> {
+            mDepartureTime.setText(changeTime(4));
+        });
+
 
         // BUTTON
         // TODO should button be activated only when both autocompletetextview are !empty?
         this.mSearchButton.setOnClickListener(v -> {
+            departureHourOfDay = Integer.parseInt(this.mDepartureTime.getText().toString().substring(0, 2));
             if (mPresenter.search(mDepartureStation.getText().toString(), mArrivalStation.getText().toString(), departureHourOfDay)) {
                 mListener.onFragmentInteraction(mPresenter.getSearchedStations(), mPresenter.getHourOfDay());
             } else {
@@ -114,6 +189,19 @@ public class JourneySearchFragment extends Fragment implements JourneyContract.S
         });
 
         return root;
+    }
+
+
+    //TODO fallo fare al presenter
+    private String changeTime(int delta) {
+        int time = Integer.parseInt(this.mDepartureTime.getText().toString().substring(0, 2)) + delta;
+        if (time < 0) {
+            time = 23;
+        } else if (time > 24) {
+            time = 1;
+        }
+        String times = time < 10 ? "0" + time : Integer.toString(time);
+        return times + ":00";
     }
 
     @Override
