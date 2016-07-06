@@ -20,6 +20,8 @@ public interface JourneyContract {
 
             void showDepartureStationNameError(String error);
 
+            void setTime(String time);
+
         }
 
         interface Presenter extends BasePresenter {
@@ -33,6 +35,8 @@ public interface JourneyContract {
             List<Station4Database> getSearchedStations();
 
             int getHourOfDay();
+
+            void changeTime(int delta);
 
         }
     }

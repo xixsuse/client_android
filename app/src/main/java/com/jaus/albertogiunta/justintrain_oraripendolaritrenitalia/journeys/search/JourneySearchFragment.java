@@ -27,8 +27,6 @@ import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.Station4
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeys.JourneyContract;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.InstantAutoCompleteTextView;
 
-import org.joda.time.LocalDateTime;
-
 import java.util.List;
 
 import trikita.log.Log;
@@ -52,10 +50,7 @@ public class JourneySearchFragment extends Fragment implements JourneyContract.S
     private TextView mPlusHour;
     private TextView mPlusPlusHour;
     private TextView mDepartureTime;
-    // TODO implement invert stations button
     private int departureHourOfDay;
-
-
 
     public JourneySearchFragment() {}
 
@@ -71,7 +66,6 @@ public class JourneySearchFragment extends Fragment implements JourneyContract.S
         super.onCreate(savedInstanceState);
         // initializing presenter
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
-
         mPresenter = new JourneySearchPresenter(this); //TODO inject this from activity
     }
 
@@ -81,21 +75,19 @@ public class JourneySearchFragment extends Fragment implements JourneyContract.S
 
         // VIEW BINDING
         View root = inflater.inflate(R.layout.fragment_journey_search, container, false);
-
-        this.mDepartureStationInputLayout = (TextInputLayout) root.findViewById(R.id.input_layout_departure_station);
-        this.mArrivalStationInputLayout = (TextInputLayout) root.findViewById(R.id.input_layout_arrival_station);
-        this.mDepartureStation = (InstantAutoCompleteTextView) root.findViewById(R.id.departure_station);
-        this.mArrivalStation = (InstantAutoCompleteTextView) root.findViewById(R.id.arrival_station);
-        this.mClearDeparture = (Button) root.findViewById(R.id.calc_clear_departure);
-        this.mClearArrival = (Button) root.findViewById(R.id.calc_clear_arrival);
-        this.mSwapStations = (Button) root.findViewById(R.id.swap_stations);
-        this.mMinusHour = (TextView) root.findViewById(R.id.arrow_left);
-        this.mMinusMinusHour = (TextView) root.findViewById(R.id.arrow_left_left);
-        this.mDepartureTime = (TextView) root.findViewById(R.id.time);
-        this.mPlusHour = (TextView) root.findViewById(R.id.arrow_right);
-        this.mPlusPlusHour = (TextView) root.findViewById(R.id.arrow_right_right);
-        this.mSearchButton = (FloatingActionButton) root.findViewById(R.id.search_journey);
-
+        this.mDepartureStationInputLayout = (TextInputLayout) root.findViewById(R.id.til_departure_station);
+        this.mArrivalStationInputLayout = (TextInputLayout) root.findViewById(R.id.til_arrival_station);
+        this.mDepartureStation = (InstantAutoCompleteTextView) root.findViewById(R.id.iatv_departure_station);
+        this.mArrivalStation = (InstantAutoCompleteTextView) root.findViewById(R.id.iatv_arrival_station);
+        this.mClearDeparture = (Button) root.findViewById(R.id.btn_clear_departure_station);
+        this.mClearArrival = (Button) root.findViewById(R.id.btn_clear_arrival_station);
+        this.mSwapStations = (Button) root.findViewById(R.id.btn_swap_station_names);
+        this.mMinusHour = (TextView) root.findViewById(R.id.tv_minus_hour);
+        this.mMinusMinusHour = (TextView) root.findViewById(R.id.tv_minus_minus_hour);
+        this.mDepartureTime = (TextView) root.findViewById(R.id.tv_selected_time);
+        this.mPlusHour = (TextView) root.findViewById(R.id.plus_hour);
+        this.mPlusPlusHour = (TextView) root.findViewById(R.id.plus_plus_hour);
+        this.mSearchButton = (FloatingActionButton) root.findViewById(R.id.fab_search_journeys);
 
         // TEXT INPUT LAYOUT
         mDepartureStationInputLayout.setErrorEnabled(true);
@@ -110,79 +102,14 @@ public class JourneySearchFragment extends Fragment implements JourneyContract.S
         setOnTouchListener(this.mDepartureStation);
         setOnTouchListener(this.mArrivalStation);
 
-        this.mClearDeparture.setOnClickListener(v -> {
-            this.mDepartureStation.setText("");
-            mDepartureStation.dismissDropDown();
-        });
-        this.mClearArrival.setOnClickListener(v -> {
-            this.mArrivalStation.setText("");
-            mArrivalStation.dismissDropDown();
-        });
+        this.mClearDeparture.setOnClickListener(v -> clearFields(mDepartureStation));
+        this.mClearArrival.setOnClickListener(v -> clearFields(mArrivalStation));
 
-        this.mDepartureStation.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+        this.mDepartureStation.addTextChangedListener(setTextWatcher(mClearDeparture));
+        this.mArrivalStation.addTextChangedListener(setTextWatcher(mClearArrival));
 
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                if (charSequence.length() == 0) {
-                    mClearDeparture.setVisibility(View.GONE);
-                } else {
-                    mClearDeparture.setVisibility(View.VISIBLE);
-                }
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-
-            }
-        });
-
-        this.mArrivalStation.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                if (charSequence.length() == 0) {
-                    mClearArrival.setVisibility(View.GONE);
-                } else {
-                    mClearArrival.setVisibility(View.VISIBLE);
-                }
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-
-            }
-        });
-
-        mDepartureStation.setOnItemClickListener((adapterView, view, i, l) -> {
-            if (mArrivalStation.getText().toString().equals("")) {
-                mArrivalStation.requestFocus();
-            } else {
-                if (view != null) {
-                    hideSoftKeyboard(getActivity(), mDepartureStation);
-                }
-            }
-        });
-
-        mArrivalStation.setOnItemClickListener((adapterView, view, i, l) -> {
-            if (mDepartureStation.getText().toString().equals("")) {
-                mDepartureStation.requestFocus();
-            } else {
-                if (view != null) {
-                    hideSoftKeyboard(getActivity(), mArrivalStation);
-                }
-            }
-        });
-
-//        mDepartureStation.onKeyPreIme(KeyEvent.KEYCODE_BACK);
-
+        mDepartureStation.setOnItemClickListener((adapterView, view, i, l) -> onAutocompleteItemClick(mDepartureStation, mArrivalStation));
+        mArrivalStation.setOnItemClickListener((adapterView, view, i, l) -> onAutocompleteItemClick(mArrivalStation, mDepartureStation));
 
         this.mSwapStations.setOnClickListener(v -> {
             String temp = mDepartureStation.getText().toString();
@@ -192,70 +119,32 @@ public class JourneySearchFragment extends Fragment implements JourneyContract.S
             mArrivalStation.dismissDropDown();
         });
 
-        int time = LocalDateTime.now().getHourOfDay();
-        String times = time < 10 ? "0" + time : Integer.toString(time);
-        mDepartureTime.setText(times + ":00");
-
-        // TIME
-        mMinusHour.setOnClickListener(v -> {
-            mDepartureTime.setText(changeTime(-1));
-        });
-
-        mMinusMinusHour.setOnClickListener(v -> {
-            mDepartureTime.setText(changeTime(-4));
-        });
-
-        mPlusHour.setOnClickListener(v -> {
-            mDepartureTime.setText(changeTime(1));
-        });
-
-        mPlusPlusHour.setOnClickListener(v -> {
-            mDepartureTime.setText(changeTime(4));
-        });
+        // TIME PANEL
+        mPresenter.changeTime(0);
+        mMinusHour.setOnClickListener(v -> mPresenter.changeTime(-1));
+        mMinusMinusHour.setOnClickListener(v -> mPresenter.changeTime(-4));
+        mPlusHour.setOnClickListener(v -> mPresenter.changeTime(1));
+        mPlusPlusHour.setOnClickListener(v -> mPresenter.changeTime(4));
 
 
-        // BUTTON
-        // TODO should button be activated only when both autocompletetextview are !empty?
+        // SEARCH BUTTON
         this.mSearchButton.setOnClickListener(v -> {
             departureHourOfDay = Integer.parseInt(this.mDepartureTime.getText().toString().substring(0, 2));
             if (mPresenter.search(mDepartureStation.getText().toString(), mArrivalStation.getText().toString(), departureHourOfDay)) {
                 mListener.onFragmentInteraction(mPresenter.getSearchedStations(), mPresenter.getHourOfDay());
             } else {
-                Log.d("search not fired due to some errors");
+                Log.d("Search not fired due to some errors");
             }
             InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
         });
 
-//        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
-
         return root;
-    }
-
-    public static void hideSoftKeyboard(Context mContext,EditText username){
-        if(((Activity) mContext).getCurrentFocus()!=null && ((Activity) mContext).getCurrentFocus() instanceof EditText){
-            InputMethodManager imm = (InputMethodManager)mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(username.getWindowToken(), 0);
-        }
-    }
-
-
-    //TODO fallo fare al presenter
-    private String changeTime(int delta) {
-        int time = Integer.parseInt(this.mDepartureTime.getText().toString().substring(0, 2)) + delta;
-        if (time < 0) {
-            time = 23;
-        } else if (time > 24) {
-            time = 1;
-        }
-        String times = time < 10 ? "0" + time : Integer.toString(time);
-        return times + ":00";
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
         } else {
@@ -273,13 +162,11 @@ public class JourneySearchFragment extends Fragment implements JourneyContract.S
     @Override
     public void onResume() {
         super.onResume();
-//        mPresenter.subscribe();
     }
 
     @Override
     public void onPause() {
         super.onPause();
-//        mPresenter.unsubscribe();
     }
 
     @Override
@@ -294,9 +181,78 @@ public class JourneySearchFragment extends Fragment implements JourneyContract.S
         this.mDepartureStationInputLayout.setError(error);
     }
 
+    @Override
+    public void setTime(String time) {
+        mDepartureTime.setText(time);
+    }
 
+    /**
+     * Hide the keyboard when touching out of the bounds of an editText
+     * @param mContext
+     * @param editText
+     */
+    private static void hideSoftKeyboard(Context mContext,EditText editText){
+        if(((Activity) mContext).getCurrentFocus()!=null && ((Activity) mContext).getCurrentFocus() instanceof EditText){
+            InputMethodManager imm = (InputMethodManager)mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
+        }
+    }
 
+    /**
+     * Text watcher for any autocomplete textview (hide and shows clear button)
+     * @param v
+     * @return
+     */
+    private TextWatcher setTextWatcher(Button v) {
+        return new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if (charSequence.length() == 0) {
+                    v.setVisibility(View.GONE);
+                } else {
+                    v.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        };
+    }
+
+    /**
+     * Clear the passed field and dismissed dropdown
+     * @param v
+     */
+    private void clearFields(InstantAutoCompleteTextView v) {
+        v.setText("");
+        v.dismissDropDown();
+    }
+
+    /**
+     * Switches AutocompleteTextView when an item of the autocomplete text view is pressed
+     * @param focusedView
+     * @param unfocusedView
+     */
+    private void onAutocompleteItemClick(@NonNull InstantAutoCompleteTextView focusedView, @NonNull InstantAutoCompleteTextView unfocusedView) {
+        if (unfocusedView.getText().toString().equals("")) {
+            unfocusedView.requestFocus();
+            unfocusedView.showDropDown();
+        } else {
+            hideSoftKeyboard(getActivity(), focusedView);
+        }
+    }
+
+    /**
+     * Toggles the error off whenever the user begins writing again in a mispelled field
+     * @param textInputLayout
+     */
     private void takeOffError(TextInputLayout textInputLayout) {
         //noinspection ConstantConditions
         textInputLayout.getEditText().addTextChangedListener(new TextWatcher() {
@@ -313,6 +269,10 @@ public class JourneySearchFragment extends Fragment implements JourneyContract.S
         });
     }
 
+    /**
+     * Shows the popup even when nothing is written in it
+     * @param textView
+     */
     private void setOnTouchListener(InstantAutoCompleteTextView textView) {
         textView.setOnTouchListener((v2, event) -> {
             if (event.getAction() == MotionEvent.ACTION_DOWN) {
@@ -333,7 +293,7 @@ public class JourneySearchFragment extends Fragment implements JourneyContract.S
 
         List<String> stationNames;
         public AutocompleteAdapter(Context context, InstantAutoCompleteTextView resource) {
-            super(context, R.layout.view_autocomplete_item, 0);
+            super(context, R.layout.item_autucomplete_station, 0);
             resource.setAdapter(this);
         }
 
@@ -359,18 +319,16 @@ public class JourneySearchFragment extends Fragment implements JourneyContract.S
                     return filterResults;
                 }
 
-                // querying the DB and retrieving the stations names
+                 // querying the DB and retrieving the stations names
                 @Override
                 protected void publishResults(@NonNull CharSequence constraint, FilterResults results) {
-//                    if (results.count == 1) {\
+//                    if (results.count == 1) {
 //                        stationNames = mPresenter.getLastSearchedStations();
 //                    } else {
                         stationNames = mPresenter.searchDbForMatchingStation(String.valueOf(constraint));
 //                    }
 
                     notifyDataSetChanged();
-
-//                    mArrivalStation.setDropDownHeight((results.count > 3 ? 3 : results.count) * 25 + 20);
                 }
             };
         }

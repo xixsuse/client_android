@@ -15,8 +15,6 @@ import org.joda.time.format.DateTimeFormat;
 
 import java.util.List;
 
-import trikita.log.Log;
-
 /**
  * Created by albertogiunta on 17/06/16.
  */
@@ -34,13 +32,13 @@ public class JourneySolutionsAdapter extends RecyclerView.Adapter<RecyclerView.V
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
         switch (viewType) {
             case VIEW_TYPES.Normal:
-                return new ItemHolder(layoutInflater.inflate(R.layout.view_journey_item, parent, false));
+                return new ItemHolder(layoutInflater.inflate(R.layout.item_journey, parent, false));
             case VIEW_TYPES.Header:
-                return new LoadMoreBeforeHolder(layoutInflater.inflate(R.layout.view_load_more_before, parent, false));
+                return new LoadMoreBeforeHolder(layoutInflater.inflate(R.layout.item_load_before, parent, false));
             case VIEW_TYPES.Footer:
-                return new LoadMoreAfterHolder(layoutInflater.inflate(R.layout.view_load_more_after, parent, false));
+                return new LoadMoreAfterHolder(layoutInflater.inflate(R.layout.item_load_after, parent, false));
             default:
-                return new ItemHolder(layoutInflater.inflate(R.layout.view_journey_item, parent, false));
+                return new ItemHolder(layoutInflater.inflate(R.layout.item_journey, parent, false));
         }
     }
 

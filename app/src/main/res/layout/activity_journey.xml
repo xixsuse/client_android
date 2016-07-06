@@ -1,6 +1,6 @@
 <LinearLayout
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -11,18 +11,17 @@
     tools:context="com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeys.JourneyActivity">
 
     <FrameLayout
-        android:id="@+id/journey_search_placeholder"
+        android:id="@+id/placeholder_journey_search"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:elevation="1dp">
     </FrameLayout>
 
     <FrameLayout
-        android:id="@+id/journey_solutions_placeholder"
+        android:id="@+id/placeholder_journey_solutions"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="-30dp">
     </FrameLayout>
-
 
 </LinearLayout>

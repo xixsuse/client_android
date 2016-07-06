@@ -27,7 +27,7 @@ public class JourneyActivity extends AppCompatActivity implements JourneySearchF
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_journey);
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.journey_search_placeholder, JourneySearchFragment.newInstance());
+        ft.replace(R.id.placeholder_journey_search, JourneySearchFragment.newInstance());
         ft.commit();
     }
 
@@ -52,7 +52,7 @@ public class JourneyActivity extends AppCompatActivity implements JourneySearchF
     @Override
     public void onFragmentInteraction(List<Station4Database> stationList, int hourOfDay) {
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.journey_solutions_placeholder, JourneySolutionsFragment.newInstance(stationList, hourOfDay));
+        ft.replace(R.id.placeholder_journey_solutions, JourneySolutionsFragment.newInstance(stationList, hourOfDay));
         ft.commit();
         Log.d("Instantiated JourneySolutionsFragment");
     }

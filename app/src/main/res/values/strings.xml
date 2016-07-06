@@ -1,8 +1,12 @@
 <resources>
     <string name="app_name">Just In Train</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="btn_search">Cerca</string>
-    <string name="atv_departure">Partenza</string>
-    <string name="atv_arrival">Arrivo</string>
+    <string name="hint_departure">Partenza</string>
+    <string name="hint_arrival">Arrivo</string>
+    <string name="title_departure_time">Ora partenza</string>
+    <string name="minus_minus_hour">-4h</string>
+    <string name="minus_hour">-1h</string>
+    <string name="plus_hour">+1h</string>
+    <string name="plus_plus_hour">+4h</string>
 </resources>
