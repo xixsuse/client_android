@@ -1,5 +1,6 @@
 package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeys.search;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -12,8 +13,11 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
@@ -66,6 +70,8 @@ public class JourneySearchFragment extends Fragment implements JourneyContract.S
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // initializing presenter
+        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+
         mPresenter = new JourneySearchPresenter(this); //TODO inject this from activity
     }
 
@@ -104,8 +110,14 @@ public class JourneySearchFragment extends Fragment implements JourneyContract.S
         setOnTouchListener(this.mDepartureStation);
         setOnTouchListener(this.mArrivalStation);
 
-        this.mClearDeparture.setOnClickListener(v -> this.mDepartureStation.setText(""));
-        this.mClearArrival.setOnClickListener(v -> this.mArrivalStation.setText(""));
+        this.mClearDeparture.setOnClickListener(v -> {
+            this.mDepartureStation.setText("");
+            mDepartureStation.dismissDropDown();
+        });
+        this.mClearArrival.setOnClickListener(v -> {
+            this.mArrivalStation.setText("");
+            mArrivalStation.dismissDropDown();
+        });
 
         this.mDepartureStation.addTextChangedListener(new TextWatcher() {
             @Override
@@ -149,10 +161,35 @@ public class JourneySearchFragment extends Fragment implements JourneyContract.S
             }
         });
 
+        mDepartureStation.setOnItemClickListener((adapterView, view, i, l) -> {
+            if (mArrivalStation.getText().toString().equals("")) {
+                mArrivalStation.requestFocus();
+            } else {
+                if (view != null) {
+                    hideSoftKeyboard(getActivity(), mDepartureStation);
+                }
+            }
+        });
+
+        mArrivalStation.setOnItemClickListener((adapterView, view, i, l) -> {
+            if (mDepartureStation.getText().toString().equals("")) {
+                mDepartureStation.requestFocus();
+            } else {
+                if (view != null) {
+                    hideSoftKeyboard(getActivity(), mArrivalStation);
+                }
+            }
+        });
+
+//        mDepartureStation.onKeyPreIme(KeyEvent.KEYCODE_BACK);
+
+
         this.mSwapStations.setOnClickListener(v -> {
             String temp = mDepartureStation.getText().toString();
             mDepartureStation.setText(mArrivalStation.getText().toString());
             mArrivalStation.setText(temp);
+            mDepartureStation.dismissDropDown();
+            mArrivalStation.dismissDropDown();
         });
 
         int time = LocalDateTime.now().getHourOfDay();
@@ -186,9 +223,20 @@ public class JourneySearchFragment extends Fragment implements JourneyContract.S
             } else {
                 Log.d("search not fired due to some errors");
             }
+            InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
         });
 
+//        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
+
         return root;
+    }
+
+    public static void hideSoftKeyboard(Context mContext,EditText username){
+        if(((Activity) mContext).getCurrentFocus()!=null && ((Activity) mContext).getCurrentFocus() instanceof EditText){
+            InputMethodManager imm = (InputMethodManager)mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(username.getWindowToken(), 0);
+        }
     }
 
 
@@ -285,7 +333,7 @@ public class JourneySearchFragment extends Fragment implements JourneyContract.S
 
         List<String> stationNames;
         public AutocompleteAdapter(Context context, InstantAutoCompleteTextView resource) {
-            super(context, android.R.layout.simple_list_item_1, 0);
+            super(context, R.layout.view_autocomplete_item, 0);
             resource.setAdapter(this);
         }
 
@@ -314,12 +362,15 @@ public class JourneySearchFragment extends Fragment implements JourneyContract.S
                 // querying the DB and retrieving the stations names
                 @Override
                 protected void publishResults(@NonNull CharSequence constraint, FilterResults results) {
-//                    if (results.count == 1) {
+//                    if (results.count == 1) {\
 //                        stationNames = mPresenter.getLastSearchedStations();
 //                    } else {
                         stationNames = mPresenter.searchDbForMatchingStation(String.valueOf(constraint));
 //                    }
+
                     notifyDataSetChanged();
+
+//                    mArrivalStation.setDropDownHeight((results.count > 3 ? 3 : results.count) * 25 + 20);
                 }
             };
         }
