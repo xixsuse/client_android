@@ -126,7 +126,7 @@
 
 
                     <!-- Swap stations button -->
-                    <Button
+                    <ImageButton
                         android:id="@+id/btn_swap_station_names"
                         android:layout_width="@dimen/btn_swap_stations_side"
                         android:layout_height="@dimen/btn_swap_stations_side"
@@ -135,7 +135,12 @@
                         android:layout_marginStart="30dp"
                         android:layout_toEndOf="@id/fl_departure_station"
 
-                        android:background="@drawable/ic_swap_vert"/>
+                        android:src="@drawable/ic_swap_vert"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+
+                        android:padding="10dp"
+                        android:clickable="true"
+                        android:backgroundTint="@android:color/transparent"/>
 
                 </RelativeLayout>
 

@@ -4,7 +4,7 @@
           android:layout_width="match_parent"
           android:layout_height="@dimen/autocomplete_height"
           android:text="Anversa-Villalago-Scanno"
-          android:textSize="@dimen/fs_autocomplete_text"
+          android:textSize="@dimen/fs_small_text"
           android:textAppearance="?android:attr/textAppearanceListItemSmall"
           android:gravity="center_vertical"
           android:paddingStart="?android:attr/listPreferredItemPaddingStart"

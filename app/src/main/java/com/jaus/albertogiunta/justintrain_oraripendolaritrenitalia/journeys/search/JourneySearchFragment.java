@@ -20,6 +20,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Filter;
 import android.widget.Filterable;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.R;
@@ -43,7 +44,7 @@ public class JourneySearchFragment extends Fragment implements JourneyContract.S
     private InstantAutoCompleteTextView mArrivalStation;
     private Button mClearDeparture;
     private Button mClearArrival;
-    private Button mSwapStations;
+    private ImageButton mSwapStations;
     private FloatingActionButton mSearchButton;
     private TextView mMinusHour;
     private TextView mMinusMinusHour;
@@ -81,7 +82,7 @@ public class JourneySearchFragment extends Fragment implements JourneyContract.S
         this.mArrivalStation = (InstantAutoCompleteTextView) root.findViewById(R.id.iatv_arrival_station);
         this.mClearDeparture = (Button) root.findViewById(R.id.btn_clear_departure_station);
         this.mClearArrival = (Button) root.findViewById(R.id.btn_clear_arrival_station);
-        this.mSwapStations = (Button) root.findViewById(R.id.btn_swap_station_names);
+        this.mSwapStations = (ImageButton) root.findViewById(R.id.btn_swap_station_names);
         this.mMinusHour = (TextView) root.findViewById(R.id.tv_minus_hour);
         this.mMinusMinusHour = (TextView) root.findViewById(R.id.tv_minus_minus_hour);
         this.mDepartureTime = (TextView) root.findViewById(R.id.tv_selected_time);
