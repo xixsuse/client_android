@@ -9,4 +9,9 @@
     <string name="minus_hour">-1h</string>
     <string name="plus_hour">+1h</string>
     <string name="plus_plus_hour">+4h</string>
+    <string name="platform_title">Binario</string>
+    <string name="lasting_time_title">Durata</string>
+    <string name="delay">ritardo</string>
+    <string name="changes">cambio</string>
+    <string name="change_title">Cambio</string>
 </resources>

@@ -56,7 +56,7 @@ public class JourneySolutionsFragment extends Fragment implements JourneyContrac
         // Inflate the layout for this fragment
         View root = inflater.inflate(R.layout.fragment_journey_solutions, container, false);
         mJourneySolutions = (RecyclerView) root.findViewById(R.id.rv_journey_solutions);
-        mJourneySolutionsAdapter = new JourneySolutionsAdapter(mPresenter.getSolutionList());
+        mJourneySolutionsAdapter = new JourneySolutionsAdapter(getActivity(), mPresenter.getSolutionList());
         mJourneySolutions.setAdapter(mJourneySolutionsAdapter);
         mJourneySolutions.setLayoutManager(new LinearLayoutManager(getActivity()));
         mPresenter.searchJourney();

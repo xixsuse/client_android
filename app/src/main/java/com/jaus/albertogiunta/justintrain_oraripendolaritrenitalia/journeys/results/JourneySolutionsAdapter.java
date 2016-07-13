@@ -1,17 +1,17 @@
 package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeys.results;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.R;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.SolutionList;
-
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
 
 import java.util.List;
 
@@ -22,9 +22,11 @@ public class JourneySolutionsAdapter extends RecyclerView.Adapter<RecyclerView.V
 
     OnItemClickListener mOnItemClickListener;
     List<SolutionList.Solution> list;
+    Context context;
 
-    public JourneySolutionsAdapter(List<SolutionList.Solution> list) {
+    public JourneySolutionsAdapter(Context context, List<SolutionList.Solution> list) {
         this.list = list;
+        this.context = context;
     }
 
     @Override
@@ -46,23 +48,13 @@ public class JourneySolutionsAdapter extends RecyclerView.Adapter<RecyclerView.V
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
 
         if (holder instanceof LoadMoreAfterHolder) {
-            ((LoadMoreAfterHolder) holder).btn.setOnClickListener(v -> mOnItemClickListener.onItemClick(list.get(list.size() - 1)));
+//            ((LoadMoreAfterHolder) holder).btn.setOnClickListener(v -> mOnItemClickListener.onItemClick(list.get(list.size() - 1)));
         }
         if (holder instanceof ItemHolder && list.size() > 0) {
             ItemHolder itemHolder = (ItemHolder) holder;
             SolutionList.Solution solution = list.get(position - 1);
-            Integer timeDifference = solution.solution.timeDifference;
-            String c = timeDifference != null ? String.format("%d'", timeDifference) : "";
-            itemHolder.trainCategory.setText(solution.solution.trainCategory);
-            itemHolder.departureTime.setText(solution.solution.departureTimeReadable);
-            itemHolder.departureTimeTimed.setText(timeDifference == null ? "" : DateTimeFormat.forPattern("HH:mm").print(DateTime.parse(solution.solution.departureTimeReadable, DateTimeFormat.forPattern("HH:mm")).plusMinutes(solution.solution.timeDifference)));
-            itemHolder.arrivalTime.setText(solution.solution.arrivalTimeReadable);
-            itemHolder.arrivalTimeTimed.setText(timeDifference == null ? "" : DateTimeFormat.forPattern("HH:mm").print(DateTime.parse(solution.solution.arrivalTimeReadable, DateTimeFormat.forPattern("HH:mm")).plusMinutes(solution.solution.timeDifference)));
-            itemHolder.lastingTime.setText(solution.solution.duration);
-            itemHolder.platform.setText(solution.solution.departurePlatform);
-            itemHolder.timeDifference.setText(c);
+            JourneyItemFactory.toggleHolder(context, itemHolder, solution);
         }
-
     }
 
     @Override
@@ -99,35 +91,87 @@ public class JourneySolutionsAdapter extends RecyclerView.Adapter<RecyclerView.V
     }
 
     protected static class ItemHolder extends RecyclerView.ViewHolder {
-        protected TextView trainCategory;
-        protected TextView departureTime;
-        protected TextView departureTimeTimed;
-        protected TextView arrivalTime;
-        protected TextView arrivalTimeTimed;
-        protected TextView timeDifference;
-        protected TextView lastingTime;
-        protected TextView platform;
+        protected TextView tvTrainCategory;
+
+        protected LinearLayout llChangesNumber;
+        protected TextView tvChangesNumber;
+        protected TextView tvChangesText;
+
+        protected LinearLayout llDepartureSchedule;
+        protected TextView tvDepartureTime;
+        protected TextView tvDepartureTimeWithDelay;
+        protected TextView tvDepartureStationName;
+
+        protected LinearLayout llArrivalSchedule;
+        protected TextView tvArrivalTime;
+        protected TextView tvArrivalTimeWithDelay;
+        protected TextView tvArrivalStationName;
+
+        protected RelativeLayout rlTimeDifference;
+        protected TextView tvTimeDifference;
+        protected TextView tvTimeDifferenceText;
+
+        protected ImageButton btnRefresh;
+
+        protected TextView tvLastingTime;
+
+        protected RelativeLayout rlPlatform;
+        protected TextView tvPlatform;
+
+        protected ImageButton btnPin;
+        protected ImageButton btnExpandCard;
+
 
         public ItemHolder(View itemView) {
             super(itemView);
-            this.trainCategory = (TextView) itemView.findViewById(R.id.text_train_category);
-            this.departureTime = (TextView) itemView.findViewById(R.id.text_departure_time);
-            this.departureTimeTimed = (TextView) itemView.findViewById(R.id.text_departure_time_timed);
-            this.arrivalTime = (TextView) itemView.findViewById(R.id.text_arrival_time);
-            this.arrivalTimeTimed = (TextView) itemView.findViewById(R.id.text_arrival_time_timed);
-            this.timeDifference = (TextView) itemView.findViewById(R.id.text_time_difference);
-            this.lastingTime = (TextView) itemView.findViewById(R.id.text_lasting_time);
-            this.platform = (TextView) itemView.findViewById(R.id.text_platform_number);
+
+            ///
+
+            this.tvTrainCategory = (TextView) itemView.findViewById(R.id.tv_train_category);
+            this.tvChangesNumber = (TextView) itemView.findViewById(R.id.tv_changes_number);
+            this.tvChangesText = (TextView) itemView.findViewById(R.id.tv_changes_text);
+
+            this.llChangesNumber = (LinearLayout) itemView.findViewById(R.id.ll_changes_number);
+
+            ///
+
+            this.llDepartureSchedule = (LinearLayout) itemView.findViewById(R.id.ll_departure_schedule);
+            this.tvDepartureTime = (TextView) itemView.findViewById(R.id.tv_departure_time);
+            this.tvDepartureTimeWithDelay = (TextView) itemView.findViewById(R.id.tv_departure_time_with_delay);
+            this.tvDepartureStationName = (TextView) itemView.findViewById(R.id.tv_departure_station_name);
+
+            this.llArrivalSchedule= (LinearLayout) itemView.findViewById(R.id.ll_arrival_schedule);
+            this.tvArrivalTime = (TextView) itemView.findViewById(R.id.tv_arrival_time);
+            this.tvArrivalTimeWithDelay = (TextView) itemView.findViewById(R.id.tv_arrival_time_with_delay);
+            this.tvArrivalStationName = (TextView) itemView.findViewById(R.id.tv_arrival_station_name);
+
+            ///
+
+            this.rlTimeDifference = (RelativeLayout) itemView.findViewById(R.id.rl_time_difference);
+            this.tvTimeDifference = (TextView) itemView.findViewById(R.id.tv_time_difference);
+            this.tvTimeDifferenceText = (TextView) itemView.findViewById(R.id.tv_time_difference_text);
+
+            this.btnRefresh = (ImageButton) itemView.findViewById(R.id.btn_refresh_journey);
+
+            ///
+
+            this.tvLastingTime = (TextView) itemView.findViewById(R.id.tv_lasting_time);
+
+            this.rlPlatform = (RelativeLayout) itemView.findViewById(R.id.rl_platform);
+            this.tvPlatform = (TextView) itemView.findViewById(R.id.tv_platform);
+
+            this.btnPin = (ImageButton) itemView.findViewById(R.id.btn_pin);
+            this.btnExpandCard = (ImageButton) itemView.findViewById(R.id.btn_expand_card);
         }
     }
 
 
     protected static class LoadMoreBeforeHolder extends RecyclerView.ViewHolder {
-        protected Button btn;
+        protected ImageButton btn;
 
         public LoadMoreBeforeHolder(View itemView) {
             super(itemView);
-            btn = (Button) itemView.findViewById(R.id.search_before_btn);
+            btn = (ImageButton) itemView.findViewById(R.id.search_before_btn);
         }
 
         public void bind(final SolutionList.Solution item, final OnItemClickListener listener) {
@@ -141,12 +185,10 @@ public class JourneySolutionsAdapter extends RecyclerView.Adapter<RecyclerView.V
     }
 
     protected static class LoadMoreAfterHolder extends RecyclerView.ViewHolder {
-        protected Button btn;
+        protected ImageButton btn;
         public LoadMoreAfterHolder(View itemView) {
             super(itemView);
-            btn = (Button) itemView.findViewById(R.id.search_after_btn);
+            btn = (ImageButton) itemView.findViewById(R.id.search_after_btn);
         }
     }
-
-
 }

@@ -52,13 +52,14 @@ public class SolutionList {
             public String arrivalTimeReadable;
 
             public Integer timeDifference;
+            public Integer progress;
 
             public String duration;
 
             @Override
             public String toString() {
                 return "Change{" +
-                        "trainCategory='" + trainCategory + '\'' +
+                        "tvTrainCategory='" + trainCategory + '\'' +
                         ", trainId='" + trainId + '\'' +
                         ", departureStationId='" + departureStationId + '\'' +
                         ", departureStationName='" + departureStationName + '\'' +
@@ -97,7 +98,7 @@ public class SolutionList {
             @Override
             public String toString() {
                 return "ShortTrainDetails{" +
-                        "trainCategory='" + trainCategory + '\'' +
+                        "tvTrainCategory='" + trainCategory + '\'' +
                         ", trainId='" + trainId + '\'' +
                         ", departureStationId='" + departureStationId + '\'' +
                         '}';
