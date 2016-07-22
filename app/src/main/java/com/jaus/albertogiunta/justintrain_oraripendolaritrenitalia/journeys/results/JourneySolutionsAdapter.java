@@ -17,8 +17,6 @@ import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.Solution
 import java.util.LinkedList;
 import java.util.List;
 
-import trikita.log.Log;
-
 /**
  * Created by albertogiunta on 17/06/16.
  */
@@ -32,7 +30,6 @@ public class JourneySolutionsAdapter extends RecyclerView.Adapter<RecyclerView.V
     public JourneySolutionsAdapter(Context context, ViewGroup container, List<SolutionList.Solution> solutionList) {
         this.solutionList = solutionList;
         this.context = context;
-        Log.d(container.toString());
         factory = JourneyItemFactory.getInstance(context);
     }
 
@@ -58,6 +55,7 @@ public class JourneySolutionsAdapter extends RecyclerView.Adapter<RecyclerView.V
 //            ((LoadMoreBeforeHolder) holder).btn.setOnClickListener(v -> mOnItemClickListener.onItemClick(solutionList.get(solutionList.size() - 1)));
         }
 
+        // if instance of JourneyHolder, create a list of views that will hold the changes (if there) and toggle the view
         if (holder instanceof JourneyHolder && solutionList.size() > 0) {
             List<View> listView = new LinkedList<>();
             if (solutionList.get(position-1).hasChanges) {
@@ -106,6 +104,15 @@ public class JourneySolutionsAdapter extends RecyclerView.Adapter<RecyclerView.V
         public static final int Footer = 3;
     }
 
+
+    /**
+     * Class that holds the concept of a change (a change can be the main solution,
+     * but also the various changes that it could have)
+     * This was needed because (almost) the same view is used for the solution and the change view,
+     * but che latter had to be nested inside the former, and this way a change view will be held
+     * inside of changeHolder, and a solution view will be held inside of a JourneyHolder (which
+     * also instantiate a changeHolder, besides other stuff).
+     */
     protected static class ChangeHolder {
 
         protected TextView tvTrainCategory;
@@ -186,6 +193,11 @@ public class JourneySolutionsAdapter extends RecyclerView.Adapter<RecyclerView.V
         }
     }
 
+
+    /**
+     * Wraps a ChangeHolder and additional views
+     * (it's the main item holder of the journey results recyclerView)
+     */
     protected static class JourneyHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnFocusChangeListener {
 
         ChangeHolder holder;
@@ -234,20 +246,20 @@ public class JourneySolutionsAdapter extends RecyclerView.Adapter<RecyclerView.V
         }
 
         public void bind(final SolutionList.Solution item, final OnItemClickListener listener) {
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    listener.onItemClick(item);
-                }
-            });
+            itemView.setOnClickListener(v -> listener.onItemClick(item));
         }
     }
 
     protected static class LoadMoreAfterHolder extends RecyclerView.ViewHolder {
         protected ImageButton btn;
+
         public LoadMoreAfterHolder(View itemView) {
             super(itemView);
             btn = (ImageButton) itemView.findViewById(R.id.search_after_btn);
+        }
+
+        public void bind(final SolutionList.Solution item, final OnItemClickListener listener) {
+            itemView.setOnClickListener(v -> listener.onItemClick(item));
         }
     }
 }

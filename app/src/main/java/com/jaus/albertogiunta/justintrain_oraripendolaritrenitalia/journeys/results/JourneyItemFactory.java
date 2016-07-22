@@ -15,7 +15,7 @@ import org.joda.time.format.DateTimeFormat;
 import java.util.List;
 
 /**
- * Created by albertogiunta on 13/07/16.
+ * SINGLETON CLASS
  */
 public class JourneyItemFactory {
 
@@ -37,12 +37,17 @@ public class JourneyItemFactory {
         return self;
     }
 
+    /**
+     * This method will take care of toggling every view inside of a journey item, depending on its
+     * current status (with/without change/delay)
+     * @param listView in case the solution has changes it will hold a list of card_views
+     * @param journeyHolder it's the holder of the main solution view
+     * @param solution it's the main solution data model
+     */
     public void toggleHolder(List<View> listView, JourneySolutionsAdapter.JourneyHolder journeyHolder, SolutionList.Solution solution) {
 
         JourneySolutionsAdapter.ChangeHolder jh = journeyHolder.holder;
         SolutionList.Solution s = solution;
-
-
 
         toggleAlways(jh, s.solution);
 
@@ -54,10 +59,14 @@ public class JourneyItemFactory {
 
         if (s.hasChanges) {
             withChanges(jh, s);
-            jh.llChanges.removeAllViews();
+            jh.llChanges.removeAllViews(); // needed to avoid "view has already parent exception"
+
+            // iterate over every change of the solution
             for (int i = 0; i < s.changes.changesList.size(); i++) {
-                View v = listView.get(i);
-                JourneySolutionsAdapter.ChangeHolder ch = new JourneySolutionsAdapter.ChangeHolder(v);
+
+                View v = listView.get(i); // get every change view passed along with the listview
+                JourneySolutionsAdapter.ChangeHolder ch = new JourneySolutionsAdapter.ChangeHolder(v); // create a new holder for this view
+
                 toggleAlways(ch, s.changes.changesList.get(i));
                 if (s.changes.changesList.get(i).timeDifference != null) {
                     withTimeDifference(ch, s.changes.changesList.get(i));
@@ -66,6 +75,7 @@ public class JourneyItemFactory {
                 }
                 withoutChanges(ch, s.changes.changesList.get(i));
                 setChangeInfo(ch, s.changes.changesList.get(i));
+
                 if (v.getParent() != null) {
                     ((ViewGroup) v.getParent()).removeView(v);
                 }
@@ -242,5 +252,4 @@ public class JourneyItemFactory {
         h.tvDepartureTimeWithDelay.setTextColor(color);
         h.tvArrivalTimeWithDelay.setTextColor(color);
     }
-
 }
