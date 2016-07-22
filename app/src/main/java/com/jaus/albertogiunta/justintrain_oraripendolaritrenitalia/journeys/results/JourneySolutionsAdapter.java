@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -13,7 +14,10 @@ import android.widget.TextView;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.R;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.SolutionList;
 
+import java.util.LinkedList;
 import java.util.List;
+
+import trikita.log.Log;
 
 /**
  * Created by albertogiunta on 17/06/16.
@@ -21,12 +25,15 @@ import java.util.List;
 public class JourneySolutionsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     OnItemClickListener mOnItemClickListener;
-    List<SolutionList.Solution> list;
+    List<SolutionList.Solution> solutionList;
     Context context;
+    JourneyItemFactory factory;
 
-    public JourneySolutionsAdapter(Context context, List<SolutionList.Solution> list) {
-        this.list = list;
+    public JourneySolutionsAdapter(Context context, ViewGroup container, List<SolutionList.Solution> solutionList) {
+        this.solutionList = solutionList;
         this.context = context;
+        Log.d(container.toString());
+        factory = JourneyItemFactory.getInstance(context);
     }
 
     @Override
@@ -34,26 +41,35 @@ public class JourneySolutionsAdapter extends RecyclerView.Adapter<RecyclerView.V
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
         switch (viewType) {
             case VIEW_TYPES.Normal:
-                return new ItemHolder(layoutInflater.inflate(R.layout.item_journey, parent, false));
+                return new JourneyHolder(layoutInflater.inflate(R.layout.item_journey, parent, false));
             case VIEW_TYPES.Header:
                 return new LoadMoreBeforeHolder(layoutInflater.inflate(R.layout.item_load_before, parent, false));
             case VIEW_TYPES.Footer:
                 return new LoadMoreAfterHolder(layoutInflater.inflate(R.layout.item_load_after, parent, false));
             default:
-                return new ItemHolder(layoutInflater.inflate(R.layout.item_journey, parent, false));
+                return new JourneyHolder(layoutInflater.inflate(R.layout.item_journey, parent, false));
         }
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
 
-        if (holder instanceof LoadMoreAfterHolder) {
-//            ((LoadMoreAfterHolder) holder).btn.setOnClickListener(v -> mOnItemClickListener.onItemClick(list.get(list.size() - 1)));
+        if (holder instanceof LoadMoreBeforeHolder) {
+//            ((LoadMoreBeforeHolder) holder).btn.setOnClickListener(v -> mOnItemClickListener.onItemClick(solutionList.get(solutionList.size() - 1)));
         }
-        if (holder instanceof ItemHolder && list.size() > 0) {
-            ItemHolder itemHolder = (ItemHolder) holder;
-            SolutionList.Solution solution = list.get(position - 1);
-            JourneyItemFactory.toggleHolder(context, itemHolder, solution);
+
+        if (holder instanceof JourneyHolder && solutionList.size() > 0) {
+            List<View> listView = new LinkedList<>();
+            if (solutionList.get(position-1).hasChanges) {
+                for (int i = 0; i < solutionList.get(position-1).changes.changesList.size(); i++) {
+                    listView.add(LayoutInflater.from(context).inflate(R.layout.card_journey, null));
+                }
+            }
+            factory.toggleHolder(listView, (JourneyHolder) holder, solutionList.get(position - 1));
+        }
+
+        if (holder instanceof LoadMoreAfterHolder) {
+//            ((LoadMoreAfterHolder) holder).btn.setOnClickListener(v -> mOnItemClickListener.onItemClick(solutionList.get(solutionList.size() - 1)));
         }
     }
 
@@ -61,7 +77,7 @@ public class JourneySolutionsAdapter extends RecyclerView.Adapter<RecyclerView.V
     public int getItemViewType(int position) {
         if (position == 0)
             return VIEW_TYPES.Header;
-        if (position - 1 == list.size())
+        if (position - 1 == solutionList.size())
             return VIEW_TYPES.Footer;
         else
             return VIEW_TYPES.Normal;
@@ -70,10 +86,10 @@ public class JourneySolutionsAdapter extends RecyclerView.Adapter<RecyclerView.V
 
     @Override
     public int getItemCount() {
-        if (list.isEmpty())
-            return list.size();
+        if (solutionList.isEmpty())
+            return solutionList.size();
         else
-            return list.size() + 2;
+            return solutionList.size() + 2;
     }
 
     public void setOnItemClickListener(OnItemClickListener listener) {
@@ -90,7 +106,8 @@ public class JourneySolutionsAdapter extends RecyclerView.Adapter<RecyclerView.V
         public static final int Footer = 3;
     }
 
-    protected static class ItemHolder extends RecyclerView.ViewHolder {
+    protected static class ChangeHolder {
+
         protected TextView tvTrainCategory;
 
         protected LinearLayout llChangesNumber;
@@ -100,11 +117,13 @@ public class JourneySolutionsAdapter extends RecyclerView.Adapter<RecyclerView.V
         protected LinearLayout llDepartureSchedule;
         protected TextView tvDepartureTime;
         protected TextView tvDepartureTimeWithDelay;
+        protected HorizontalScrollView hsvDepartureStationName;
         protected TextView tvDepartureStationName;
 
         protected LinearLayout llArrivalSchedule;
         protected TextView tvArrivalTime;
         protected TextView tvArrivalTimeWithDelay;
+        protected HorizontalScrollView hsvArrivalStationName;
         protected TextView tvArrivalStationName;
 
         protected RelativeLayout rlTimeDifference;
@@ -121,11 +140,11 @@ public class JourneySolutionsAdapter extends RecyclerView.Adapter<RecyclerView.V
         protected ImageButton btnPin;
         protected ImageButton btnExpandCard;
 
+        protected LinearLayout llChanges;
 
-        public ItemHolder(View itemView) {
-            super(itemView);
 
-            ///
+        public ChangeHolder(View itemView) {
+
 
             this.tvTrainCategory = (TextView) itemView.findViewById(R.id.tv_train_category);
             this.tvChangesNumber = (TextView) itemView.findViewById(R.id.tv_changes_number);
@@ -138,11 +157,13 @@ public class JourneySolutionsAdapter extends RecyclerView.Adapter<RecyclerView.V
             this.llDepartureSchedule = (LinearLayout) itemView.findViewById(R.id.ll_departure_schedule);
             this.tvDepartureTime = (TextView) itemView.findViewById(R.id.tv_departure_time);
             this.tvDepartureTimeWithDelay = (TextView) itemView.findViewById(R.id.tv_departure_time_with_delay);
+            this.hsvDepartureStationName = (HorizontalScrollView) itemView.findViewById(R.id.hsv_departure_station_name);
             this.tvDepartureStationName = (TextView) itemView.findViewById(R.id.tv_departure_station_name);
 
             this.llArrivalSchedule= (LinearLayout) itemView.findViewById(R.id.ll_arrival_schedule);
             this.tvArrivalTime = (TextView) itemView.findViewById(R.id.tv_arrival_time);
             this.tvArrivalTimeWithDelay = (TextView) itemView.findViewById(R.id.tv_arrival_time_with_delay);
+            this.hsvArrivalStationName = (HorizontalScrollView) itemView.findViewById(R.id.hsv_arrival_station_name);
             this.tvArrivalStationName = (TextView) itemView.findViewById(R.id.tv_arrival_station_name);
 
             ///
@@ -162,6 +183,44 @@ public class JourneySolutionsAdapter extends RecyclerView.Adapter<RecyclerView.V
 
             this.btnPin = (ImageButton) itemView.findViewById(R.id.btn_pin);
             this.btnExpandCard = (ImageButton) itemView.findViewById(R.id.btn_expand_card);
+        }
+    }
+
+    protected static class JourneyHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnFocusChangeListener {
+
+        ChangeHolder holder;
+
+        public JourneyHolder(View itemView) {
+            super(itemView);
+
+            holder = new ChangeHolder(itemView);
+
+            holder.llChanges = (LinearLayout) itemView.findViewById(R.id.ll_changes);
+
+            holder.llChanges.setVisibility(View.GONE);
+
+            holder.btnExpandCard.setOnClickListener(this);
+            holder.btnExpandCard.setFocusableInTouchMode(true);
+            holder.btnExpandCard.setOnFocusChangeListener(this);
+        }
+
+        @Override
+        public void onFocusChange(View view, boolean focused) {
+            if (focused) {
+                holder.llChanges.setVisibility(View.VISIBLE);
+            } else {
+                holder.llChanges.setVisibility(View.GONE);
+            }
+
+        }
+
+        @Override
+        public void onClick(View view) {
+            if (holder.btnExpandCard.isFocused()) {
+                holder.btnExpandCard.clearFocus();
+            } else {
+                holder.btnExpandCard.requestFocus();
+            }
         }
     }
 

@@ -3,6 +3,7 @@ package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeys.res
 import android.content.Context;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.R;
@@ -10,6 +11,8 @@ import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.Solution
 
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
+
+import java.util.List;
 
 /**
  * Created by albertogiunta on 13/07/16.
@@ -19,94 +22,160 @@ public class JourneyItemFactory {
     private static final boolean ON = true;
     private static final boolean OFF = false;
 
-    public static void toggleHolder(Context context, JourneySolutionsAdapter.ItemHolder h, SolutionList.Solution s) {
+    private static JourneyItemFactory self = null;
+    private static Context context;
 
-        // always
-        setText(h.tvDepartureTime, s.solution.departureTimeReadable);
-        setText(h.tvArrivalTime, s.solution.arrivalTimeReadable);
-        setText(h.tvLastingTime, s.solution.duration);
+
+    private JourneyItemFactory() {
+    }
+
+    public static synchronized JourneyItemFactory getInstance(Context c) {
+        if (self == null) {
+            self = new JourneyItemFactory();
+        }
+        context = c;
+        return self;
+    }
+
+    public void toggleHolder(List<View> listView, JourneySolutionsAdapter.JourneyHolder journeyHolder, SolutionList.Solution solution) {
+
+        JourneySolutionsAdapter.ChangeHolder jh = journeyHolder.holder;
+        SolutionList.Solution s = solution;
+
+
+
+        toggleAlways(jh, s.solution);
 
         if (s.solution.timeDifference != null) {
-            // with time difference
-
-            // show time difference
-            // hide refresh
-            setVisibility(h.rlTimeDifference, ON);
-            setVisibility(h.btnRefresh, OFF);
-
-            // show platform
-            setVisibility(h.rlPlatform, ON);
-
-            // show schedules with delay
-            setVisibility(h.tvDepartureTimeWithDelay, ON);
-            setVisibility(h.tvArrivalTimeWithDelay, ON);
-
-            // show pin
-            setVisibility(h.btnPin, ON);
-
-            setText(h.tvTimeDifference, s.solution.timeDifference, "'");
-            setProgress(h.tvTimeDifferenceText, s.solution.progress);
-            setText(h.tvPlatform, s.solution.departurePlatform);
-
-            setText(h.tvDepartureTimeWithDelay, sumTimes(s.solution.departureTimeReadable, s.solution.timeDifference));
-            setText(h.tvArrivalTimeWithDelay, sumTimes(s.solution.arrivalTimeReadable, s.solution.timeDifference));
-
-            setColors(context, h, s.solution.timeDifference);
-
+            withTimeDifference(jh, s.solution);
         } else {
-            // without time difference
-
-            // show refresh
-            // hide time difference
-            setVisibility(h.btnRefresh, ON);
-            setVisibility(h.rlTimeDifference, OFF);
-
-            // hide schedules with delay
-            setVisibility(h.tvDepartureTimeWithDelay, OFF);
-            setVisibility(h.tvArrivalTimeWithDelay, OFF);
-
-            // hide platform
-            setVisibility(h.rlPlatform, OFF);
-
-            // hide pin
-            setVisibility(h.btnPin, OFF);
-
+            withoutTimeDifference(jh);
         }
 
         if (s.hasChanges) {
-            // with changes
-
-            // show changes nubmer
-            // hide train category
-            setVisibility(h.llChangesNumber, ON);
-            setVisibility(h.tvTrainCategory, OFF);
-
-            // hide platform
-            setVisibility(h.rlPlatform, OFF);
-
-            // show expand
-            // hide pin
-            setVisibility(h.btnExpandCard, ON);
-            setVisibility(h.btnPin, OFF);
-
-            setText(h.tvChangesNumber, s.changes.changesNumber);
-            setText(h.tvChangesText, checkPlural("cambio", s.changes.changesNumber));
-
+            withChanges(jh, s);
+            jh.llChanges.removeAllViews();
+            for (int i = 0; i < s.changes.changesList.size(); i++) {
+                View v = listView.get(i);
+                JourneySolutionsAdapter.ChangeHolder ch = new JourneySolutionsAdapter.ChangeHolder(v);
+                toggleAlways(ch, s.changes.changesList.get(i));
+                if (s.changes.changesList.get(i).timeDifference != null) {
+                    withTimeDifference(ch, s.changes.changesList.get(i));
+                } else {
+                    withoutTimeDifference(ch);
+                }
+                withoutChanges(ch, s.changes.changesList.get(i));
+                setChangeInfo(ch, s.changes.changesList.get(i));
+                if (v.getParent() != null) {
+                    ((ViewGroup) v.getParent()).removeView(v);
+                }
+                jh.llChanges.addView(v);
+            }
         } else {
-            // without changes
-
-            // show train category
-            // hide changes number
-            setVisibility(h.tvTrainCategory, ON);
-            setVisibility(h.llChangesNumber, OFF);
-
-            // hide expand
-            setVisibility(h.btnExpandCard, OFF);
-
-            setText(h.tvTrainCategory, s.solution.trainCategory);
+            withoutChanges(jh, s.solution);
         }
+    }
+
+
+    private void toggleAlways(JourneySolutionsAdapter.ChangeHolder holder, SolutionList.Solution.Change solution) {
+        // always
+        setText(holder.tvDepartureTime, solution.departureTimeReadable);
+        setText(holder.tvArrivalTime, solution.arrivalTimeReadable);
+        setText(holder.tvLastingTime, solution.duration);
+    }
+
+
+    private void withTimeDifference(JourneySolutionsAdapter.ChangeHolder holder, SolutionList.Solution.Change solution) {
+        // show time difference
+        // hide refresh
+        setVisibility(holder.rlTimeDifference, ON);
+        setVisibility(holder.btnRefresh, OFF);
+
+        // show platform
+        setVisibility(holder.rlPlatform, ON);
+
+        // show schedules with delay
+        setVisibility(holder.tvDepartureTimeWithDelay, ON);
+        setVisibility(holder.tvArrivalTimeWithDelay, ON);
+
+        // show pin
+        setVisibility(holder.btnPin, ON);
+
+        setText(holder.tvTimeDifference, solution.timeDifference, "'");
+        setProgress(holder.tvTimeDifferenceText, solution.progress);
+        setText(holder.tvPlatform, solution.departurePlatform);
+
+        setText(holder.tvDepartureTimeWithDelay, sumTimes(solution.departureTimeReadable, solution.timeDifference));
+        setText(holder.tvArrivalTimeWithDelay, sumTimes(solution.arrivalTimeReadable, solution.timeDifference));
+
+        setColors(context, holder, solution.timeDifference);
+    }
+
+
+    private void withoutTimeDifference(JourneySolutionsAdapter.ChangeHolder jh) {
+        // show refresh
+        // hide time difference
+        setVisibility(jh.btnRefresh, ON);
+        setVisibility(jh.rlTimeDifference, OFF);
+
+        // hide schedules with delay
+        setVisibility(jh.tvDepartureTimeWithDelay, OFF);
+        setVisibility(jh.tvArrivalTimeWithDelay, OFF);
+
+        // hide platform
+        setVisibility(jh.rlPlatform, OFF);
+
+        // hide pin
+        setVisibility(jh.btnPin, OFF);
+    }
+
+    private void withChanges(JourneySolutionsAdapter.ChangeHolder jh, SolutionList.Solution s) {
+        // show changes nubmer
+        // hide train category
+        setVisibility(jh.llChangesNumber, ON);
+        setVisibility(jh.tvTrainCategory, OFF);
+
+        // hide platform
+        setVisibility(jh.rlPlatform, OFF);
+
+        // show expand
+        // hide pin
+        setVisibility(jh.btnExpandCard, ON);
+        setVisibility(jh.btnPin, OFF);
+
+        // show changes
+//        setVisibility(jh.llChanges, ON);
+
+        setText(jh.tvChangesNumber, s.changes.changesNumber);
+        setText(jh.tvChangesText, checkPlural("cambio", s.changes.changesNumber));
 
     }
+
+    private void withoutChanges(JourneySolutionsAdapter.ChangeHolder jh, SolutionList.Solution.Change s) {
+        // show train category
+        // hide changes number
+        setVisibility(jh.tvTrainCategory, ON);
+        setVisibility(jh.llChangesNumber, OFF);
+
+        // hide expand
+        setVisibility(jh.btnExpandCard, OFF);
+        setText(jh.tvTrainCategory, s.trainCategory);
+
+        // hide changes
+//        setVisibility(jh.llChanges, OFF);
+    }
+
+    private void setChangeInfo(JourneySolutionsAdapter.ChangeHolder jh, SolutionList.Solution.Change s) {
+        setVisibility(jh.hsvDepartureStationName, ON);
+        setVisibility(jh.hsvArrivalStationName, ON);
+
+        setText(jh.tvDepartureStationName, s.departureStationName);
+        setText(jh.tvArrivalStationName, s.arrivalStationName);
+    }
+
+
+    ///////
+
 
     private static void setVisibility(View view, boolean setAsVisible) {
         if (setAsVisible) {
@@ -159,7 +228,7 @@ public class JourneyItemFactory {
                         .plusMinutes(timeDifference));
     }
 
-    private static void setColors(Context context, JourneySolutionsAdapter.ItemHolder h, int timeDifference) {
+    private static void setColors(Context context, JourneySolutionsAdapter.ChangeHolder h, int timeDifference) {
         int color = ContextCompat.getColor(context, R.color.textLight);
         if (timeDifference == 0) {
             color = ContextCompat.getColor(context, R.color.ontime);
@@ -172,99 +241,6 @@ public class JourneyItemFactory {
         h.tvTimeDifference.setTextColor(color);
         h.tvDepartureTimeWithDelay.setTextColor(color);
         h.tvArrivalTimeWithDelay.setTextColor(color);
-    }
-
-
-    private void old(JourneySolutionsAdapter.ItemHolder itemHolder, SolutionList.Solution solution) {
-        Integer timeDifference = solution.solution.timeDifference;
-        String c = timeDifference != null ? String.format("%  d'", timeDifference) : "";
-        itemHolder.tvTrainCategory.setText(solution.solution.trainCategory);
-        itemHolder.tvDepartureTime.setText(solution.solution.departureTimeReadable);
-        itemHolder.tvDepartureTimeWithDelay.setText(timeDifference == null ? "" : DateTimeFormat.forPattern("HH:mm").print(DateTime.parse(solution.solution.departureTimeReadable, DateTimeFormat.forPattern("HH:mm")).plusMinutes(solution.solution.timeDifference)));
-        itemHolder.tvArrivalTime.setText(solution.solution.arrivalTimeReadable);
-        itemHolder.tvArrivalTimeWithDelay.setText(timeDifference == null ? "" : DateTimeFormat.forPattern("HH:mm").print(DateTime.parse(solution.solution.arrivalTimeReadable, DateTimeFormat.forPattern("HH:mm")).plusMinutes(solution.solution.timeDifference)));
-        itemHolder.tvLastingTime.setText(solution.solution.duration);
-        itemHolder.tvPlatform.setText(solution.solution.departurePlatform);
-        itemHolder.tvTimeDifference.setText(c);
-    }
-
-    private void delayNoChange(JourneySolutionsAdapter.ItemHolder h, SolutionList.Solution s) {
-
-        // change
-        h.tvTrainCategory.setVisibility(View.VISIBLE);
-        h.llChangesNumber.setVisibility(View.GONE);
-
-        //delay + change
-        h.tvDepartureTimeWithDelay.setVisibility(View.VISIBLE);
-        h.tvDepartureStationName.setVisibility(View.GONE);
-
-        //delay + change
-        h.tvArrivalTimeWithDelay.setVisibility(View.VISIBLE);
-        h.tvArrivalStationName.setVisibility(View.GONE);
-
-        //delay
-        h.rlTimeDifference.setVisibility(View.VISIBLE);
-        h.btnRefresh.setVisibility(View.GONE);
-
-        //delay
-        h.rlPlatform.setVisibility(View.VISIBLE);
-
-        //change
-        h.btnPin.setVisibility(View.VISIBLE);
-        h.btnExpandCard.setVisibility(View.GONE);
-
-        h.tvTrainCategory.setText(s.solution.trainCategory);
-        h.tvDepartureTime.setText(s.solution.departureTimeReadable);
-        h.tvDepartureTimeWithDelay.setText(s.solution.departureTimeReadable);
-        h.tvArrivalTime.setText(s.solution.arrivalTimeReadable);
-        h.tvArrivalTimeWithDelay.setText(s.solution.arrivalTimeReadable);
-        h.tvTimeDifference.setText(s.solution.timeDifference + "");
-        h.tvLastingTime.setText(s.solution.duration);
-        h.tvPlatform.setText(s.solution.departurePlatform);
-
-
-    }
-
-    private void noDelaynoChange(JourneySolutionsAdapter.ItemHolder h, SolutionList.Solution s) {
-
-        // change
-        h.tvTrainCategory.setVisibility(View.VISIBLE);
-        h.llChangesNumber.setVisibility(View.GONE);
-
-        //delay + change
-        h.tvDepartureTimeWithDelay.setVisibility(View.GONE);
-        h.tvDepartureStationName.setVisibility(View.GONE);
-
-        //delay + change
-        h.tvArrivalTimeWithDelay.setVisibility(View.GONE);
-        h.tvArrivalStationName.setVisibility(View.GONE);
-
-        //delay
-        h.rlTimeDifference.setVisibility(View.GONE);
-        h.btnRefresh.setVisibility(View.VISIBLE);
-
-        //delay
-        h.rlPlatform.setVisibility(View.GONE);
-
-        //change
-        h.btnPin.setVisibility(View.GONE);
-        h.btnExpandCard.setVisibility(View.GONE);
-
-        h.tvTrainCategory.setText(s.solution.trainCategory);
-        h.tvDepartureTime.setText(s.solution.departureTimeReadable);
-        h.tvArrivalTime.setText(s.solution.arrivalTimeReadable);
-        h.tvLastingTime.setText(s.solution.duration);
-    }
-
-    private void change(JourneySolutionsAdapter.ItemHolder h, SolutionList.Solution s) {
-        h.llChangesNumber.setVisibility(View.VISIBLE);
-        h.tvTrainCategory.setVisibility(View.GONE);
-
-        h.btnExpandCard.setVisibility(View.VISIBLE);
-        h.btnPin.setVisibility(View.GONE);
-
-        h.tvChangesNumber.setText(s.changes.changesNumber + "");
-
     }
 
 }
