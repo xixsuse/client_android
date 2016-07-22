@@ -176,7 +176,8 @@
                         android:marqueeRepeatLimit="marquee_forever"
                         android:scrollHorizontally="true"
                         android:singleLine="true"
-                        android:text="Milano Centrale"
+                        android:layout_gravity="end"
+                        android:text="Milano"
                         android:textSize="@dimen/fs_floating_title"
                         />
                 </HorizontalScrollView>

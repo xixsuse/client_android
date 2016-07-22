@@ -68,7 +68,7 @@
                                 android:completionThreshold="1"
                                 android:dropDownWidth="@dimen/iatv_station_width"
                                 android:hint="@string/hint_departure"
-
+                                android:imeOptions="actionNext"
                                 android:inputType="textCapSentences|textNoSuggestions"
                                 android:singleLine="true"/>
                         </android.support.design.widget.TextInputLayout>
@@ -105,7 +105,7 @@
                                 android:completionThreshold="1"
                                 android:dropDownHeight="match_parent"
                                 android:dropDownWidth="@dimen/iatv_station_width"
-
+                                android:imeOptions="actionSearch"
                                 android:hint="@string/hint_arrival"
                                 android:inputType="textCapSentences|textNoSuggestions"
                                 android:singleLine="true"/>

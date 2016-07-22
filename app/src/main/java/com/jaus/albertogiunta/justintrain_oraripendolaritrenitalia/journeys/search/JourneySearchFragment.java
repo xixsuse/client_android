@@ -14,6 +14,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -103,14 +104,19 @@ public class JourneySearchFragment extends Fragment implements JourneyContract.S
         setOnTouchListener(this.mDepartureStation);
         setOnTouchListener(this.mArrivalStation);
 
+        setOnEditorAction(this.mDepartureStation);
+        setOnEditorAction(this.mArrivalStation);
+
         this.mClearDeparture.setOnClickListener(v -> clearFields(mDepartureStation));
         this.mClearArrival.setOnClickListener(v -> clearFields(mArrivalStation));
 
         this.mDepartureStation.addTextChangedListener(setTextWatcher(mClearDeparture));
         this.mArrivalStation.addTextChangedListener(setTextWatcher(mClearArrival));
 
-        mDepartureStation.setOnItemClickListener((adapterView, view, i, l) -> onAutocompleteItemClick(mDepartureStation, mArrivalStation));
-        mArrivalStation.setOnItemClickListener((adapterView, view, i, l) -> onAutocompleteItemClick(mArrivalStation, mDepartureStation));
+        this.mDepartureStation.setOnItemClickListener((adapterView, view, i, l) -> onAutocompleteItemClick(mDepartureStation, mArrivalStation));
+        this.mArrivalStation.setOnItemClickListener((adapterView, view, i, l) -> onAutocompleteItemClick(mArrivalStation, mDepartureStation));
+
+
 
         this.mSwapStations.setOnClickListener(v -> {
             String temp = mDepartureStation.getText().toString();
@@ -129,16 +135,7 @@ public class JourneySearchFragment extends Fragment implements JourneyContract.S
 
 
         // SEARCH BUTTON
-        this.mSearchButton.setOnClickListener(v -> {
-            departureHourOfDay = Integer.parseInt(this.mDepartureTime.getText().toString().substring(0, 2));
-            if (mPresenter.search(mDepartureStation.getText().toString(), mArrivalStation.getText().toString(), departureHourOfDay)) {
-                mListener.onFragmentInteraction(mPresenter.getSearchedStations(), mPresenter.getHourOfDay());
-            } else {
-                Log.d("Search not fired due to some errors");
-            }
-            InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-        });
+        this.mSearchButton.setOnClickListener(this::performSearch);
 
         return root;
     }
@@ -187,6 +184,21 @@ public class JourneySearchFragment extends Fragment implements JourneyContract.S
         mDepartureTime.setText(time);
     }
 
+    private void performSearch(View v) {
+        departureHourOfDay = Integer.parseInt(this.mDepartureTime.getText().toString().substring(0, 2));
+
+        mDepartureStation.dismissDropDown();
+        mArrivalStation.dismissDropDown();
+
+        if (mPresenter.search(mDepartureStation.getText().toString(), mArrivalStation.getText().toString(), departureHourOfDay)) {
+            mListener.onFragmentInteraction(mPresenter.getSearchedStations(), mPresenter.getHourOfDay());
+        } else {
+            Log.d("Search not fired due to some errors");
+        }
+        InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+    }
+
     /**
      * Hide the keyboard when touching out of the bounds of an editText
      * @param mContext
@@ -197,6 +209,21 @@ public class JourneySearchFragment extends Fragment implements JourneyContract.S
             InputMethodManager imm = (InputMethodManager)mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
         }
+    }
+
+    private void setOnEditorAction(EditText editText) {
+        editText.setOnEditorActionListener((textView, i, keyEvent) -> {
+            boolean handled = false;
+            if (i == EditorInfo.IME_ACTION_SEARCH) {
+                performSearch(textView);
+                handled = true;
+//            } else if (i == EditorInfo.IME_ACTION_NEXT) {
+//
+//                handled = true;
+            }
+
+            return handled;
+        });
     }
 
     /**
