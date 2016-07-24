@@ -4,9 +4,11 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.CardView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -39,6 +41,10 @@ public class JourneySearchFragment extends Fragment implements JourneyContract.S
 
     private OnFragmentInteractionListener mListener;
 
+    private CoordinatorLayout clHeader;
+
+//    private LinearLayout llSearchPanel;
+    private FloatingActionButton mSearchButton;
     private TextInputLayout mDepartureStationInputLayout;
     private TextInputLayout mArrivalStationInputLayout;
     private InstantAutoCompleteTextView mDepartureStation;
@@ -46,13 +52,20 @@ public class JourneySearchFragment extends Fragment implements JourneyContract.S
     private Button mClearDeparture;
     private Button mClearArrival;
     private ImageButton mSwapStations;
-    private FloatingActionButton mSearchButton;
     private TextView mMinusHour;
     private TextView mMinusMinusHour;
     private TextView mPlusHour;
     private TextView mPlusPlusHour;
     private TextView mDepartureTime;
     private int departureHourOfDay;
+
+    private CardView cvHeader;
+    private TextView tvDepartureStationName;
+    private TextView tvArrivalStationName;
+    private ImageButton btnHeaderSwapStationNames;
+    private ImageButton btnToggleFavorite;
+
+
 
     public JourneySearchFragment() {}
 
@@ -77,6 +90,11 @@ public class JourneySearchFragment extends Fragment implements JourneyContract.S
 
         // VIEW BINDING
         View root = inflater.inflate(R.layout.fragment_journey_search, container, false);
+
+        this.clHeader = (CoordinatorLayout) root.findViewById(R.id.cl_header_0);
+//        this.llSearchPanel = (LinearLayout) root.findViewById(R.id.ll_search_panel_1);
+        this.mSearchButton = (FloatingActionButton) root.findViewById(R.id.fab_search_journeys);
+
         this.mDepartureStationInputLayout = (TextInputLayout) root.findViewById(R.id.til_departure_station);
         this.mArrivalStationInputLayout = (TextInputLayout) root.findViewById(R.id.til_arrival_station);
         this.mDepartureStation = (InstantAutoCompleteTextView) root.findViewById(R.id.iatv_departure_station);
@@ -89,7 +107,10 @@ public class JourneySearchFragment extends Fragment implements JourneyContract.S
         this.mDepartureTime = (TextView) root.findViewById(R.id.tv_selected_time);
         this.mPlusHour = (TextView) root.findViewById(R.id.plus_hour);
         this.mPlusPlusHour = (TextView) root.findViewById(R.id.plus_plus_hour);
-        this.mSearchButton = (FloatingActionButton) root.findViewById(R.id.fab_search_journeys);
+
+        this.cvHeader = (CardView) root.findViewById(R.id.cv_header_1);
+        this.tvDepartureStationName = (TextView) root.findViewById(R.id.tv_departure_station_name);
+        this.tvArrivalStationName = (TextView) root.findViewById(R.id.tv_arrival_station_name);
 
         // TEXT INPUT LAYOUT
         mDepartureStationInputLayout.setErrorEnabled(true);
@@ -135,7 +156,14 @@ public class JourneySearchFragment extends Fragment implements JourneyContract.S
 
 
         // SEARCH BUTTON
-        this.mSearchButton.setOnClickListener(this::performSearch);
+        this.mSearchButton.setOnClickListener(view -> {
+            performSearch(view);
+        });
+
+        this.cvHeader.setOnClickListener(view -> {
+            this.cvHeader.setVisibility(View.GONE);
+            this.clHeader.setVisibility(View.VISIBLE);
+        });
 
         return root;
     }
@@ -189,6 +217,12 @@ public class JourneySearchFragment extends Fragment implements JourneyContract.S
 
         mDepartureStation.dismissDropDown();
         mArrivalStation.dismissDropDown();
+
+        this.cvHeader.setVisibility(View.VISIBLE);
+        this.clHeader.setVisibility(View.GONE);
+
+        this.tvDepartureStationName.setText(mDepartureStation.getText().toString());
+        this.tvArrivalStationName.setText(mArrivalStation.getText().toString());
 
         if (mPresenter.search(mDepartureStation.getText().toString(), mArrivalStation.getText().toString(), departureHourOfDay)) {
             mListener.onFragmentInteraction(mPresenter.getSearchedStations(), mPresenter.getHourOfDay());

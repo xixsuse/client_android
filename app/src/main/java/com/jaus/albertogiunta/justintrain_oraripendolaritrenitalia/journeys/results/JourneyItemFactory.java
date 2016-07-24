@@ -49,6 +49,8 @@ public class JourneyItemFactory {
         JourneySolutionsAdapter.ChangeHolder jh = journeyHolder.holder;
         SolutionList.Solution s = solution;
 
+        jh.llChanges.removeAllViews(); // needed to avoid "view has already parent exception"
+
         toggleAlways(jh, s.solution);
 
         if (s.solution.timeDifference != null) {
@@ -59,7 +61,6 @@ public class JourneyItemFactory {
 
         if (s.hasChanges) {
             withChanges(jh, s);
-            jh.llChanges.removeAllViews(); // needed to avoid "view has already parent exception"
 
             // iterate over every change of the solution
             for (int i = 0; i < s.changes.changesList.size(); i++) {

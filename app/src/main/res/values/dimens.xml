@@ -29,5 +29,6 @@
     <dimen name="fs_big_text">30sp</dimen>
     <dimen name="journey_item_elevation">2dp</dimen>
     <dimen name="card_corner_radius">4dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
 
 </resources>

@@ -17,6 +17,8 @@ import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.Solution
 import java.util.LinkedList;
 import java.util.List;
 
+import trikita.log.Log;
+
 /**
  * Created by albertogiunta on 17/06/16.
  */
@@ -198,7 +200,7 @@ public class JourneySolutionsAdapter extends RecyclerView.Adapter<RecyclerView.V
      * Wraps a ChangeHolder and additional views
      * (it's the main item holder of the journey results recyclerView)
      */
-    protected static class JourneyHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnFocusChangeListener {
+    protected static class JourneyHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         ChangeHolder holder;
 
@@ -209,29 +211,18 @@ public class JourneySolutionsAdapter extends RecyclerView.Adapter<RecyclerView.V
 
             holder.llChanges = (LinearLayout) itemView.findViewById(R.id.ll_changes);
 
-            holder.llChanges.setVisibility(View.GONE);
 
             holder.btnExpandCard.setOnClickListener(this);
-            holder.btnExpandCard.setFocusableInTouchMode(true);
-            holder.btnExpandCard.setOnFocusChangeListener(this);
-        }
-
-        @Override
-        public void onFocusChange(View view, boolean focused) {
-            if (focused) {
-                holder.llChanges.setVisibility(View.VISIBLE);
-            } else {
-                holder.llChanges.setVisibility(View.GONE);
-            }
-
+//            holder.llChanges.setVisibility(View.GONE);
+//            holder.btnExpandCard.setFocusableInTouchMode(true);
         }
 
         @Override
         public void onClick(View view) {
-            if (holder.btnExpandCard.isFocused()) {
-                holder.btnExpandCard.clearFocus();
+            if (holder.llChanges.getVisibility() == View.VISIBLE) {
+                holder.llChanges.setVisibility(View.GONE);
             } else {
-                holder.btnExpandCard.requestFocus();
+                holder.llChanges.setVisibility(View.VISIBLE);
             }
         }
     }

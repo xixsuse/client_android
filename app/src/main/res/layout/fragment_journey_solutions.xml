@@ -2,7 +2,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     tools:context="com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeys.results.JourneySolutionsFragment">
 
     <RelativeLayout
@@ -10,82 +10,11 @@
         android:layout_height="match_parent"
         android:layout_marginBottom="-6dp">
 
-        <android.support.v7.widget.CardView
-            android:id="@+id/cv_header_1"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/thin_card_height"
-            android:elevation="@dimen/basic_card_elevation"
-            android:visibility="gone"
-            >
-
-            <RelativeLayout
-                android:id="@+id/rl_header_2"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <RelativeLayout
-                    android:id="@+id/rl_station_names"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_marginEnd="120dp"
-                    android:layout_marginStart="@dimen/basic_horizontal_margin">
-
-                    <TextView
-                        android:id="@+id/tv_departure_station_name"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
-                        android:text=""
-                        android:textSize="@dimen/fs_small_text"/>
-
-                    <TextView
-                        android:id="@+id/tv_arrival_station_name"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/tv_departure_station_name"
-                        android:layout_marginBottom="5dp"
-                        android:layout_marginStart="30dp"
-                        android:layout_marginTop="10dp"
-                        android:text=""
-                        android:textSize="@dimen/fs_small_text"/>
-
-                </RelativeLayout>
-
-                <ImageButton
-                    android:id="@+id/btn_swap_station_names"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="16dp"
-                    android:layout_toStartOf="@+id/btn_toggle_favourite"
-                    android:clickable="true"
-                    android:src="@drawable/ic_swap_vert"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:backgroundTint="@android:color/transparent"
-
-                    />
-
-                <ImageButton
-                    android:id="@+id/btn_toggle_favourite"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_marginEnd="@dimen/basic_horizontal_margin"
-                    android:clickable="true"
-                    android:src="@drawable/ic_star_border"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:backgroundTint="@android:color/transparent"
-                    />
-
-            </RelativeLayout>
-
-        </android.support.v7.widget.CardView>
-
-
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rv_journey_solutions"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@id/cv_header_1"/>
+            />
 
         <ImageButton
             android:id="@+id/btn_refresh"
