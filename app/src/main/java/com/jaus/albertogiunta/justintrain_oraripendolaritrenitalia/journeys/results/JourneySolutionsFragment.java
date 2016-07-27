@@ -1,6 +1,5 @@
 package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeys.results;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -8,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.R;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.SolutionList;
@@ -20,18 +20,14 @@ import trikita.log.Log;
 
 public class JourneySolutionsFragment extends Fragment implements JourneyContract.Results.View {
 
-//    private OnFragmentInteractionListener mListener;
-
     private JourneyContract.Results.Presenter mPresenter;
-    private RecyclerView mJourneySolutions;
-    private JourneySolutionsAdapter mJourneySolutionsAdapter;
+    private JourneySolutionsAdapter journeySolutionsAdapter;
+    private RecyclerView rvJourneySolutions;
+    private ImageButton btnRefresh;
 
+    public JourneySolutionsFragment() {}
 
-    public JourneySolutionsFragment() {
-        // Required empty public constructor
-    }
-
-    public static JourneySolutionsFragment newInstance(List<Station4Database> stationList, int time) {
+    public static JourneySolutionsFragment newInstance(List<Station4Database> stationList, int time, boolean hasModifiedTime) {
         JourneySolutionsFragment fragment = new JourneySolutionsFragment();
         Bundle args = new Bundle();
         args.putString("departureStationName", stationList.get(0).getName());
@@ -39,6 +35,7 @@ public class JourneySolutionsFragment extends Fragment implements JourneyContrac
         args.putString("arrivalStationName", stationList.get(1).getName());
         args.putString("arrivalStationId", stationList.get(1).getStationShortId());
         args.putInt("hourOfDay", time);
+        args.putBoolean("hasModifiedTime", hasModifiedTime);
         fragment.setArguments(args);
         return fragment;
     }
@@ -46,40 +43,45 @@ public class JourneySolutionsFragment extends Fragment implements JourneyContrac
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mPresenter = new JourneySolutionsPresenter(this, getArguments().getString("departureStationId"), getArguments().getString("arrivalStationId"), getArguments().getInt("hourOfDay"));
-        Log.d("Instating JourneySolutionsPresenter");
+        mPresenter = new JourneySolutionsPresenter(this);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View root = inflater.inflate(R.layout.fragment_journey_solutions, container, false);
-        mJourneySolutions = (RecyclerView) root.findViewById(R.id.rv_journey_solutions);
-        mJourneySolutionsAdapter = new JourneySolutionsAdapter(getActivity(), container, mPresenter.getSolutionList());
-        mJourneySolutions.setAdapter(mJourneySolutionsAdapter);
-        mJourneySolutions.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mPresenter.searchJourney();
+        rvJourneySolutions = (RecyclerView) root.findViewById(R.id.rv_journey_solutions);
+        journeySolutionsAdapter = new JourneySolutionsAdapter(getActivity(), mPresenter);
+        rvJourneySolutions.setAdapter(journeySolutionsAdapter);
+        rvJourneySolutions.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        btnRefresh = (ImageButton) root.findViewById(R.id.btn_refresh);
+        btnRefresh.setOnClickListener(view -> {
+            mPresenter.searchJourney(new JourneySolutionsPresenter.SearchInstantlyStrategy(),
+                    getArguments().getString("departureStationId"),
+                    getArguments().getString("arrivalStationId"),
+                    getArguments().getInt("hourOfDay"),
+                    true,
+                    true);
+        });
+
+        if (getArguments().getBoolean("hasModifiedTime")) {
+            mPresenter.searchJourney(new JourneySolutionsPresenter.SearchAfterTimeStrategy(),
+                    getArguments().getString("departureStationId"),
+                    getArguments().getString("arrivalStationId"),
+                    getArguments().getInt("hourOfDay"),
+                    true,
+                    true);
+        } else {
+            mPresenter.searchJourney(new JourneySolutionsPresenter.SearchInstantlyStrategy(),
+                    getArguments().getString("departureStationId"),
+                    getArguments().getString("arrivalStationId"),
+                    getArguments().getInt("hourOfDay"),
+                    true,
+                    true);
+        }
         return root;
     }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-//        if (context instanceof OnFragmentInteractionListener) {
-//            mListener = (OnFragmentInteractionListener) context;
-//        } else {
-//            throw new RuntimeException(context.toString()
-//                    + " must implement OnFragmentInteractionListener");
-//        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-//        mListener = null;
-    }
-
 
     @Override
     public void showProgress() {
@@ -91,19 +93,13 @@ public class JourneySolutionsFragment extends Fragment implements JourneyContrac
         Log.d("Finishing ...");
     }
 
-    @Override
-    public void setJourneySolutions(List<SolutionList.Solution> solutionList) {
-        Log.d("Size of solutionList: ", mJourneySolutionsAdapter.solutionList.size());
-        mJourneySolutionsAdapter.notifyDataSetChanged();
+    public void setRvJourneySolutions(List<SolutionList.Solution> solutionList) {
+        Log.d("Size of solutionList: ", journeySolutionsAdapter.solutionList.size());
+        journeySolutionsAdapter.notifyDataSetChanged();
     }
 
     @Override
     public void showError(String message) {
         Log.d(message);
     }
-
-
-//    public interface OnFragmentInteractionListener {
-//        void onFragmentInteraction();
-//    }
 }

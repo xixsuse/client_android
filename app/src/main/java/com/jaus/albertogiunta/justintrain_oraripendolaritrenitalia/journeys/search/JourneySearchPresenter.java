@@ -20,83 +20,93 @@ import trikita.log.Log;
  */
 public class JourneySearchPresenter implements JourneyContract.Search.Presenter {
 
-    private JourneyContract.Search.View mJourneySearchView;
+    private JourneyContract.Search.View journeySearchView;
 
-    private List<Station4Database> mObjectList;
-    private RealmResults<Station4Database> mRealmObjectList;
-    private List<Station4Database> mSearchedStations;
-    private int mHourOfDay;
+    private List<Station4Database> objectList;
+    private RealmResults<Station4Database> realmObjectList;
+    private List<Station4Database> searchedStations;
+
+    private int originalHourOfDay;
+    private int hourOfDay;
 
     public JourneySearchPresenter(JourneyContract.Search.View journeySearchView) {
-        mJourneySearchView = journeySearchView;
+        this.journeySearchView = journeySearchView;
+
         Realm realm = Realm.getDefaultInstance();
-        mRealmObjectList = realm.where(Station4Database.class).findAll();
-        mSearchedStations = new ArrayList<>(2);
-        mHourOfDay = LocalDateTime.now().getHourOfDay();
+        realmObjectList = realm.where(Station4Database.class).findAll();
+        searchedStations = new ArrayList<>(2);
+
+        originalHourOfDay = LocalDateTime.now().getHourOfDay();
+        hourOfDay = originalHourOfDay;
     }
 
     // TODO modify database to save info about searched stations
     @Override
-    public List<String> getLastSearchedStations() {
-        mObjectList = mRealmObjectList.where().findAll();
-        return Stream.of(mObjectList).map(Station4Database::getName).collect(Collectors.toList());
+    public List<String> getRecentStations() {
+        objectList = realmObjectList.where().findAll();
+        return Stream.of(objectList).map(Station4Database::getName).collect(Collectors.toList());
     }
 
     @Override
     public List<String> searchDbForMatchingStation(String constraint) {
-        mObjectList = mRealmObjectList.where().beginsWith("name", constraint, Case.INSENSITIVE).findAll();
-        return Stream.of(mObjectList).map(Station4Database::getName).collect(Collectors.toList());
+        objectList = realmObjectList.where().beginsWith("name", constraint, Case.INSENSITIVE).findAll();
+        return Stream.of(objectList).map(Station4Database::getName).collect(Collectors.toList());
     }
 
     @Override
     public boolean search(String departureStationName, String arrivalStationName, int hourOfDay) {
-        mSearchedStations.clear();
+        searchedStations.clear();
 
         if (!validateStationName(departureStationName)) {
-            mJourneySearchView.showDepartureStationNameError(departureStationName + " not found!");
+            journeySearchView.showDepartureStationNameError(departureStationName + " not found!");
             Log.d(arrivalStationName + " not found!");
             return false;
         }
 
         if (!validateStationName(arrivalStationName)) {
-            mJourneySearchView.showArrivalStationNameError(arrivalStationName + " not found!");
+            journeySearchView.showArrivalStationNameError(arrivalStationName + " not found!");
             Log.d(departureStationName + " not found!");
             return false;
         }
 
-        Log.d("Searching for: " + mSearchedStations.toString());
+        Log.d("Searching for: " + searchedStations.toString(), hourOfDay);
         return true;
-    }
-
-    private boolean validateStationName(String stationName) {
-        mObjectList = mRealmObjectList.where().equalTo("name", stationName, Case.INSENSITIVE).findAll();
-        if (mObjectList.size() == 1 && !stationName.isEmpty()) {
-            mSearchedStations.add(mObjectList.get(0));
-            return true;
-        }
-        return false;
     }
 
     @Override
     public List<Station4Database> getSearchedStations() {
-        return mSearchedStations;
+        return searchedStations;
     }
 
     @Override
     public int getHourOfDay() {
-        return mHourOfDay;
+        return hourOfDay;
+    }
+
+    @Override
+    public boolean userHasModifiedTime() {
+        return originalHourOfDay != hourOfDay;
     }
 
     @Override
     public void changeTime(int delta) {
-        mHourOfDay += delta;
+        hourOfDay += delta;
         if (delta != 0) {
-            if (mHourOfDay < 0) {
-                mHourOfDay = 23;
-            } else if (mHourOfDay > 24) {
-                mHourOfDay = 1;
+            if (hourOfDay < 0) {
+                hourOfDay = 23;
+            } else if (hourOfDay > 24) {
+                hourOfDay = 1;
             }
         }
-        mJourneySearchView.setTime((mHourOfDay < 10 ? "0" + mHourOfDay : Integer.toString(mHourOfDay)).concat(":00"));
+        journeySearchView.setTime((hourOfDay < 10 ? "0" + hourOfDay : Integer.toString(hourOfDay)).concat(":00"));
+    }
+
+    private boolean validateStationName(String stationName) {
+        objectList = realmObjectList.where().equalTo("name", stationName, Case.INSENSITIVE).findAll();
+        if (objectList.size() == 1 && !stationName.isEmpty()) {
+            searchedStations.add(objectList.get(0));
+            return true;
+        }
+        return false;
     }
 }

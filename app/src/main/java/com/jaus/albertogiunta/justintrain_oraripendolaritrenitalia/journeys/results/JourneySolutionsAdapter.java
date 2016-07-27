@@ -13,25 +13,28 @@ import android.widget.TextView;
 
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.R;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.SolutionList;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeys.JourneyContract;
 
 import java.util.LinkedList;
 import java.util.List;
-
-import trikita.log.Log;
 
 /**
  * Created by albertogiunta on 17/06/16.
  */
 public class JourneySolutionsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    OnItemClickListener mOnItemClickListener;
-    List<SolutionList.Solution> solutionList;
     Context context;
     JourneyItemFactory factory;
+    List<SolutionList.Solution> solutionList;
+    JourneyContract.Results.Presenter presenter;
 
-    public JourneySolutionsAdapter(Context context, ViewGroup container, List<SolutionList.Solution> solutionList) {
-        this.solutionList = solutionList;
+//    private OnItemClickListener mOnItemClickListener;
+//    private OnItemLongClickListener mOnItemLongClickListener;
+
+    public JourneySolutionsAdapter(Context context, JourneyContract.Results.Presenter presenter) {
         this.context = context;
+        this.presenter = presenter;
+        this.solutionList = presenter.getSolutionList();
         factory = JourneyItemFactory.getInstance(context);
     }
 
@@ -92,12 +95,12 @@ public class JourneySolutionsAdapter extends RecyclerView.Adapter<RecyclerView.V
             return solutionList.size() + 2;
     }
 
-    public void setOnItemClickListener(OnItemClickListener listener) {
-        this.mOnItemClickListener = listener;
-    }
-
     public interface OnItemClickListener {
         void onItemClick(SolutionList.Solution item);
+    }
+
+    public interface OnItemLongClickListener {
+        boolean onItemSelected(int position, View view, SolutionList.Solution item);
     }
 
     private class VIEW_TYPES {
@@ -200,7 +203,7 @@ public class JourneySolutionsAdapter extends RecyclerView.Adapter<RecyclerView.V
      * Wraps a ChangeHolder and additional views
      * (it's the main item holder of the journey results recyclerView)
      */
-    protected static class JourneyHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    protected class JourneyHolder extends RecyclerView.ViewHolder {
 
         ChangeHolder holder;
 
@@ -212,28 +215,32 @@ public class JourneySolutionsAdapter extends RecyclerView.Adapter<RecyclerView.V
             holder.llChanges = (LinearLayout) itemView.findViewById(R.id.ll_changes);
 
 
-            holder.btnExpandCard.setOnClickListener(this);
+            holder.btnExpandCard.setOnClickListener(view -> {
+                if (holder.llChanges.getVisibility() == View.VISIBLE) {
+                    holder.llChanges.setVisibility(View.GONE);
+                } else {
+                    holder.llChanges.setVisibility(View.VISIBLE);
+                }
+            });
+
 //            holder.llChanges.setVisibility(View.GONE);
 //            holder.btnExpandCard.setFocusableInTouchMode(true);
-        }
-
-        @Override
-        public void onClick(View view) {
-            if (holder.llChanges.getVisibility() == View.VISIBLE) {
-                holder.llChanges.setVisibility(View.GONE);
-            } else {
-                holder.llChanges.setVisibility(View.VISIBLE);
-            }
         }
     }
 
 
-    protected static class LoadMoreBeforeHolder extends RecyclerView.ViewHolder {
+    protected class LoadMoreBeforeHolder extends RecyclerView.ViewHolder {
         protected ImageButton btn;
 
         public LoadMoreBeforeHolder(View itemView) {
             super(itemView);
             btn = (ImageButton) itemView.findViewById(R.id.search_before_btn);
+            btn.setOnClickListener(view -> {
+                presenter.searchJourney(new JourneySolutionsPresenter.SearchBeforeTimeStrategy(),
+                        presenter.getSolutionList().get(0).journeyDepartureStationId,
+                        presenter.getSolutionList().get(0).journeyArrivalStationId,
+                        presenter.getSolutionList().get(0).solution.departureTime, false, false);
+            });
         }
 
         public void bind(final SolutionList.Solution item, final OnItemClickListener listener) {
@@ -241,12 +248,18 @@ public class JourneySolutionsAdapter extends RecyclerView.Adapter<RecyclerView.V
         }
     }
 
-    protected static class LoadMoreAfterHolder extends RecyclerView.ViewHolder {
+    protected class LoadMoreAfterHolder extends RecyclerView.ViewHolder {
         protected ImageButton btn;
 
         public LoadMoreAfterHolder(View itemView) {
             super(itemView);
             btn = (ImageButton) itemView.findViewById(R.id.search_after_btn);
+            btn.setOnClickListener(view -> {
+                presenter.searchJourney(new JourneySolutionsPresenter.SearchAfterTimeStrategy(),
+                        presenter.getSolutionList().get(0).journeyDepartureStationId,
+                        presenter.getSolutionList().get(0).journeyArrivalStationId,
+                        presenter.getSolutionList().get(0).solution.departureTime, false, false);
+            });
         }
 
         public void bind(final SolutionList.Solution item, final OnItemClickListener listener) {

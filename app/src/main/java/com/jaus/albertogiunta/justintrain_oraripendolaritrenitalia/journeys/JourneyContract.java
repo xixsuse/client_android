@@ -26,7 +26,7 @@ public interface JourneyContract {
 
         interface Presenter extends BasePresenter {
 
-            List<String> getLastSearchedStations();
+            List<String> getRecentStations();
 
             List<String> searchDbForMatchingStation(String constraint);
 
@@ -35,6 +35,8 @@ public interface JourneyContract {
             List<Station4Database> getSearchedStations();
 
             int getHourOfDay();
+
+            boolean userHasModifiedTime();
 
             void changeTime(int delta);
 
@@ -49,7 +51,7 @@ public interface JourneyContract {
 
             void hideProgress();
 
-            void setJourneySolutions(List<SolutionList.Solution> solutionList);
+            void setRvJourneySolutions(List<SolutionList.Solution> solutionList);
 
             void showError(String message);
 
@@ -57,17 +59,30 @@ public interface JourneyContract {
 
         interface Presenter extends BasePresenter {
 
+            List<SolutionList.Solution> getSolutionList();
+
+            void searchJourney(JourneySearchStrategy strategy,
+                               String departureStationId,
+                               String arrivalStationId,
+                               long timestamp,
+                               boolean isPreemptive,
+                               boolean withDelays);
+
+            void searchJourney(JourneySearchStrategy strategy,
+                               String departureStationId,
+                               String arrivalStationId,
+                               int hourOfDay,
+                               boolean isPreemptive,
+                               boolean withDelays);
+
             String getDepartureStationId();
 
             String getArrivalStationId();
 
             int getHourOfDay();
 
-            List<SolutionList.Solution> getSolutionList();
+            interface JourneySearchStrategy {
 
-            void searchJourney();
-
-            interface Interactor {
                 interface OnJourneySearchFinishedListener {
 
                     void onStationNotFound();
@@ -80,7 +95,12 @@ public interface JourneyContract {
 
                 }
 
-                void searchJourney(String departureStationId, String arrivalStationId, int time, OnJourneySearchFinishedListener listener);
+                void searchJourney(String departureStationId,
+                                   String arrivalStationId,
+                                   long timestamp,
+                                   boolean isPreemptive,
+                                   boolean withDelays,
+                                   OnJourneySearchFinishedListener listener);
             }
         }
     }

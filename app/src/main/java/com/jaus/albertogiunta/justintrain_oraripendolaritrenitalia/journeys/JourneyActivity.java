@@ -50,9 +50,9 @@ public class JourneyActivity extends AppCompatActivity implements JourneySearchF
 
 
     @Override
-    public void onFragmentInteraction(List<Station4Database> stationList, int hourOfDay) {
+    public void onFragmentInteraction(List<Station4Database> stationList, int hourOfDay, boolean userHasModifiedTime) {
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.placeholder_journey_solutions, JourneySolutionsFragment.newInstance(stationList, hourOfDay));
+        ft.replace(R.id.placeholder_journey_solutions, JourneySolutionsFragment.newInstance(stationList, hourOfDay, userHasModifiedTime));
         ft.commit();
         Log.d("Instantiated JourneySolutionsFragment");
     }

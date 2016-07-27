@@ -65,8 +65,11 @@ public class JourneyItemFactory {
             // iterate over every change of the solution
             for (int i = 0; i < s.changes.changesList.size(); i++) {
 
-                View v = listView.get(i); // get every change view passed along with the listview
-                JourneySolutionsAdapter.ChangeHolder ch = new JourneySolutionsAdapter.ChangeHolder(v); // create a new holder for this view
+                // get every change view passed along with the listview
+                View v = listView.get(i);
+
+                // create a new holder for this view
+                JourneySolutionsAdapter.ChangeHolder ch = new JourneySolutionsAdapter.ChangeHolder(v);
 
                 toggleAlways(ch, s.changes.changesList.get(i));
                 if (s.changes.changesList.get(i).timeDifference != null) {

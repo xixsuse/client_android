@@ -37,34 +37,31 @@ import trikita.log.Log;
 
 public class JourneySearchFragment extends Fragment implements JourneyContract.Search.View {
 
-    private JourneyContract.Search.Presenter mPresenter;
+    private JourneyContract.Search.Presenter presenter;
 
-    private OnFragmentInteractionListener mListener;
+    private OnFragmentInteractionListener listener;
 
     private CoordinatorLayout clHeader;
 
-//    private LinearLayout llSearchPanel;
-    private FloatingActionButton mSearchButton;
-    private TextInputLayout mDepartureStationInputLayout;
-    private TextInputLayout mArrivalStationInputLayout;
-    private InstantAutoCompleteTextView mDepartureStation;
-    private InstantAutoCompleteTextView mArrivalStation;
-    private Button mClearDeparture;
-    private Button mClearArrival;
-    private ImageButton mSwapStations;
-    private TextView mMinusHour;
-    private TextView mMinusMinusHour;
-    private TextView mPlusHour;
-    private TextView mPlusPlusHour;
-    private TextView mDepartureTime;
-    private int departureHourOfDay;
+    private FloatingActionButton btnSearchJourney;
+    private TextInputLayout tilDepartureStationInputLayout;
+    private TextInputLayout tilArrivalStationInputLayout;
+    private InstantAutoCompleteTextView iactDepartureStation;
+    private InstantAutoCompleteTextView iactArrivalStation;
+    private Button btnClearDeparture;
+    private Button btnClearArrival;
+    private ImageButton btnSwapStations;
+    private TextView tvMinusHour;
+    private TextView tvMinusMinusHour;
+    private TextView tvPlusHour;
+    private TextView tvPlusPlusHour;
+    private TextView tvDepartureTime;
 
     private CardView cvHeader;
-    private TextView tvDepartureStationName;
-    private TextView tvArrivalStationName;
+    private TextView tvHeaderDepartureStation;
+    private TextView tvHeaderArrivalStation;
     private ImageButton btnHeaderSwapStationNames;
-    private ImageButton btnToggleFavorite;
-
+    private ImageButton btnHeaderToggleFavorite;
 
 
     public JourneySearchFragment() {}
@@ -81,7 +78,7 @@ public class JourneySearchFragment extends Fragment implements JourneyContract.S
         super.onCreate(savedInstanceState);
         // initializing presenter
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
-        mPresenter = new JourneySearchPresenter(this); //TODO inject this from activity
+        presenter = new JourneySearchPresenter(this); //TODO inject this from activity
     }
 
     @Override
@@ -92,77 +89,87 @@ public class JourneySearchFragment extends Fragment implements JourneyContract.S
         View root = inflater.inflate(R.layout.fragment_journey_search, container, false);
 
         this.clHeader = (CoordinatorLayout) root.findViewById(R.id.cl_header_0);
-//        this.llSearchPanel = (LinearLayout) root.findViewById(R.id.ll_search_panel_1);
-        this.mSearchButton = (FloatingActionButton) root.findViewById(R.id.fab_search_journeys);
+        this.btnSearchJourney = (FloatingActionButton) root.findViewById(R.id.fab_search_journeys);
 
-        this.mDepartureStationInputLayout = (TextInputLayout) root.findViewById(R.id.til_departure_station);
-        this.mArrivalStationInputLayout = (TextInputLayout) root.findViewById(R.id.til_arrival_station);
-        this.mDepartureStation = (InstantAutoCompleteTextView) root.findViewById(R.id.iatv_departure_station);
-        this.mArrivalStation = (InstantAutoCompleteTextView) root.findViewById(R.id.iatv_arrival_station);
-        this.mClearDeparture = (Button) root.findViewById(R.id.btn_clear_departure_station);
-        this.mClearArrival = (Button) root.findViewById(R.id.btn_clear_arrival_station);
-        this.mSwapStations = (ImageButton) root.findViewById(R.id.btn_swap_station_names);
-        this.mMinusHour = (TextView) root.findViewById(R.id.tv_minus_hour);
-        this.mMinusMinusHour = (TextView) root.findViewById(R.id.tv_minus_minus_hour);
-        this.mDepartureTime = (TextView) root.findViewById(R.id.tv_selected_time);
-        this.mPlusHour = (TextView) root.findViewById(R.id.plus_hour);
-        this.mPlusPlusHour = (TextView) root.findViewById(R.id.plus_plus_hour);
+        this.tilDepartureStationInputLayout = (TextInputLayout) root.findViewById(R.id.til_departure_station);
+        this.tilArrivalStationInputLayout = (TextInputLayout) root.findViewById(R.id.til_arrival_station);
+        this.iactDepartureStation = (InstantAutoCompleteTextView) root.findViewById(R.id.iatv_departure_station);
+        this.iactArrivalStation = (InstantAutoCompleteTextView) root.findViewById(R.id.iatv_arrival_station);
+        this.btnClearDeparture = (Button) root.findViewById(R.id.btn_clear_departure_station);
+        this.btnClearArrival = (Button) root.findViewById(R.id.btn_clear_arrival_station);
+        this.btnSwapStations = (ImageButton) root.findViewById(R.id.btn_swap_station_names);
+        this.tvMinusHour = (TextView) root.findViewById(R.id.tv_minus_hour);
+        this.tvMinusMinusHour = (TextView) root.findViewById(R.id.tv_minus_minus_hour);
+        this.tvDepartureTime = (TextView) root.findViewById(R.id.tv_selected_time);
+        this.tvPlusHour = (TextView) root.findViewById(R.id.plus_hour);
+        this.tvPlusPlusHour = (TextView) root.findViewById(R.id.plus_plus_hour);
 
         this.cvHeader = (CardView) root.findViewById(R.id.cv_header_1);
-        this.tvDepartureStationName = (TextView) root.findViewById(R.id.tv_departure_station_name);
-        this.tvArrivalStationName = (TextView) root.findViewById(R.id.tv_arrival_station_name);
+        this.tvHeaderDepartureStation = (TextView) root.findViewById(R.id.tv_departure_station_name);
+        this.tvHeaderArrivalStation = (TextView) root.findViewById(R.id.tv_arrival_station_name);
+        this.btnHeaderSwapStationNames = (ImageButton) root.findViewById(R.id.btn_header_swap_station_names);
+        this.btnHeaderToggleFavorite = (ImageButton) root.findViewById(R.id.btn_toggle_favourite);
+
 
         // TEXT INPUT LAYOUT
-        mDepartureStationInputLayout.setErrorEnabled(true);
-        mArrivalStationInputLayout.setErrorEnabled(true);
-        takeOffError(mDepartureStationInputLayout);
-        takeOffError(mArrivalStationInputLayout);
+        tilDepartureStationInputLayout.setErrorEnabled(true);
+        tilArrivalStationInputLayout.setErrorEnabled(true);
+        takeOffError(tilDepartureStationInputLayout);
+        takeOffError(tilArrivalStationInputLayout);
 
         // AUTOCOMPLETE TEXT VIEW
-        final AutocompleteAdapter departureAdapter = new AutocompleteAdapter(getActivity(), mDepartureStation);
-        final AutocompleteAdapter arrivalAdapter = new AutocompleteAdapter(getActivity(), mArrivalStation);
+        final AutocompleteAdapter departureAdapter = new AutocompleteAdapter(getActivity(), iactDepartureStation);
+        final AutocompleteAdapter arrivalAdapter = new AutocompleteAdapter(getActivity(), iactArrivalStation);
 
-        setOnTouchListener(this.mDepartureStation);
-        setOnTouchListener(this.mArrivalStation);
+        setOnTouchListener(this.iactDepartureStation);
+        setOnTouchListener(this.iactArrivalStation);
 
-        setOnEditorAction(this.mDepartureStation);
-        setOnEditorAction(this.mArrivalStation);
+        setOnEditorAction(this.iactDepartureStation);
+        setOnEditorAction(this.iactArrivalStation);
 
-        this.mClearDeparture.setOnClickListener(v -> clearFields(mDepartureStation));
-        this.mClearArrival.setOnClickListener(v -> clearFields(mArrivalStation));
+        this.btnClearDeparture.setOnClickListener(v -> clearFields(iactDepartureStation));
+        this.btnClearArrival.setOnClickListener(v -> clearFields(iactArrivalStation));
 
-        this.mDepartureStation.addTextChangedListener(setTextWatcher(mClearDeparture));
-        this.mArrivalStation.addTextChangedListener(setTextWatcher(mClearArrival));
+        this.iactDepartureStation.addTextChangedListener(setTextWatcher(btnClearDeparture));
+        this.iactArrivalStation.addTextChangedListener(setTextWatcher(btnClearArrival));
 
-        this.mDepartureStation.setOnItemClickListener((adapterView, view, i, l) -> onAutocompleteItemClick(mDepartureStation, mArrivalStation));
-        this.mArrivalStation.setOnItemClickListener((adapterView, view, i, l) -> onAutocompleteItemClick(mArrivalStation, mDepartureStation));
+        this.iactDepartureStation.setOnItemClickListener((adapterView, view, i, l) -> onAutocompleteItemClick(iactDepartureStation, iactArrivalStation));
+        this.iactArrivalStation.setOnItemClickListener((adapterView, view, i, l) -> onAutocompleteItemClick(iactArrivalStation, iactDepartureStation));
 
 
-
-        this.mSwapStations.setOnClickListener(v -> {
-            String temp = mDepartureStation.getText().toString();
-            mDepartureStation.setText(mArrivalStation.getText().toString());
-            mArrivalStation.setText(temp);
-            mDepartureStation.dismissDropDown();
-            mArrivalStation.dismissDropDown();
+        // SWAP BUTTON
+        this.btnSwapStations.setOnClickListener(v -> {
+            swapStations(iactDepartureStation, iactArrivalStation);
+            swapStations(this.tvHeaderDepartureStation, this.tvHeaderArrivalStation);
+            iactDepartureStation.dismissDropDown();
+            iactArrivalStation.dismissDropDown();
         });
 
         // TIME PANEL
-        mPresenter.changeTime(0);
-        mMinusHour.setOnClickListener(v -> mPresenter.changeTime(-1));
-        mMinusMinusHour.setOnClickListener(v -> mPresenter.changeTime(-4));
-        mPlusHour.setOnClickListener(v -> mPresenter.changeTime(1));
-        mPlusPlusHour.setOnClickListener(v -> mPresenter.changeTime(4));
+        presenter.changeTime(0);
+        tvMinusHour.setOnClickListener(v -> presenter.changeTime(-1));
+        tvMinusMinusHour.setOnClickListener(v -> presenter.changeTime(-4));
+        tvPlusHour.setOnClickListener(v -> presenter.changeTime(1));
+        tvPlusPlusHour.setOnClickListener(v -> presenter.changeTime(4));
 
 
         // SEARCH BUTTON
-        this.mSearchButton.setOnClickListener(view -> {
-            performSearch(view);
-        });
+        this.btnSearchJourney.setOnClickListener(this::performSearch);
 
+
+        // HEADER
+
+        // PANEL
         this.cvHeader.setOnClickListener(view -> {
             this.cvHeader.setVisibility(View.GONE);
             this.clHeader.setVisibility(View.VISIBLE);
+        });
+
+        // BUTTONS
+        this.btnHeaderSwapStationNames.setOnClickListener(view -> {
+            swapStations(iactDepartureStation, iactArrivalStation);
+            swapStations(this.tvHeaderDepartureStation, this.tvHeaderArrivalStation);
+            performSearch(this.btnSearchJourney);
         });
 
         return root;
@@ -172,7 +179,7 @@ public class JourneySearchFragment extends Fragment implements JourneyContract.S
     public void onAttach(Context context) {
         super.onAttach(context);
         if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
+            listener = (OnFragmentInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
@@ -182,7 +189,7 @@ public class JourneySearchFragment extends Fragment implements JourneyContract.S
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
+        listener = null;
     }
 
     @Override
@@ -197,35 +204,52 @@ public class JourneySearchFragment extends Fragment implements JourneyContract.S
 
     @Override
     public void showArrivalStationNameError(String error) {
+        this.tilArrivalStationInputLayout.setError(error);
         Log.d(error);
-        this.mArrivalStationInputLayout.setError(error);
     }
 
     @Override
     public void showDepartureStationNameError(String error) {
+        this.tilDepartureStationInputLayout.setError(error);
         Log.d(error);
-        this.mDepartureStationInputLayout.setError(error);
     }
 
     @Override
     public void setTime(String time) {
-        mDepartureTime.setText(time);
+        tvDepartureTime.setText(time);
     }
 
-    private void performSearch(View v) {
-        departureHourOfDay = Integer.parseInt(this.mDepartureTime.getText().toString().substring(0, 2));
+    /**
+     * Swap station names between text views
+     * @param v1
+     * @param v2
+     */
+    private void swapStations(TextView v1, TextView v2) {
+        String temp = v1.getText().toString();
+        v1.setText(v2.getText().toString());
+        v2.setText(temp);
+    }
 
-        mDepartureStation.dismissDropDown();
-        mArrivalStation.dismissDropDown();
+
+    /**
+     * Dismisses dropdown, switches from big search panel to small card, sets station names,
+     * hides keyboard and interacts with activity
+     * @param v
+     */
+    private void performSearch(View v) {
+        int departureHourOfDay = Integer.parseInt(this.tvDepartureTime.getText().toString().substring(0, 2));
+
+        iactDepartureStation.dismissDropDown();
+        iactArrivalStation.dismissDropDown();
 
         this.cvHeader.setVisibility(View.VISIBLE);
         this.clHeader.setVisibility(View.GONE);
 
-        this.tvDepartureStationName.setText(mDepartureStation.getText().toString());
-        this.tvArrivalStationName.setText(mArrivalStation.getText().toString());
+        this.tvHeaderDepartureStation.setText(iactDepartureStation.getText().toString());
+        this.tvHeaderArrivalStation.setText(iactArrivalStation.getText().toString());
 
-        if (mPresenter.search(mDepartureStation.getText().toString(), mArrivalStation.getText().toString(), departureHourOfDay)) {
-            mListener.onFragmentInteraction(mPresenter.getSearchedStations(), mPresenter.getHourOfDay());
+        if (presenter.search(iactDepartureStation.getText().toString(), iactArrivalStation.getText().toString(), departureHourOfDay)) {
+            listener.onFragmentInteraction(presenter.getSearchedStations(), presenter.getHourOfDay(), presenter.userHasModifiedTime());
         } else {
             Log.d("Search not fired due to some errors");
         }
@@ -245,17 +269,17 @@ public class JourneySearchFragment extends Fragment implements JourneyContract.S
         }
     }
 
+    /**
+     * Detect if should substitute ENTER key in soft keyboard with SEARCH key
+     * @param editText
+     */
     private void setOnEditorAction(EditText editText) {
         editText.setOnEditorActionListener((textView, i, keyEvent) -> {
             boolean handled = false;
             if (i == EditorInfo.IME_ACTION_SEARCH) {
                 performSearch(textView);
                 handled = true;
-//            } else if (i == EditorInfo.IME_ACTION_NEXT) {
-//
-//                handled = true;
             }
-
             return handled;
         });
     }
@@ -385,9 +409,9 @@ public class JourneySearchFragment extends Fragment implements JourneyContract.S
                 @Override
                 protected void publishResults(@NonNull CharSequence constraint, FilterResults results) {
 //                    if (results.count == 1) {
-//                        stationNames = mPresenter.getLastSearchedStations();
+//                        stationNames = presenter.getRecentStations();
 //                    } else {
-                        stationNames = mPresenter.searchDbForMatchingStation(String.valueOf(constraint));
+                        stationNames = presenter.searchDbForMatchingStation(String.valueOf(constraint));
 //                    }
 
                     notifyDataSetChanged();
@@ -403,6 +427,6 @@ public class JourneySearchFragment extends Fragment implements JourneyContract.S
 
 
     public interface OnFragmentInteractionListener {
-        void onFragmentInteraction(List<Station4Database> stationList, int hourOfDay);
+        void onFragmentInteraction(List<Station4Database> stationList, int hourOfDay, boolean userHasModifiedTime);
     }
 }
