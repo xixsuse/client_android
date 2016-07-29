@@ -172,6 +172,11 @@ public class JourneySearchFragment extends Fragment implements JourneyContract.S
             performSearch(this.btnSearchJourney);
         });
 
+        presenter.toggleFavouriteJourneyButton();
+        this.btnHeaderToggleFavorite.setOnClickListener(view -> {
+            presenter.toggleFavouriteJourneyOnClick();
+        });
+
         return root;
     }
 
@@ -219,6 +224,22 @@ public class JourneySearchFragment extends Fragment implements JourneyContract.S
         tvDepartureTime.setText(time);
     }
 
+    @Override
+    public Context getViewContext() {
+        return this.getActivity();
+    }
+
+    @Override
+    public void togglePreferredJourneyButton(boolean isPreferred) {
+        Log.d("ispreferred", isPreferred);
+        if (isPreferred) {
+            this.btnHeaderToggleFavorite.setImageResource(R.drawable.ic_star_black);
+        } else {
+            this.btnHeaderToggleFavorite.setImageResource(R.drawable.ic_star_border);
+        }
+    }
+
+
     /**
      * Swap station names between text views
      * @param v1
@@ -248,7 +269,8 @@ public class JourneySearchFragment extends Fragment implements JourneyContract.S
         this.tvHeaderDepartureStation.setText(iactDepartureStation.getText().toString());
         this.tvHeaderArrivalStation.setText(iactArrivalStation.getText().toString());
 
-        if (presenter.search(iactDepartureStation.getText().toString(), iactArrivalStation.getText().toString(), departureHourOfDay)) {
+        if (presenter.search(iactDepartureStation.getText().toString(), iactArrivalStation.getText().toString())) {
+            presenter.toggleFavouriteJourneyButton();
             listener.onFragmentInteraction(presenter.getSearchedStations(), presenter.getHourOfDay(), presenter.userHasModifiedTime());
         } else {
             Log.d("Search not fired due to some errors");

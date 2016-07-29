@@ -2,8 +2,10 @@ package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeys.sea
 
 import com.annimon.stream.Collectors;
 import com.annimon.stream.Stream;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.PreferredJourney;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.Station4Database;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeys.JourneyContract;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.PreferredStationsHelper;
 
 import org.joda.time.LocalDateTime;
 
@@ -40,8 +42,36 @@ public class JourneySearchPresenter implements JourneyContract.Search.Presenter 
         hourOfDay = originalHourOfDay;
     }
 
-    // TODO modify database to save info about searched stations
+
     @Override
+    public boolean isThisJourneyPreferred() {
+        return searchedStations.size() > 0 &&
+                PreferredStationsHelper.isJourneyAlreadyPreferred(journeySearchView.getViewContext(), searchedStations);
+    }
+
+    @Override
+    public void toggleFavouriteJourneyButton() {
+        Log.d(PreferredStationsHelper.getAll(journeySearchView.getViewContext()).toString());
+        if (!isThisJourneyPreferred()) {
+            journeySearchView.togglePreferredJourneyButton(false);
+        } else {
+            journeySearchView.togglePreferredJourneyButton(true);
+        }
+    }
+
+    @Override
+    public void toggleFavouriteJourneyOnClick() {
+        if (!isThisJourneyPreferred()) {
+            PreferredStationsHelper.setPreferredJourney(journeySearchView.getViewContext(), new PreferredJourney(searchedStations));
+            journeySearchView.togglePreferredJourneyButton(true);
+        } else {
+            PreferredStationsHelper.removePreferredJourney(journeySearchView.getViewContext(), searchedStations);
+            journeySearchView.togglePreferredJourneyButton(false);
+        }
+    }
+
+    @Override
+    // TODO modify database to save info about searched stations
     public List<String> getRecentStations() {
         objectList = realmObjectList.where().findAll();
         return Stream.of(objectList).map(Station4Database::getName).collect(Collectors.toList());
@@ -54,7 +84,7 @@ public class JourneySearchPresenter implements JourneyContract.Search.Presenter 
     }
 
     @Override
-    public boolean search(String departureStationName, String arrivalStationName, int hourOfDay) {
+    public boolean search(String departureStationName, String arrivalStationName) {
         searchedStations.clear();
 
         if (!validateStationName(departureStationName)) {
@@ -69,7 +99,7 @@ public class JourneySearchPresenter implements JourneyContract.Search.Presenter 
             return false;
         }
 
-        Log.d("Searching for: " + searchedStations.toString(), hourOfDay);
+        Log.d("Searching for: " + searchedStations.toString());
         return true;
     }
 
@@ -100,6 +130,7 @@ public class JourneySearchPresenter implements JourneyContract.Search.Presenter 
         }
         journeySearchView.setTime((hourOfDay < 10 ? "0" + hourOfDay : Integer.toString(hourOfDay)).concat(":00"));
     }
+
 
     private boolean validateStationName(String stationName) {
         objectList = realmObjectList.where().equalTo("name", stationName, Case.INSENSITIVE).findAll();

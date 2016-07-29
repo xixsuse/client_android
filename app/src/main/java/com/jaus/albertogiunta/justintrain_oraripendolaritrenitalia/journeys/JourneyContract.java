@@ -1,5 +1,7 @@
 package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeys;
 
+import android.content.Context;
+
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.BasePresenter;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.BaseView;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.SolutionList;
@@ -22,15 +24,24 @@ public interface JourneyContract {
 
             void setTime(String time);
 
+            Context getViewContext();
+
+            void togglePreferredJourneyButton(boolean isPreferred);
         }
 
         interface Presenter extends BasePresenter {
+
+            boolean isThisJourneyPreferred();
+
+            void toggleFavouriteJourneyOnClick();
+
+            void toggleFavouriteJourneyButton();
 
             List<String> getRecentStations();
 
             List<String> searchDbForMatchingStation(String constraint);
 
-            boolean search(String departureStationName, String arrivalStationName, int hourOfDay);
+            boolean search(String departureStationName, String arrivalStationName);
 
             List<Station4Database> getSearchedStations();
 
@@ -39,6 +50,8 @@ public interface JourneyContract {
             boolean userHasModifiedTime();
 
             void changeTime(int delta);
+
+
 
         }
     }
