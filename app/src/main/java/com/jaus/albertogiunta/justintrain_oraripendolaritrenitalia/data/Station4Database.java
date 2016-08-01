@@ -4,15 +4,17 @@ import io.realm.RealmObject;
 import io.realm.annotations.Required;
 
 /**
- * Created by albertogiunta on 27/05/16.
+ * Created by albertogiunta on 31/07/16.
  */
 public class Station4Database extends RealmObject {
+
     @Required
     private String stationShortId;
     @Required
     private String stationLongId;
     @Required
     private String name;
+
 
     public String getStationShortId() {
         return stationShortId;
@@ -36,14 +38,5 @@ public class Station4Database extends RealmObject {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    @Override
-    public String toString() {
-        return "Station4Database{" +
-                "stationShortId='" + stationShortId + '\'' +
-                ", stationLongId='" + stationLongId + '\'' +
-                ", name='" + name + '\'' +
-                '}';
     }
 }

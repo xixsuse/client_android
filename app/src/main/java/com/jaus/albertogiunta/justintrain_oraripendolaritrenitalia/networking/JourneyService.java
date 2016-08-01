@@ -19,7 +19,8 @@ public interface JourneyService {
     //INSTANT
     @GET("/departure/{departureStationId}/arrival/{arrivalStationId}/instant")
     Observable<List<SolutionList.Solution>> getJourneyInstant(@Path("departureStationId") String departureId,
-                                                              @Path("arrivalStationId") String arrivalId);
+                                                              @Path("arrivalStationId") String arrivalId,
+                                                              @Query("preemptive") boolean preemptive);
 
 
     // GET BEFORE TIME

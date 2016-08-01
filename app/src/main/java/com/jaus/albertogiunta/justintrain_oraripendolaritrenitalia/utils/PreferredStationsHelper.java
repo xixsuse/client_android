@@ -42,8 +42,12 @@ public class PreferredStationsHelper {
         removePreferredJourney(context, list.get(0).getStationShortId(), list.get(1).getStationShortId());
     }
 
-    public static Map<String, ?> getAll(Context context) {
-        return SharedPrefsHelper.getAll(context);
+    public static Map<String, PreferredJourney> getAll(Context context) {
+        return (Map<String, PreferredJourney>) SharedPrefsHelper.getAll(context);
+    }
+
+    public static List<PreferredJourney> getAllAsObject(Context context) {
+        return SharedPrefsHelper.getAllAsObject(context);
     }
 
 

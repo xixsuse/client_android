@@ -42,12 +42,11 @@ public class JourneyItemFactory {
      * current status (with/without change/delay)
      * @param listView in case the solution has changes it will hold a list of card_views
      * @param journeyHolder it's the holder of the main solution view
-     * @param solution it's the main solution data model
+     * @param s it's the main solution data model
      */
-    public void toggleHolder(List<View> listView, JourneySolutionsAdapter.JourneyHolder journeyHolder, SolutionList.Solution solution) {
+    public void toggleHolder(List<View> listView, JourneySolutionsAdapter.JourneyHolder journeyHolder, SolutionList.Solution s) {
 
         JourneySolutionsAdapter.ChangeHolder jh = journeyHolder.holder;
-        SolutionList.Solution s = solution;
 
         jh.llChanges.removeAllViews(); // needed to avoid "view has already parent exception"
 

@@ -1,32 +1,19 @@
 package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data;
 
+
 public class PreferredStation {
 
-    private String name;
     private String stationShortId;
     private String stationLongId;
+    private String name;
 
     public PreferredStation() {
     }
 
-    public PreferredStation(String name, String stationShortId, String stationLongId) {
-        this.name = name;
-        this.stationShortId = stationShortId;
-        this.stationLongId = stationLongId;
-    }
-
-    public PreferredStation(Station4Database s) {
-        this.name = s.getName();
-        this.stationShortId = s.getStationShortId();
-        this.stationLongId = s.getStationLongId();
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+    public PreferredStation(Station4Database station) {
+        this.stationShortId = station.getStationShortId();
+        this.stationLongId = station.getStationLongId();
+        this.name = station.getName();
     }
 
     public String getStationShortId() {
@@ -43,5 +30,13 @@ public class PreferredStation {
 
     public void setStationLongId(String stationLongId) {
         this.stationLongId = stationLongId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

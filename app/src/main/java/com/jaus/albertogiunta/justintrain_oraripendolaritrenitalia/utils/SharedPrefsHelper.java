@@ -4,7 +4,11 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.google.gson.Gson;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.PreferredJourney;
 
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 public class SharedPrefsHelper {
@@ -124,6 +128,15 @@ public class SharedPrefsHelper {
     static Map<String, ?> getAll(Context context) {
         SharedPreferences settings = context.getSharedPreferences(PREF_FILE, 0);
         return settings.getAll();
+    }
+
+    static List<PreferredJourney> getAllAsObject(Context context) {
+        Gson gson = new Gson();
+        List<PreferredJourney> list = new LinkedList<>();
+        for (String el : (Collection<String>)getAll(context).values()) {
+            list.add(gson.fromJson(el, PreferredJourney.class));
+        }
+        return list;
     }
 
 }

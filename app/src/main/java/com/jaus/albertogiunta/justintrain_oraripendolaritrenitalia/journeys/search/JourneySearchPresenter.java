@@ -3,6 +3,7 @@ package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeys.sea
 import com.annimon.stream.Collectors;
 import com.annimon.stream.Stream;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.PreferredJourney;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.PreferredStation;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.Station4Database;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeys.JourneyContract;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.PreferredStationsHelper;
@@ -42,9 +43,19 @@ public class JourneySearchPresenter implements JourneyContract.Search.Presenter 
         hourOfDay = originalHourOfDay;
     }
 
+    public void setList(Station4Database station1, Station4Database station2) {
+        searchedStations.add(station1);
+        searchedStations.add(station2);
+    }
+
+    public void setList(String departureStationId, String arrivalStationId) {
+        search(departureStationId, arrivalStationId);
+    }
+
 
     @Override
     public boolean isThisJourneyPreferred() {
+        Log.d(searchedStations);
         return searchedStations.size() > 0 &&
                 PreferredStationsHelper.isJourneyAlreadyPreferred(journeySearchView.getViewContext(), searchedStations);
     }
@@ -62,7 +73,9 @@ public class JourneySearchPresenter implements JourneyContract.Search.Presenter 
     @Override
     public void toggleFavouriteJourneyOnClick() {
         if (!isThisJourneyPreferred()) {
-            PreferredStationsHelper.setPreferredJourney(journeySearchView.getViewContext(), new PreferredJourney(searchedStations));
+            PreferredStationsHelper.setPreferredJourney(journeySearchView.getViewContext(),
+                    new PreferredJourney(new PreferredStation(searchedStations.get(0)),
+                            new PreferredStation(searchedStations.get(1))));
             journeySearchView.togglePreferredJourneyButton(true);
         } else {
             PreferredStationsHelper.removePreferredJourney(journeySearchView.getViewContext(), searchedStations);

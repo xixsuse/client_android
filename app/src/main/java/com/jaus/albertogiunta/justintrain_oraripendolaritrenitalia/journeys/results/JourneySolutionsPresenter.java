@@ -23,9 +23,6 @@ public class JourneySolutionsPresenter implements JourneyContract.Results.Presen
 
     private JourneyContract.Results.View mJourneyResultsView;
     private JourneyContract.Results.Presenter.JourneySearchStrategy strategy;
-    private String mDepartureStationId;
-    private String mArrivalStationId;
-    private int mHourOfDay;
     private static List<SolutionList.Solution> mSolutionList;
 
     public JourneySolutionsPresenter(JourneyContract.Results.View journeyResultsView) {
@@ -73,25 +70,11 @@ public class JourneySolutionsPresenter implements JourneyContract.Results.Presen
     @Override
     public void onSuccess() {
         // TODO what if size == 0 -> call onJourneyNotFound
-        Log.d("Size of results: ", mSolutionList.size());
+//        Log.d("Size of results: ", mSolutionList.size());
         mJourneyResultsView.hideProgress();
-        mJourneyResultsView.setRvJourneySolutions(mSolutionList);
+        mJourneyResultsView.updateSolutionsList(mSolutionList);
     }
 
-    @Override
-    public String getDepartureStationId() {
-        return mDepartureStationId;
-    }
-
-    @Override
-    public String getArrivalStationId() {
-        return mArrivalStationId;
-    }
-
-    @Override
-    public int getHourOfDay() {
-        return mHourOfDay;
-    }
 
     private void setStrategy(JourneySearchStrategy strategy) {
         this.strategy = strategy;
@@ -105,7 +88,7 @@ public class JourneySolutionsPresenter implements JourneyContract.Results.Presen
 
         @Override
         public void searchJourney(String departureStationId, String arrivalStationId, long timestamp, boolean isPreemptive, boolean withDelays, OnJourneySearchFinishedListener listener) {
-            ServiceFactory.createRetrofitService(JourneyService.class, JourneyService.SERVICE_ENDPOINT).getJourneyInstant(departureStationId, arrivalStationId)
+            ServiceFactory.createRetrofitService(JourneyService.class, JourneyService.SERVICE_ENDPOINT).getJourneyInstant(departureStationId, arrivalStationId, isPreemptive)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new Subscriber<List<SolutionList.Solution>>() {

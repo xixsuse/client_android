@@ -17,20 +17,26 @@ import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeys.sear
 
 import java.util.List;
 
-import trikita.log.Log;
-
 public class JourneyActivity extends AppCompatActivity implements JourneySearchFragment.OnFragmentInteractionListener {
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_journey);
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.placeholder_journey_search, JourneySearchFragment.newInstance());
-        ft.commit();
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        JourneySearchFragment fragment = JourneySearchFragment.newInstance(getIntent().getExtras() != null);
+        transaction.replace(R.id.placeholder_journey_search, fragment);
+        transaction.commit();
     }
 
+
+    /**
+     * This interacepts a touch outside of a textview and hides the keyboard after it happens.
+     * @param event
+     * @return
+     */
     @Override
     public boolean dispatchTouchEvent(MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
@@ -49,11 +55,16 @@ public class JourneyActivity extends AppCompatActivity implements JourneySearchF
     }
 
 
+    /**
+     * Instantiate the Solution Fragment
+     * @param stationList
+     * @param hourOfDay
+     * @param userHasModifiedTime
+     */
     @Override
     public void onFragmentInteraction(List<Station4Database> stationList, int hourOfDay, boolean userHasModifiedTime) {
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.placeholder_journey_solutions, JourneySolutionsFragment.newInstance(stationList, hourOfDay, userHasModifiedTime));
         ft.commit();
-        Log.d("Instantiated JourneySolutionsFragment");
     }
 }

@@ -29,14 +29,15 @@ public class JourneySolutionsFragment extends Fragment implements JourneyContrac
 
     public static JourneySolutionsFragment newInstance(List<Station4Database> stationList, int time, boolean hasModifiedTime) {
         JourneySolutionsFragment fragment = new JourneySolutionsFragment();
-        Bundle args = new Bundle();
-        args.putString("departureStationName", stationList.get(0).getName());
-        args.putString("departureStationId", stationList.get(0).getStationShortId());
-        args.putString("arrivalStationName", stationList.get(1).getName());
-        args.putString("arrivalStationId", stationList.get(1).getStationShortId());
-        args.putInt("hourOfDay", time);
-        args.putBoolean("hasModifiedTime", hasModifiedTime);
-        fragment.setArguments(args);
+        // TODO usa gson
+        Bundle bundle = new Bundle();
+        bundle.putString("departureStationName", stationList.get(0).getName());
+        bundle.putString("departureStationId", stationList.get(0).getStationShortId());
+        bundle.putString("arrivalStationName", stationList.get(1).getName());
+        bundle.putString("arrivalStationId", stationList.get(1).getStationShortId());
+        bundle.putInt("hourOfDay", time);
+        bundle.putBoolean("hasModifiedTime", hasModifiedTime);
+        fragment.setArguments(bundle);
         return fragment;
     }
 
@@ -53,6 +54,7 @@ public class JourneySolutionsFragment extends Fragment implements JourneyContrac
         rvJourneySolutions = (RecyclerView) root.findViewById(R.id.rv_journey_solutions);
         journeySolutionsAdapter = new JourneySolutionsAdapter(getActivity(), mPresenter);
         rvJourneySolutions.setAdapter(journeySolutionsAdapter);
+        rvJourneySolutions.setHasFixedSize(true);
         rvJourneySolutions.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         btnRefresh = (ImageButton) root.findViewById(R.id.btn_refresh);
@@ -93,7 +95,7 @@ public class JourneySolutionsFragment extends Fragment implements JourneyContrac
         Log.d("Finishing ...");
     }
 
-    public void setRvJourneySolutions(List<SolutionList.Solution> solutionList) {
+    public void updateSolutionsList(List<SolutionList.Solution> solutionList) {
         Log.d("Size of solutionList: ", journeySolutionsAdapter.solutionList.size());
         journeySolutionsAdapter.notifyDataSetChanged();
     }

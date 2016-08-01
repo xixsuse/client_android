@@ -26,6 +26,7 @@ import android.widget.Filterable;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.R;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.Station4Database;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeys.JourneyContract;
@@ -63,13 +64,15 @@ public class JourneySearchFragment extends Fragment implements JourneyContract.S
     private ImageButton btnHeaderSwapStationNames;
     private ImageButton btnHeaderToggleFavorite;
 
+    private static boolean alreadyOpen = false;
 
     public JourneySearchFragment() {}
 
-    public static JourneySearchFragment newInstance() {
+    public static JourneySearchFragment newInstance(boolean ao) {
         JourneySearchFragment fragment = new JourneySearchFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
+        alreadyOpen = ao;
         return fragment;
     }
 
@@ -78,12 +81,13 @@ public class JourneySearchFragment extends Fragment implements JourneyContract.S
         super.onCreate(savedInstanceState);
         // initializing presenter
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
-        presenter = new JourneySearchPresenter(this); //TODO inject this from activity
+        presenter = new JourneySearchPresenter(this);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
 
         // VIEW BINDING
         View root = inflater.inflate(R.layout.fragment_journey_search, container, false);
@@ -176,6 +180,18 @@ public class JourneySearchFragment extends Fragment implements JourneyContract.S
         this.btnHeaderToggleFavorite.setOnClickListener(view -> {
             presenter.toggleFavouriteJourneyOnClick();
         });
+
+        Log.d("already open? ", alreadyOpen);
+        if (alreadyOpen) {
+            Bundle bundle = getActivity().getIntent().getExtras();
+            Gson gson = new Gson();
+            Station4Database station1 = gson.fromJson(bundle.getString("departure"), Station4Database.class);
+            Station4Database station2 = gson.fromJson(bundle.getString("arrival"), Station4Database.class);
+            presenter.setList(station1, station2);
+            this.iactDepartureStation.setText(station1.getName());
+            this.iactArrivalStation.setText(station2.getName());
+            performSearch(this.btnSearchJourney);
+        }
 
         return root;
     }

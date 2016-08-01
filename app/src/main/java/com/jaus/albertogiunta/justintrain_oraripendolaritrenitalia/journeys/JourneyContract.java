@@ -31,6 +31,10 @@ public interface JourneyContract {
 
         interface Presenter extends BasePresenter {
 
+            void setList(Station4Database station1, Station4Database station2);
+
+            void setList(String departureStationId, String arrivalStationId);
+
             boolean isThisJourneyPreferred();
 
             void toggleFavouriteJourneyOnClick();
@@ -64,7 +68,7 @@ public interface JourneyContract {
 
             void hideProgress();
 
-            void setRvJourneySolutions(List<SolutionList.Solution> solutionList);
+            void updateSolutionsList(List<SolutionList.Solution> solutionList);
 
             void showError(String message);
 
@@ -87,12 +91,6 @@ public interface JourneyContract {
                                int hourOfDay,
                                boolean isPreemptive,
                                boolean withDelays);
-
-            String getDepartureStationId();
-
-            String getArrivalStationId();
-
-            int getHourOfDay();
 
             interface JourneySearchStrategy {
 

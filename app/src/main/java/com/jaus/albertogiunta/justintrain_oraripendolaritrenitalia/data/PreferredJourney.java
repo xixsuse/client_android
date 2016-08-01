@@ -2,10 +2,7 @@ package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data;
 
 import org.joda.time.DateTime;
 
-import java.util.List;
-
 public class PreferredJourney {
-
 
     private PreferredStation station1;
     private PreferredStation station2;
@@ -17,11 +14,6 @@ public class PreferredJourney {
         this.station2 = station2;
         timestamp = DateTime.now().toInstant().getMillis();
         priority = -1;
-    }
-
-    public PreferredJourney(List<Station4Database> list) {
-        station1 = new PreferredStation(list.get(0));
-        station2 = new PreferredStation(list.get(1));
     }
 
     public PreferredStation getStation1() {
