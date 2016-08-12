@@ -10,11 +10,15 @@ import android.support.v7.widget.Toolbar;
 
 import com.google.gson.Gson;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.PreferredJourney;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeys.JourneyContract;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeys.JourneyActivity;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.PreferredStationsHelper;
 
 import co.dift.ui.SwipeToAction;
 import trikita.log.Log;
+
+import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeys.JourneyActivity.JOURNEY_PARAM;
+import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeys.JourneyActivity.SEARCH_PANEL_STATUS_PARAM;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -34,28 +38,16 @@ public class MainActivity extends AppCompatActivity {
         SwipeToAction swipeToAction = new SwipeToAction(rvFavouriteJourneys, new SwipeToAction.SwipeListener<PreferredJourney>() {
             @Override
             public boolean swipeLeft(PreferredJourney itemData) {
-                PreferredJourney pj = itemData;
                 Intent myIntent = new Intent(MainActivity.this, JourneyActivity.class);
-                Bundle bundle = new Bundle();
-                Gson gson = new Gson();
-                bundle.putString("departure", gson.toJson(pj.getStation2()));
-                bundle.putString("arrival", gson.toJson(pj.getStation1()));
-                myIntent.putExtras(bundle);
-                Log.d(bundle);
+                myIntent.putExtras(getBundle(itemData.swapStations()));
                 MainActivity.this.startActivity(myIntent);
                 return true;
             }
 
             @Override
             public boolean swipeRight(PreferredJourney itemData) {
-                PreferredJourney pj = itemData;
                 Intent myIntent = new Intent(MainActivity.this, JourneyActivity.class);
-                Bundle bundle = new Bundle();
-                Gson gson = new Gson();
-                bundle.putString("departure", gson.toJson(pj.getStation1()));
-                bundle.putString("arrival", gson.toJson(pj.getStation2()));
-                myIntent.putExtras(bundle);
-                Log.d(bundle);
+                myIntent.putExtras(getBundle(itemData));
                 MainActivity.this.startActivity(myIntent);
                 return true;
             }
@@ -78,6 +70,11 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-
-
+    private Bundle getBundle(PreferredJourney journey) {
+        Bundle bundle = new Bundle();
+        bundle.putString(JOURNEY_PARAM, new Gson().toJson(journey));
+        bundle.putString(SEARCH_PANEL_STATUS_PARAM, JourneyContract.View.SEARCH_PANEL_STATUS.INACTIVE.toString());
+        Log.d("Sending",bundle);
+        return bundle;
+    }
 }

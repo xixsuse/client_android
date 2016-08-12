@@ -3,6 +3,7 @@ package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils;
 import android.content.Context;
 
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.PreferredJourney;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.PreferredStation;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.Station4Database;
 
 import java.util.List;
@@ -20,6 +21,10 @@ public class PreferredStationsHelper {
 
     public static boolean isJourneyAlreadyPreferred(Context context, List<Station4Database> list) {
         return isJourneyAlreadyPreferred(context, list.get(0).getStationShortId(), list.get(1).getStationShortId());
+    }
+
+    public static boolean isJourneyAlreadyPreferred(Context context, PreferredStation departureStation, PreferredStation arrivalStation) {
+        return isJourneyAlreadyPreferred(context, departureStation.getStationShortId(), arrivalStation.getStationShortId());
     }
 
     public static void setPreferredJourney(Context context, PreferredJourney journey) {
@@ -40,6 +45,10 @@ public class PreferredStationsHelper {
 
     public static void removePreferredJourney(Context context, List<Station4Database> list) {
         removePreferredJourney(context, list.get(0).getStationShortId(), list.get(1).getStationShortId());
+    }
+
+    public static void removePreferredJourney(Context context, PreferredStation departureStation, PreferredStation arrivalStation) {
+        removePreferredJourney(context, departureStation.getStationShortId(), arrivalStation.getStationShortId());
     }
 
     public static Map<String, PreferredJourney> getAll(Context context) {

@@ -1,4 +1,4 @@
-package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeys.results;
+package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeys;
 
 import android.content.Context;
 import android.support.v4.content.ContextCompat;
@@ -114,8 +114,10 @@ public class JourneyItemFactory {
         // show pin
         setVisibility(holder.btnPin, ON);
 
+
         setText(holder.tvTimeDifference, solution.timeDifference, "'");
         setProgress(holder.tvTimeDifferenceText, solution.progress);
+
         setText(holder.tvPlatform, solution.departurePlatform);
 
         setText(holder.tvDepartureTimeWithDelay, sumTimes(solution.departureTimeReadable, solution.timeDifference));

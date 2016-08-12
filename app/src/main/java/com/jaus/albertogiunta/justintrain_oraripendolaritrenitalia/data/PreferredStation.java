@@ -16,6 +16,12 @@ public class PreferredStation {
         this.name = station.getName();
     }
 
+    public PreferredStation(String stationShortId, String stationLongId, String name) {
+        this.stationShortId = stationShortId;
+        this.stationLongId = stationLongId;
+        this.name = name;
+    }
+
     public String getStationShortId() {
         return stationShortId;
     }
@@ -38,5 +44,14 @@ public class PreferredStation {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public String toString() {
+        return "PreferredStation{" +
+                "name='" + name + '\'' +
+                ", stationLongId='" + stationLongId + '\'' +
+                ", stationShortId='" + stationShortId + '\'' +
+                '}';
     }
 }

@@ -1,5 +1,6 @@
 package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.networking;
 
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.NotificationData;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.SolutionList;
 
 import java.util.List;
@@ -39,4 +40,13 @@ public interface JourneyService {
                                                                 @Query("start-from") long time,
                                                                 @Query("include-delays") boolean includeDelays,
                                                                 @Query("preemptive") boolean preemptive);
+
+
+    @GET("/station/{trainDepartureStationId}/train/{trainId}/header")
+    Observable<NotificationData> getNotificationData(@Path("trainDepartureStationId") String trainDepartureStationId,
+                                                     @Path("trainId") String trainId);
+
+    @GET("/train/{trainId}/header")
+    Observable<NotificationData> getNotificationData(@Path("trainId") String trainId);
+
 }

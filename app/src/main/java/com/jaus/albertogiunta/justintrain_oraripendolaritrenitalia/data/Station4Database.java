@@ -39,4 +39,13 @@ public class Station4Database extends RealmObject {
     public void setName(String name) {
         this.name = name;
     }
+
+    @Override
+    public String toString() {
+        return "Station4Database{" +
+                "stationShortId='" + stationShortId + '\'' +
+                ", stationLongId='" + stationLongId + '\'' +
+                ", name='" + name + '\'' +
+                '}';
+    }
 }

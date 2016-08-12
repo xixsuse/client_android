@@ -1,4 +1,4 @@
-package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeys.results;
+package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeys;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -13,10 +13,11 @@ import android.widget.TextView;
 
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.R;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.SolutionList;
-import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeys.JourneyContract;
 
 import java.util.LinkedList;
 import java.util.List;
+
+import trikita.log.Log;
 
 /**
  * Created by albertogiunta on 17/06/16.
@@ -25,13 +26,10 @@ public class JourneySolutionsAdapter extends RecyclerView.Adapter<RecyclerView.V
 
     Context context;
     JourneyItemFactory factory;
-    List<SolutionList.Solution> solutionList;
-    JourneyContract.Results.Presenter presenter;
+    public List<SolutionList.Solution> solutionList;
+    JourneyContract.Presenter presenter;
 
-//    private OnItemClickListener mOnItemClickListener;
-//    private OnItemLongClickListener mOnItemLongClickListener;
-
-    public JourneySolutionsAdapter(Context context, JourneyContract.Results.Presenter presenter) {
+    public JourneySolutionsAdapter(Context context, JourneyContract.Presenter presenter) {
         this.context = context;
         this.presenter = presenter;
         this.solutionList = presenter.getSolutionList();
@@ -63,8 +61,8 @@ public class JourneySolutionsAdapter extends RecyclerView.Adapter<RecyclerView.V
         // if instance of JourneyHolder, create a list of views that will hold the changes (if there) and toggle the view
         if (holder instanceof JourneyHolder && solutionList.size() > 0) {
             List<View> listView = new LinkedList<>();
-            if (solutionList.get(position-1).hasChanges) {
-                for (int i = 0; i < solutionList.get(position-1).changes.changesList.size(); i++) {
+            if (solutionList.get(position - 1).hasChanges) {
+                for (int i = 0; i < solutionList.get(position - 1).changes.changesList.size(); i++) {
                     listView.add(LayoutInflater.from(context).inflate(R.layout.card_journey, null));
                 }
             }
@@ -95,13 +93,6 @@ public class JourneySolutionsAdapter extends RecyclerView.Adapter<RecyclerView.V
             return solutionList.size() + 2;
     }
 
-    public interface OnItemClickListener {
-        void onItemClick(SolutionList.Solution item);
-    }
-
-    public interface OnItemLongClickListener {
-        boolean onItemSelected(int position, View view, SolutionList.Solution item);
-    }
 
     private class VIEW_TYPES {
         public static final int Header = 1;
@@ -172,7 +163,7 @@ public class JourneySolutionsAdapter extends RecyclerView.Adapter<RecyclerView.V
             this.hsvDepartureStationName = (HorizontalScrollView) itemView.findViewById(R.id.hsv_departure_station_name);
             this.tvDepartureStationName = (TextView) itemView.findViewById(R.id.tv_departure_station_name);
 
-            this.llArrivalSchedule= (LinearLayout) itemView.findViewById(R.id.ll_arrival_schedule);
+            this.llArrivalSchedule = (LinearLayout) itemView.findViewById(R.id.ll_arrival_schedule);
             this.tvArrivalTime = (TextView) itemView.findViewById(R.id.tv_arrival_time);
             this.tvArrivalTimeWithDelay = (TextView) itemView.findViewById(R.id.tv_arrival_time_with_delay);
             this.hsvArrivalStationName = (HorizontalScrollView) itemView.findViewById(R.id.hsv_arrival_station_name);
@@ -215,6 +206,15 @@ public class JourneySolutionsAdapter extends RecyclerView.Adapter<RecyclerView.V
             holder.llChanges = (LinearLayout) itemView.findViewById(R.id.ll_changes);
 
 
+            holder.btnPin.setOnClickListener(view -> {
+                Log.d("clicked on PIN");
+//                NotificationService.startActionStartNotification(context,
+//                        presenter.getDepartureStation(),
+//                        presenter.getArrivalStation(),
+//                        presenter.getSolutionList().get(getAdapterPosition()).solution.trainId,
+//                        presenter.getSolutionList().get(getAdapterPosition()).solution.departureStationId);
+            });
+
             holder.btnExpandCard.setOnClickListener(view -> {
                 if (holder.llChanges.getVisibility() == View.VISIBLE) {
                     holder.llChanges.setVisibility(View.GONE);
@@ -222,7 +222,6 @@ public class JourneySolutionsAdapter extends RecyclerView.Adapter<RecyclerView.V
                     holder.llChanges.setVisibility(View.VISIBLE);
                 }
             });
-
 //            holder.llChanges.setVisibility(View.GONE);
 //            holder.btnExpandCard.setFocusableInTouchMode(true);
         }
@@ -236,15 +235,8 @@ public class JourneySolutionsAdapter extends RecyclerView.Adapter<RecyclerView.V
             super(itemView);
             btn = (ImageButton) itemView.findViewById(R.id.search_before_btn);
             btn.setOnClickListener(view -> {
-                presenter.searchJourney(new JourneySolutionsPresenter.SearchBeforeTimeStrategy(),
-                        presenter.getSolutionList().get(0).journeyDepartureStationId,
-                        presenter.getSolutionList().get(0).journeyArrivalStationId,
-                        presenter.getSolutionList().get(0).solution.departureTime, false, false);
+                presenter.onLoadMoreItemsBefore();
             });
-        }
-
-        public void bind(final SolutionList.Solution item, final OnItemClickListener listener) {
-            itemView.setOnClickListener(v -> listener.onItemClick(item));
         }
     }
 
@@ -255,15 +247,8 @@ public class JourneySolutionsAdapter extends RecyclerView.Adapter<RecyclerView.V
             super(itemView);
             btn = (ImageButton) itemView.findViewById(R.id.search_after_btn);
             btn.setOnClickListener(view -> {
-                presenter.searchJourney(new JourneySolutionsPresenter.SearchAfterTimeStrategy(),
-                        presenter.getSolutionList().get(0).journeyDepartureStationId,
-                        presenter.getSolutionList().get(0).journeyArrivalStationId,
-                        presenter.getSolutionList().get(0).solution.departureTime, false, false);
+                presenter.onLoadMoreItemsAfter();
             });
-        }
-
-        public void bind(final SolutionList.Solution item, final OnItemClickListener listener) {
-            itemView.setOnClickListener(v -> listener.onItemClick(item));
         }
     }
 }

@@ -46,12 +46,15 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
 
+    compile group: 'com.google.code.gson', name: 'gson', version: '1.7.2'
+    provided 'com.google.auto.value:auto-value:1.2-rc1' // needed for Android Studio
+    apt 'com.google.auto.value:auto-value:1.2-rc1'
     compile 'co.trikita:log:1.1.5'
-    compile 'com.android.support:support-v4:24.0.0'
-    compile 'com.android.support:appcompat-v7:24.0.0'
-    compile 'com.android.support:design:24.0.0'
-    compile 'com.android.support:cardview-v7:24.0.0'
-    compile 'com.android.support:recyclerview-v7:24.0.0'
+    compile 'com.android.support:support-v4:24.1.1'
+    compile 'com.android.support:appcompat-v7:24.1.1'
+    compile 'com.android.support:design:24.1.1'
+    compile 'com.android.support:cardview-v7:24.1.1'
+    compile 'com.android.support:recyclerview-v7:24.1.1'
     compile 'co.dift.ui.swipetoaction:library:1.1'
     compile 'com.annimon:stream:1.0.9'
     compile 'io.reactivex:rxjava:1.1.2'
@@ -60,7 +63,4 @@ dependencies {
     compile 'com.squareup.retrofit2:retrofit:2.0.1'
     compile 'com.squareup.retrofit2:converter-gson:2.0.0'
     compile 'com.squareup.retrofit2:adapter-rxjava:2.0.0'
-    compile group: 'com.google.code.gson', name: 'gson', version: '1.7.2'
-    provided 'com.google.auto.value:auto-value:1.2-rc1' // needed for Android Studio
-    apt 'com.google.auto.value:auto-value:1.2-rc1'
 }
