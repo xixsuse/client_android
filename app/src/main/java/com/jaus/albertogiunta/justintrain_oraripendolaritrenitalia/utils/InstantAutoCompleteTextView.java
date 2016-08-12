@@ -3,6 +3,7 @@ package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils;
 import android.content.Context;
 import android.graphics.Rect;
 import android.util.AttributeSet;
+import android.view.KeyEvent;
 import android.widget.AutoCompleteTextView;
 
 /**
@@ -25,6 +26,16 @@ public class InstantAutoCompleteTextView extends AutoCompleteTextView {
     @Override
     public boolean enoughToFilter() {
         return true;
+    }
+
+    @Override
+    public boolean onKeyPreIme(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK &&
+                event.getAction() == KeyEvent.ACTION_UP) {
+            this.dismissDropDown();
+            return false;
+        }
+        return super.dispatchKeyEvent(event);
     }
 
     @Override

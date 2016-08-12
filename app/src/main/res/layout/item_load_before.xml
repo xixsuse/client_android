@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/thin_card_height">
+
+    <ImageButton
+        android:id="@+id/search_before_btn"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerHorizontal="true"
+        android:layout_centerInParent="true"
+        android:background="?attr/selectableItemBackground"
+        android:clickable="true"
+        android:src="@drawable/ic_arrow_upward"
+        />
+
+</RelativeLayout>

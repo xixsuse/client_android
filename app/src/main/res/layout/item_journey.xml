@@ -1,0 +1,357 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+        <!--<include layout="@layout/card_journey" android:id="@+id/cjJourney"/>-->
+    <android.support.v7.widget.CardView
+        xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/cvJourney"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="0dp"
+        android:elevation="@dimen/journey_item_elevation"
+        card_view:cardBackgroundColor="@color/cardview_light_background"
+        card_view:cardCornerRadius="@dimen/card_corner_radius"
+        >
+
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="@dimen/basic_vertical_margin">
+
+            <LinearLayout
+                android:id="@+id/ll_change_or_category"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tv_train_category"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="IC"
+                    android:textSize="@dimen/fs_big_text"
+                    android:textStyle="bold"
+                    android:visibility="gone"
+                    />
+
+                <LinearLayout
+                    android:id="@+id/ll_changes_number"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone"
+                    >
+
+                    <TextView
+                        android:id="@+id/tv_changes_number"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="1"
+                        android:textAlignment="center"
+                        android:textSize="@dimen/fs_big_text"
+                        android:textStyle="bold"
+                        />
+
+                    <TextView
+                        android:id="@+id/tv_changes_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/changes"
+                        android:textColor="@color/textLight"
+                        android:textSize="@dimen/fs_floating_title"
+                        android:textStyle="italic"
+                        />
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <RelativeLayout
+                android:id="@+id/rl_time_schedule"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true">
+
+                <LinearLayout
+                    android:id="@+id/ll_departure_schedule"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    >
+
+                    <TextView
+                        android:id="@+id/tv_departure_time"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/basic_horizontal_margin"
+                        android:text="7:20"
+                        android:textSize="@dimen/fs_big_text"
+                        />
+
+                    <TextView
+                        android:id="@+id/tv_departure_time_with_delay"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="7:44"
+                        android:textColor="@color/late1"
+                        android:textSize="@dimen/fs_small_text"
+                        android:visibility="gone"
+                        />
+
+                    <HorizontalScrollView
+                        android:id="@+id/hsv_departure_station_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:scrollbars="none"
+                        android:visibility="gone"
+                        >
+
+                        <TextView
+                            android:id="@+id/tv_departure_station_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:ellipsize="marquee"
+                            android:focusable="true"
+                            android:focusableInTouchMode="true"
+                            android:marqueeRepeatLimit="marquee_forever"
+                            android:scrollHorizontally="true"
+                            android:singleLine="true"
+                            android:text="Torino Porta Nuova"
+                            android:textSize="@dimen/fs_floating_title"
+                            />
+                    </HorizontalScrollView>
+
+                </LinearLayout>
+
+                <ImageView
+                    android:id="@+id/iv_from_to"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toEndOf="@+id/ll_departure_schedule"
+                    android:src="@drawable/ic_arrow_forward"
+                    />
+
+                <LinearLayout
+                    android:id="@+id/ll_arrival_schedule"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toEndOf="@id/iv_from_to"
+                    android:orientation="vertical"
+                    >
+
+                    <TextView
+                        android:id="@+id/tv_arrival_time"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/basic_horizontal_margin"
+                        android:text="10:24"
+                        android:textSize="@dimen/fs_big_text"
+                        />
+
+                    <TextView
+                        android:id="@+id/tv_arrival_time_with_delay"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="11:41"
+                        android:textAlignment="textEnd"
+                        android:textColor="@color/late1"
+                        android:textSize="@dimen/fs_small_text"
+                        android:visibility="gone"
+                        />
+
+                    <HorizontalScrollView
+                        android:id="@+id/hsv_arrival_station_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:scrollbars="none"
+                        android:visibility="gone"
+                        >
+
+                        <TextView
+                            android:id="@+id/tv_arrival_station_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:ellipsize="marquee"
+                            android:focusable="true"
+                            android:focusableInTouchMode="true"
+                            android:marqueeRepeatLimit="marquee_forever"
+                            android:scrollHorizontally="true"
+                            android:singleLine="true"
+                            android:text="Milano Centrale"
+                            android:textSize="@dimen/fs_floating_title"
+                            />
+                    </HorizontalScrollView>
+                </LinearLayout>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/rl_time_difference"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:visibility="gone"
+                >
+
+                <TextView
+                    android:id="@+id/tv_time_difference"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:text="4'"
+                    android:textColor="@color/late1"
+                    android:textSize="@dimen/fs_big_text"
+                    />
+
+                <TextView
+                    android:id="@+id/tv_time_difference_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tv_time_difference"
+                    android:layout_centerInParent="true"
+                    android:textColor="@color/textLight"
+                    android:textSize="@dimen/fs_floating_title"
+                    android:textStyle="italic"/>
+            </RelativeLayout>
+
+            <ImageButton
+                android:id="@+id/btn_refresh_journey"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:padding="8dp"
+                android:scaleX="-1"
+                android:src="@drawable/ic_refresh"
+                android:tint="?attr/colorButtonNormal"
+                android:visibility="gone"/>
+
+            <LinearLayout
+                android:id="@+id/ll_journey_info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/ll_change_or_category"
+                android:layout_marginTop="50dp">
+
+                <RelativeLayout
+                    android:id="@+id/rl_lasting_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:id="@+id/ic_clock"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_clock"
+                        />
+
+                    <TextView
+                        android:id="@+id/tv_lasting_time_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="10dp"
+                        android:layout_toEndOf="@id/ic_clock"
+                        android:text="@string/lasting_time_title"
+                        android:textColor="@color/textLight"
+                        android:textSize="@dimen/fs_small_text"
+                        />
+
+                    <TextView
+                        android:id="@+id/tv_lasting_time"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="5sp"
+                        android:layout_toEndOf="@id/tv_lasting_time_title"
+                        android:text="1h 20'"
+                        android:textSize="@dimen/fs_small_text"
+                        />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/rl_platform"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="30dp"
+                    android:visibility="gone"
+                    >
+
+                    <ImageView
+                        android:id="@+id/ic_platform"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_platform"
+                        />
+
+                    <TextView
+                        android:id="@+id/tv_platform_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="10dp"
+                        android:layout_toEndOf="@id/ic_platform"
+                        android:text="@string/platform_title"
+                        android:textColor="@color/textLight"
+                        android:textSize="@dimen/fs_small_text"
+                        />
+
+                    <TextView
+                        android:id="@+id/tv_platform"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="5sp"
+                        android:layout_toEndOf="@id/tv_platform_title"
+                        android:text="4"
+                        android:textSize="@dimen/fs_small_text"
+                        />
+                </RelativeLayout>
+
+            </LinearLayout>
+
+            <ImageButton
+                android:id="@+id/btn_pin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@id/ll_journey_info"
+                android:layout_alignParentEnd="true"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:paddingEnd="@dimen/basic_horizontal_margin"
+                android:paddingStart="@dimen/basic_horizontal_margin"
+                android:src="@drawable/ic_pin"
+                android:tint="@color/colorPrimaryDark"
+                android:visibility="gone"
+                />
+
+            <ImageButton
+                android:id="@+id/btn_expand_card"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@id/ll_journey_info"
+                android:layout_alignParentEnd="true"
+                android:layout_marginBottom="-8dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:padding="8dp"
+                android:src="@drawable/ic_expand_more"
+                android:visibility="gone"
+                />
+
+        </RelativeLayout>
+    </android.support.v7.widget.CardView>
+
+    <LinearLayout
+        android:id="@+id/ll_changes"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="-8dp"
+        android:layout_marginBottom="16dp"
+        android:visibility="gone"
+        />
+
+</LinearLayout>

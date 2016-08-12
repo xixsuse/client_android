@@ -1,9 +1,21 @@
 <resources>
-    <string name="app_name">Just In Train - Orari Pendolari Trenitalia</string>
+    <string name="app_name">Just In Train</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="btn_search">Cerca</string>
-    <string name="atv_departure">Partenza</string>
-    <string name="atv_arrival">Arrivo</string>
+    <string name="hint_departure">Partenza</string>
+    <string name="hint_arrival">Arrivo</string>
+    <string name="title_departure_time">Ora partenza</string>
+    <string name="minus_minus_hour">-4h</string>
+    <string name="minus_hour">-1h</string>
+    <string name="plus_hour">+1h</string>
+    <string name="plus_plus_hour">+4h</string>
+    <string name="platform_title">Binario</string>
+    <string name="lasting_time_title">Durata</string>
+    <string name="delay">ritardo</string>
+    <string name="changes">cambio</string>
+    <string name="change_title">Cambio</string>
+    <string name="title_activity_main">MainActivity</string>
+
+    <string name="action_share">Share</string>
+    <string name="action_reply">Reply</string>
 </resources>

@@ -1,6 +1,34 @@
 <resources>
     <!-- Default screen margins, per the Android Design guidelines. -->
-    <dimen name="activity_horizontal_margin">16dp</dimen>
-    <dimen name="activity_vertical_margin">16dp</dimen>
+    <!--<dimen name="activity_horizontal_margin">16dp</dimen>-->
+    <!--<dimen name="activity_vertical_margin">16dp</dimen>-->
+
+    <!-- MISCELLANEOUS -->
+    <dimen name="activity_horizontal_margin">0dp</dimen>
+    <dimen name="activity_vertical_margin">0dp</dimen>
     <dimen name="text_margin">16dp</dimen>
+    <dimen name="card_margin_horizontal">-3dp</dimen>
+
+
+    <!-- AUTOCOMPLETE LIST -->
+    <dimen name="autocomplete_height">40dp</dimen>
+    <dimen name="fs_small_text">16sp</dimen>
+
+    <!-- SEARCH -->
+    <dimen name="basic_card_elevation">4dp</dimen>
+    <dimen name="basic_horizontal_margin">16dp</dimen>
+    <dimen name="basic_vertical_margin">16dp</dimen>
+    <dimen name="iatv_station_width">270dp</dimen>
+    <dimen name="btn_clear_tf_side">24dp</dimen>
+    <dimen name="btn_clear_station_tf_margin">10dp</dimen>
+    <dimen name="btn_swap_stations_side">48dp</dimen>
+    <dimen name="fs_floating_title">12sp</dimen>
+    <dimen name="fs_basic_text">18sp</dimen>
+    <dimen name="btn_time_picker_padding">12dp</dimen>
+    <dimen name="thin_card_height">60dp</dimen>
+    <dimen name="fs_big_text">30sp</dimen>
+    <dimen name="journey_item_elevation">2dp</dimen>
+    <dimen name="card_corner_radius">4dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
+
 </resources>

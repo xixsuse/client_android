@@ -1,18 +1,37 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:tools="http://schemas.android.com/tools"
-             android:layout_width="match_parent"
-             android:layout_height="wrap_content"
-             tools:context="com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeys.results.JourneySolutionsFragment">
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeys.results.JourneySolutionsFragment">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_marginBottom="-6dp">
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rv_journey_solutions"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent"
+            android:layout_marginBottom="@dimen/thin_card_height"
+            />
 
+        <ImageButton
+            android:id="@+id/btn_refresh"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/thin_card_height"
+            android:layout_marginEnd="-5dp"
+            android:layout_marginStart="-4dp"
+            android:layout_alignParentBottom="true"
+            android:clickable="true"
+            android:src="@drawable/ic_refresh"
+            android:backgroundTint="@color/colorPrimaryDark"
+            android:scaleX="-1"
+            android:elevation="4dp"
+            android:translationZ="5dp"
+            android:visibility="visible"
+            />
     </RelativeLayout>
 
 </FrameLayout>

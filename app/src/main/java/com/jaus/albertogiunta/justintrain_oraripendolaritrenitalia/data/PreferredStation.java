@@ -1,20 +1,26 @@
 package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data;
 
-import io.realm.RealmObject;
-import io.realm.annotations.Required;
 
-/**
- * Created by albertogiunta on 31/07/16.
- */
-public class Station4Database extends RealmObject {
+public class PreferredStation {
 
-    @Required
     private String stationShortId;
-    @Required
     private String stationLongId;
-    @Required
     private String name;
 
+    public PreferredStation() {
+    }
+
+    public PreferredStation(Station4Database station) {
+        this.stationShortId = station.getStationShortId();
+        this.stationLongId = station.getStationLongId();
+        this.name = station.getName();
+    }
+
+    public PreferredStation(String stationShortId, String stationLongId, String name) {
+        this.stationShortId = stationShortId;
+        this.stationLongId = stationLongId;
+        this.name = name;
+    }
 
     public String getStationShortId() {
         return stationShortId;
@@ -42,10 +48,10 @@ public class Station4Database extends RealmObject {
 
     @Override
     public String toString() {
-        return "Station4Database{" +
-                "stationShortId='" + stationShortId + '\'' +
+        return "PreferredStation{" +
+                "name='" + name + '\'' +
                 ", stationLongId='" + stationLongId + '\'' +
-                ", name='" + name + '\'' +
+                ", stationShortId='" + stationShortId + '\'' +
                 '}';
     }
 }
