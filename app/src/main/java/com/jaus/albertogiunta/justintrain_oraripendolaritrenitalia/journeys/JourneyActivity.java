@@ -36,13 +36,13 @@ import java.util.List;
 
 import trikita.log.Log;
 
-public class JourneyActivity extends AppCompatActivity implements com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeys.newp.JourneyContract.View {
+public class JourneyActivity extends AppCompatActivity implements JourneyContract.View {
 
-    /**
-     * SEARCH
-     */
+    public static final String JOURNEY_PARAM = "journey";
+    public static final String SEARCH_PANEL_STATUS_PARAM = "searchPanelStatus";
 
-    private com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeys.newp.JourneyContract.Presenter presenter;
+    //  SEARCH
+    private JourneyContract.Presenter presenter;
 
     private CoordinatorLayout clHeader;
 
@@ -68,7 +68,7 @@ public class JourneyActivity extends AppCompatActivity implements com.jaus.alber
 
     private SEARCH_PANEL_STATUS journeySearchFragmentViewState;
 
-
+    //  RESULTS
     private JourneySolutionsAdapter journeySolutionsAdapter;
     private RecyclerView rvJourneySolutions;
     private ImageButton btnRefresh;
@@ -182,9 +182,6 @@ public class JourneyActivity extends AppCompatActivity implements com.jaus.alber
         btnRefresh.setOnClickListener(view -> {
             presenter.searchFromSearch();
         });
-
-        presenter.onResuming(getIntent().getExtras());
-
     }
 
     @Override
@@ -200,6 +197,18 @@ public class JourneyActivity extends AppCompatActivity implements com.jaus.alber
     }
 
     @Override
+    protected void onPostResume() {
+        super.onPostResume();
+        presenter.onResuming(getIntent().getExtras());
+    }
+
+    @Override
+    protected void onDestroy() {
+        presenter.unsubscribe();
+        super.onDestroy();
+    }
+
+    @Override
     public Context getViewContext() {
         return getApplicationContext();
     }
@@ -207,7 +216,7 @@ public class JourneyActivity extends AppCompatActivity implements com.jaus.alber
     @Override
     public void setJourneySearchFragmentViewStatus(SEARCH_PANEL_STATUS status) {
         journeySearchFragmentViewState = status;
-        if (status == com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeys.newp.JourneyContract.View.SEARCH_PANEL_STATUS.INACTIVE) {
+        if (status == SEARCH_PANEL_STATUS.INACTIVE) {
             this.cvHeader.setVisibility(View.VISIBLE);
             this.clHeader.setVisibility(View.GONE);
             this.iactDepartureStation.dismissDropDown();
@@ -216,7 +225,7 @@ public class JourneyActivity extends AppCompatActivity implements com.jaus.alber
             this.presenter.setFavouriteButtonStatus();
 //            InputMethodManager imm = (InputMethodManage).getSystemService(Context.INPUT_METHOD_SERVICE);
 //            imm.hideSoftInputFromWindow(this.btnSearchJourney.getWindowToken(), 0);
-        } else if (status == com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeys.newp.JourneyContract.View.SEARCH_PANEL_STATUS.ACTIVE) {
+        } else if (status == SEARCH_PANEL_STATUS.ACTIVE) {
             this.cvHeader.setVisibility(View.GONE);
             this.clHeader.setVisibility(View.VISIBLE);
             getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
@@ -255,14 +264,14 @@ public class JourneyActivity extends AppCompatActivity implements com.jaus.alber
 
     @Override
     public void onValidSearchParameters() {
-        Log.d("valid parameters");
+        Log.d("Parameters: VALID");
         presenter.searchFromSearch();
         setJourneySearchFragmentViewStatus(SEARCH_PANEL_STATUS.INACTIVE);
     }
 
     @Override
     public void onInvalidSearchParameters() {
-        Log.d("invalid parameters");
+        Log.d("Parameters: NOT VALID");
     }
 
     @Override
@@ -286,7 +295,7 @@ public class JourneyActivity extends AppCompatActivity implements com.jaus.alber
 
     @Override
     public void updateSolutionsList(List<SolutionList.Solution> solutionList) {
-        Log.d("Size of solutionList: ", journeySolutionsAdapter.solutionList.size());
+        Log.d(journeySolutionsAdapter.solutionList.size(), "solutions found");
         journeySolutionsAdapter.notifyDataSetChanged();
     }
 
