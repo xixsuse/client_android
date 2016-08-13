@@ -1,4 +1,4 @@
-package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia;
+package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.favourites;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.R;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.PreferredJourney;
 
 import java.util.ArrayList;
@@ -13,9 +14,6 @@ import java.util.List;
 
 import co.dift.ui.SwipeToAction;
 
-/**
- * Created by albertogiunta on 29/07/16.
- */
 public class FavouriteJourneysAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private List<PreferredJourney> list = new ArrayList<>();
@@ -55,8 +53,5 @@ public class FavouriteJourneysAdapter extends RecyclerView.Adapter<RecyclerView.
             tvPreferredStation1 = (TextView) itemView.findViewById(R.id.tv_favourite_station_left);
             tvPreferredStation2 = (TextView) itemView.findViewById(R.id.tv_favourite_station_right);
         }
-
-
     }
-
 }

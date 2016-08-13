@@ -36,7 +36,7 @@ public class JourneyPresenter implements JourneyContract.Presenter, JourneyContr
 
     private static final int HOUR = LocalDateTime.now().plusHours(2).getHourOfDay();
 
-    private JourneyContract.View journeySearchView;
+    private JourneyContract.View view;
     private RealmResults<Station4Database> stationList;
 
     private static List<SolutionList.Solution> journeySolutions;
@@ -45,8 +45,8 @@ public class JourneyPresenter implements JourneyContract.Presenter, JourneyContr
     private PreferredStation arrivalStation;
     private int hour;
 
-    public JourneyPresenter(JourneyContract.View journeySearchView) {
-        this.journeySearchView = journeySearchView;
+    public JourneyPresenter(JourneyContract.View view) {
+        this.view = view;
         this.stationList = Realm.getDefaultInstance().where(Station4Database.class).findAll();
         journeySolutions = new LinkedList<>();
         this.hour = HOUR;
@@ -54,19 +54,19 @@ public class JourneyPresenter implements JourneyContract.Presenter, JourneyContr
 
     @Override
     public void subscribe(BaseView baseView) {
-        journeySearchView = (JourneyContract.View) baseView;
+        view = (JourneyContract.View) baseView;
     }
 
     @Override
     public void unsubscribe() {
-        journeySearchView = null;
+        view = null;
     }
 
     @Override
     public void onLeaving(Bundle bundle) {
         // Save value of member in saved state
         bundle.putString(JOURNEY_PARAM, new Gson().toJson(new PreferredJourney(departureStation, arrivalStation)));
-        bundle.putString(SEARCH_PANEL_STATUS_PARAM, new Gson().toJson(journeySearchView.getJourneySearchFragmentViewStatus()));
+        bundle.putString(SEARCH_PANEL_STATUS_PARAM, new Gson().toJson(view.getJourneySearchFragmentViewStatus()));
     }
 
     @Override
@@ -77,11 +77,11 @@ public class JourneyPresenter implements JourneyContract.Presenter, JourneyContr
             this.departureStation = journey.getStation1();
             this.arrivalStation = journey.getStation2();
 
-            journeySearchView.setJourneySearchFragmentViewStatus(new Gson()
+            view.setJourneySearchFragmentViewStatus(new Gson()
                     .fromJson(bundle.getString(SEARCH_PANEL_STATUS_PARAM, ACTIVE.toString()), JourneyContract.View.SEARCH_PANEL_STATUS.class));
 
             searchFromIntent();
-            journeySearchView.setStationNames(departureStation.getName(), arrivalStation.getName());
+            view.setStationNames(departureStation.getName(), arrivalStation.getName());
         } else {
             // Probably initialize members with default values for a new instance
         }
@@ -89,22 +89,22 @@ public class JourneyPresenter implements JourneyContract.Presenter, JourneyContr
 
     @Override
     public void setFavouriteButtonStatus() {
-        if (PresenterUtilities.isThisJourneyPreferred(departureStation, arrivalStation, journeySearchView.getViewContext())) {
-            journeySearchView.setFavouriteButtonStatus(true);
+        if (PresenterUtilities.isThisJourneyPreferred(departureStation, arrivalStation, view.getViewContext())) {
+            view.setFavouriteButtonStatus(true);
         } else {
-            journeySearchView.setFavouriteButtonStatus(false);
+            view.setFavouriteButtonStatus(false);
         }
     }
 
     @Override
     public void onFavouriteButtonClick() {
-        if (PresenterUtilities.isThisJourneyPreferred(departureStation, arrivalStation, journeySearchView.getViewContext())) {
-            PreferredStationsHelper.removePreferredJourney(journeySearchView.getViewContext(),
+        if (PresenterUtilities.isThisJourneyPreferred(departureStation, arrivalStation, view.getViewContext())) {
+            PreferredStationsHelper.removePreferredJourney(view.getViewContext(),
                     departureStation,
                     arrivalStation);
             setFavouriteButtonStatus();
         } else {
-            PreferredStationsHelper.setPreferredJourney(journeySearchView.getViewContext(),
+            PreferredStationsHelper.setPreferredJourney(view.getViewContext(),
                     new PreferredJourney(departureStation, arrivalStation));
             setFavouriteButtonStatus();
         }
@@ -120,7 +120,7 @@ public class JourneyPresenter implements JourneyContract.Presenter, JourneyContr
                 hour = 1;
             }
         }
-        journeySearchView.setTime((hour < 10 ? "0" + hour : Integer.toString(hour)).concat(":00"));
+        view.setTime((hour < 10 ? "0" + hour : Integer.toString(hour)).concat(":00"));
     }
 
     @Override
@@ -136,7 +136,7 @@ public class JourneyPresenter implements JourneyContract.Presenter, JourneyContr
             PreferredStation temp = departureStation;
             departureStation = arrivalStation;
             arrivalStation = temp;
-            journeySearchView.setStationNames(departureStation.getName(), arrivalStation.getName());
+            view.setStationNames(departureStation.getName(), arrivalStation.getName());
         }
     }
 
@@ -149,7 +149,7 @@ public class JourneyPresenter implements JourneyContract.Presenter, JourneyContr
             departureStation = new PreferredStation(PresenterUtilities.getStationObject(departureStationName, stationList));
             departureFound = true;
         } else {
-            journeySearchView.showDepartureStationNameError(departureStationName + " not found!");
+            view.showDepartureStationNameError(departureStationName + " not found!");
             Log.d(arrivalStationName + " not found!");
         }
 
@@ -157,12 +157,12 @@ public class JourneyPresenter implements JourneyContract.Presenter, JourneyContr
             arrivalStation = new PreferredStation(PresenterUtilities.getStationObject(arrivalStationName, stationList));
             arrivalFound = true;
         } else {
-            journeySearchView.showArrivalStationNameError(arrivalStationName + " not found!");
+            view.showArrivalStationNameError(arrivalStationName + " not found!");
             Log.d(departureStationName + " not found!");
         }
 
         if (departureFound && arrivalFound) {
-            journeySearchView.onValidSearchParameters();
+            view.onValidSearchParameters();
             journeySolutions.clear();
             Log.d("Searching for: " + departureStation.toString(), arrivalStation.toString());
         }
@@ -196,7 +196,7 @@ public class JourneyPresenter implements JourneyContract.Presenter, JourneyContr
                     arrivalStation.getStationShortId(),
                     DateTime.now().withHourOfDay(hour).toInstant().getMillis() / 1000, true, true, this);
         }
-        journeySearchView.setStationNames(departureStation.getName(), arrivalStation.getName());
+        view.setStationNames(departureStation.getName(), arrivalStation.getName());
     }
 
     @Override
@@ -213,23 +213,23 @@ public class JourneyPresenter implements JourneyContract.Presenter, JourneyContr
 
     @Override
     public void onStationNotFound() {
-        journeySearchView.showError("Station not found");
+        view.showError("Station not found");
     }
 
     @Override
     public void onJourneyNotFound() {
-        journeySearchView.showError("Journey not found");
+        view.showError("Journey not found");
     }
 
     @Override
     public void onServerError() {
-        journeySearchView.showError("Server error");
+        view.showError("Server error");
     }
 
     @Override
     public void onSuccess() {
-        journeySearchView.hideProgress();
-        journeySearchView.updateSolutionsList(journeySolutions);
+        view.hideProgress();
+        view.updateSolutionsList(journeySolutions);
     }
 
 

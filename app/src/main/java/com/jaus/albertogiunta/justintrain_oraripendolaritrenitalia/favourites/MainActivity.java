@@ -1,5 +1,6 @@
-package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia;
+package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.favourites;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -9,10 +10,12 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 
 import com.google.gson.Gson;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.R;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.PreferredJourney;
-import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeys.JourneyContract;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeys.JourneyActivity;
-import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.PreferredStationsHelper;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeys.JourneyContract;
+
+import java.util.List;
 
 import co.dift.ui.SwipeToAction;
 import trikita.log.Log;
@@ -20,17 +23,24 @@ import trikita.log.Log;
 import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeys.JourneyActivity.JOURNEY_PARAM;
 import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeys.JourneyActivity.SEARCH_PANEL_STATUS_PARAM;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements FavouritesContract.View {
+
+    FavouritesContract.Presenter presenter;
+    RecyclerView rvFavouriteJourneys;
+    FavouriteJourneysAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        presenter = new FavouritesPresenter(this);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        RecyclerView rvFavouriteJourneys = (RecyclerView) findViewById(R.id.rv_favourite_journeys);
-        FavouriteJourneysAdapter adapter = new FavouriteJourneysAdapter(PreferredStationsHelper.getAllAsObject(this));
+        rvFavouriteJourneys = (RecyclerView) findViewById(R.id.rv_favourite_journeys);
+        adapter = new FavouriteJourneysAdapter(presenter.getPreferredJourneys());
         rvFavouriteJourneys.setAdapter(adapter);
         rvFavouriteJourneys.setHasFixedSize(true);
         rvFavouriteJourneys.setLayoutManager(new LinearLayoutManager(this));
@@ -68,6 +78,41 @@ public class MainActivity extends AppCompatActivity {
             Intent myIntent = new Intent(MainActivity.this, JourneyActivity.class);
             MainActivity.this.startActivity(myIntent);
         });
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        presenter.onLeaving(outState);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        presenter.onResuming(savedInstanceState);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        presenter.onResuming(getIntent().getExtras());
+    }
+
+    @Override
+    protected void onDestroy() {
+        presenter.unsubscribe();
+        super.onDestroy();
+    }
+
+    @Override
+    public Context getViewContext() {
+        return this;
+    }
+
+    @Override
+    public void updateFavouritesList(List<PreferredJourney> preferredJourneys) {
+        Log.d("Favourite journeys list UPDATED");
+        adapter.notifyDataSetChanged();
     }
 
     private Bundle getBundle(PreferredJourney journey) {
