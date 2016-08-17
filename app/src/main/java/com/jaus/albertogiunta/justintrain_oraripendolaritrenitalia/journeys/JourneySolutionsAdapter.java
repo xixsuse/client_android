@@ -207,12 +207,8 @@ public class JourneySolutionsAdapter extends RecyclerView.Adapter<RecyclerView.V
 
 
             holder.btnPin.setOnClickListener(view -> {
-                Log.d("clicked on PIN");
-//                NotificationService.startActionStartNotification(context,
-//                        presenter.getDepartureStation(),
-//                        presenter.getArrivalStation(),
-//                        presenter.getSolutionList().get(getAdapterPosition()).solution.trainId,
-//                        presenter.getSolutionList().get(getAdapterPosition()).solution.departureStationId);
+                Log.d("Requested notification for item number ", getAdapterPosition());
+                presenter.onNotificationRequested(getAdapterPosition()-1);
             });
 
             holder.btnExpandCard.setOnClickListener(view -> {

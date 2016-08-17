@@ -3,16 +3,17 @@ package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.notification
 import android.annotation.TargetApi;
 import android.app.Notification;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Context;
-import android.content.Intent;
 import android.content.res.Resources;
-import android.net.Uri;
 import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.R;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.NotificationData;
+
+import org.joda.time.DateTime;
+
+import trikita.log.Log;
 
 /**
  * Helper class for showing and canceling train
@@ -49,25 +50,14 @@ public class TrainNotification {
         // TODO: Remove this if your notification has no relevant thumbnail.
 //        final Bitmap picture = BitmapFactory.decodeResource(res, R.drawable.example_picture);
 
+        String departureStationName = trimStationName(notificationData.getDepartureStationName());
+        String arrivalStationName = trimStationName(notificationData.getArrivalStationName());
 
-        final String ticker = notificationData.getTrainCategory() +
-                " | " +
-                notificationData.getDepartureStationName() +
-                " - " +
-                notificationData.getArrivalStationName() +
-                " - " +
-                notificationData.getTimeDifference();
+        final String title = buildTitle(notificationData);
 
-        final String title = notificationData.getTrainCategory() +
-                " | " +
-                notificationData.getDepartureStationName() +
-                " - " +
-                notificationData.getArrivalStationName() +
-                " - " +
-                notificationData.getTimeDifference();
-        final String text = notificationData.getLastSeenTimeReadable() +
-                " @ " +
-                notificationData.getLastSeenStationName();
+        final String text = buildBody(notificationData);
+
+        final String smallText = buildSmallText(notificationData);
 
         final NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
 
@@ -92,7 +82,7 @@ public class TrainNotification {
 //                .setLargeIcon(picture)
 
                 // Set ticker text (preview) information for this notification.
-                .setTicker(ticker)
+                .setTicker(buildTicker(notificationData))
 
                 // Show a number. This is useful when stacking notifications of
                 // a single type.
@@ -109,42 +99,37 @@ public class TrainNotification {
 
                 // Set the pending intent to be initiated when the user touches
                 // the notification.
-                .setContentIntent(
-                        PendingIntent.getActivity(
-                                context,
-                                0,
-                                new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.google.com")),
-                                PendingIntent.FLAG_UPDATE_CURRENT))
+//                .setContentIntent(
+//                        PendingIntent.getActivity(
+//                                context,
+//                                0,
+//                                new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.google.com")),
+//                                PendingIntent.FLAG_UPDATE_CURRENT))
 
                 // Show expanded text content on devices running Android 4.1 or
                 // later.
                 .setStyle(new NotificationCompat.BigTextStyle()
                         .bigText(text)
                         .setBigContentTitle(title)
-                        .setSummaryText("Dummy summary text"))
+                        .setSummaryText(smallText))
 
                 // Example additional actions for this notification. These will
                 // only show on devices running Android 4.1 or later, so you
                 // should ensure that the activity in this notification's
                 // content intent provides access to the same actions in
                 // another way.
-//                .addAction(
-//                        R.drawable.ic_action_stat_share,
-//                        res.getString(R.string.action_share),
-//                        PendingIntent.getActivity(
-//                                context,
-//                                0,
-//                                Intent.createChooser(new Intent(Intent.ACTION_SEND)
-//                                        .setType("text/plain")
-//                                        .putExtra(Intent.EXTRA_TEXT, "Dummy text"), "Dummy title"),
-//                                PendingIntent.FLAG_UPDATE_CURRENT))
-//                .addAction(
-//                        R.drawable.ic_action_stat_reply,
-//                        res.getString(R.string.action_reply),
-//                        null)
+                .addAction(
+                        R.drawable.ic_refresh,
+                        res.getString(R.string.action_refresh),
+                        null)
+                .addAction(
+                        R.drawable.ic_clear,
+                        res.getString(R.string.action_end),
+                        null)
 
                 // Automatically dismiss the notification when it is touched.
-                .setAutoCancel(true);
+//                .setAutoCancel(true);
+                .setAutoCancel(false);
 
         notify(context, builder.build());
     }
@@ -172,6 +157,129 @@ public class TrainNotification {
             nm.cancel(NOTIFICATION_TAG, 0);
         } else {
             nm.cancel(NOTIFICATION_TAG.hashCode());
+        }
+    }
+
+    private static String buildTitle(NotificationData data) {
+        String categoryPlusDestinations = new Builder()
+                .withString(data.getTrainCategory())
+                .withSpace()
+                .withString(data.getTrainId())
+                .withEndingSymbol("|")
+                .withSeparatedWords(data.getDepartureStationName(), String.valueOf((char) 187), data.getArrivalStationName())
+                .build();
+
+        return categoryPlusDestinations;
+    }
+
+    private static String buildBody(NotificationData data) {
+        String delayPlusProgress = new Builder()
+                .withString(buildTimeDifferenceString(data.getTimeDifference()))
+                .withEndingSymbol("|")
+                .withString(buildProgressString(data.getProgress()))
+                .build();
+
+        return delayPlusProgress + "\n" + buildPredictor(data);
+    }
+
+    private static String buildSmallText(NotificationData data) {
+        String lastSeen = buildLastSeenString(data.getLastSeenTimeReadable(), data.getLastSeenStationName());
+        return lastSeen;
+    }
+
+    private static String buildTicker(NotificationData data) {
+        String ticker = new Builder()
+                .withString(buildTimeDifferenceString(data.getTimeDifference()))
+                .withEndingSymbol("|")
+                .withString(buildProgressString(data.getProgress()))
+                .build();
+        return ticker;
+    }
+
+    private static String trimStationName(String stationName) {
+        return (stationName.length() > 5 ? stationName.substring(0, 3) + "." : stationName).toUpperCase();
+    }
+
+    private static String buildTimeDifferenceString(int timeDifference) {
+        String time = Integer.toString(Math.abs(timeDifference)) + "'";
+        String delay = "Ritardo: ";
+        String ontime = "Anticipo: ";
+        if (timeDifference > 0) {
+            time = delay + time;
+        } else if (timeDifference < 0) {
+            time = ontime + time;
+        } else {
+            time = "In orario";
+        }
+        return time;
+    }
+
+    private static String buildProgressString(int progress) {
+        switch (progress) {
+            case 0:
+                return "Costante";
+            case 1:
+                return "Recuperando";
+            case 2:
+                return "Rallentando";
+            default:
+                return "";
+        }
+    }
+
+    private static String buildPredictor(NotificationData data) {
+        DateTime now = DateTime.now().plusHours(2);
+        Log.d("now", now.toString());
+        String s = "";
+        if (now.isBefore(data.getDepartureTime() * 1000)) {
+            s = buildPrediction(data.getDepartureStationName(),
+                    (data.getDepartureTime() + (data.getTimeDifference() * 60) - now.getMillis() / 1000) / 60);
+        } else if (now.isBefore(data.getArrivalTime() * 1000)) {
+            s = buildPrediction(data.getArrivalStationName(),
+                    (data.getArrivalTime() + (data.getTimeDifference() * 60) - now.getMillis() / 1000) / 60);
+        }
+        return s;
+    }
+
+    private static String buildPrediction(String station, long minutes) {
+        String minutesString = minutes == 0 ? " adesso " : minutes == 1 ? " tra " + minutes + " minuto" : " tra " + minutes + " minuti";
+        return "Arrivo a " + station + minutesString;
+    }
+
+
+    private static String buildLastSeenString(String time, String station) {
+        return time.length() > 0 && station.length() > 0 ? "Visto alle " + time + " a " + station : "";
+    }
+
+    private static class Builder {
+
+        String string = "";
+
+        public Builder() {
+        }
+
+        public Builder withString(String s) {
+            string += s;
+            return this;
+        }
+
+        public Builder withSpace() {
+            string += " ";
+            return this;
+        }
+
+        public Builder withEndingSymbol(String symbol) {
+            string += string.length() > 0 ? " " + symbol + " " : "";
+            return this;
+        }
+
+        public Builder withSeparatedWords(String first, String separator, String second) {
+            string += first.length() == 0 || second.length() == 0 ? first + second : first + " " + separator + " " + second;
+            return this;
+        }
+
+        public String build() {
+            return string;
         }
     }
 }

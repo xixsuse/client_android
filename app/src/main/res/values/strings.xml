@@ -16,6 +16,6 @@
     <string name="change_title">Cambio</string>
     <string name="title_activity_main">MainActivity</string>
 
-    <string name="action_share">Share</string>
-    <string name="action_reply">Reply</string>
+    <string name="action_refresh">Aggiorna</string>
+    <string name="action_end">Termina</string>
 </resources>

@@ -92,6 +92,8 @@ public interface JourneyContract {
          */
         void onLoadMoreItemsAfter();
 
+        void onNotificationRequested(int elementIndex);
+
         /**
          * Getter for the solution list (it's a static field)
          * @return the current solution list

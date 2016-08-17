@@ -26,6 +26,7 @@ import android.widget.EditText;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageButton;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.R;
@@ -69,11 +70,10 @@ public class JourneyActivity extends AppCompatActivity implements JourneyContrac
     private SEARCH_PANEL_STATUS journeySearchFragmentViewState;
 
     //  RESULTS
+    private RelativeLayout rlJourneySolutions;
     private JourneySolutionsAdapter journeySolutionsAdapter;
     private RecyclerView rvJourneySolutions;
     private ImageButton btnRefresh;
-
-
 
 
     @Override
@@ -171,14 +171,15 @@ public class JourneyActivity extends AppCompatActivity implements JourneyContrac
             presenter.onFavouriteButtonClick();
         });
 
-
+        // RESULTS
+        rlJourneySolutions = (RelativeLayout) findViewById(R.id.rl_journey_solutions);
         rvJourneySolutions = (RecyclerView) findViewById(R.id.rv_journey_solutions);
+        btnRefresh = (ImageButton) findViewById(R.id.btn_refresh);
         journeySolutionsAdapter = new JourneySolutionsAdapter(this, presenter);
         rvJourneySolutions.setAdapter(journeySolutionsAdapter);
         rvJourneySolutions.setHasFixedSize(true);
         rvJourneySolutions.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
 
-        btnRefresh = (ImageButton) findViewById(R.id.btn_refresh);
         btnRefresh.setOnClickListener(view -> {
             presenter.searchFromSearch();
         });
@@ -219,6 +220,7 @@ public class JourneyActivity extends AppCompatActivity implements JourneyContrac
         if (status == SEARCH_PANEL_STATUS.INACTIVE) {
             this.cvHeader.setVisibility(View.VISIBLE);
             this.clHeader.setVisibility(View.GONE);
+//            this.btnRefresh.setVisibility(View.VISIBLE);
             this.iactDepartureStation.dismissDropDown();
             this.iactArrivalStation.dismissDropDown();
             getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
@@ -228,6 +230,7 @@ public class JourneyActivity extends AppCompatActivity implements JourneyContrac
         } else if (status == SEARCH_PANEL_STATUS.ACTIVE) {
             this.cvHeader.setVisibility(View.GONE);
             this.clHeader.setVisibility(View.VISIBLE);
+//            this.btnRefresh.setVisibility(View.GONE);
             getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
         }
     }

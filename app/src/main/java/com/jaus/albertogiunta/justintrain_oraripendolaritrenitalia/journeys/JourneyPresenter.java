@@ -12,6 +12,7 @@ import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.Solution
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.Station4Database;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.networking.JourneyService;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.networking.ServiceFactory;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.notification.NotificationService;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.PreferredStationsHelper;
 
 import org.joda.time.DateTime;
@@ -204,6 +205,18 @@ public class JourneyPresenter implements JourneyContract.Presenter, JourneyContr
         new SearchAfterTimeStrategy().searchJourney(departureStation.getStationShortId(),
                 arrivalStation.getStationShortId(),
                 journeySolutions.get(journeySolutions.size()-1).solution.departureTime+61, false, false, this);
+    }
+
+    @Override
+    public void onNotificationRequested(int elementIndex) {
+        NotificationService.startActionStartNotification(view.getViewContext(),
+                journeySolutions.get(elementIndex).solution.departureStationName,
+                journeySolutions.get(elementIndex).solution.departureTime,
+                journeySolutions.get(elementIndex).solution.departureTimeReadable,
+                journeySolutions.get(elementIndex).solution.arrivalStationName,
+                journeySolutions.get(elementIndex).solution.arrivalTime,
+                journeySolutions.get(elementIndex).solution.arrivalTimeReadable,
+                journeySolutions.get(elementIndex).solution.trainId);
     }
 
     @Override

@@ -6,7 +6,11 @@ package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data;
 public class NotificationData {
 
     private String departureStationName;
+    private long departureTime;
+    private String departureTimeReadable;
     private String arrivalStationName;
+    private long arrivalTime;
+    private String arrivalTimeReadable;
 
     private String trainCategory;
     private String trainId;
@@ -29,12 +33,44 @@ public class NotificationData {
         this.departureStationName = departureStationName;
     }
 
+    public long getDepartureTime() {
+        return departureTime;
+    }
+
+    public void setDepartureTime(long departureTime) {
+        this.departureTime = departureTime;
+    }
+
+    public String getDepartureTimeReadable() {
+        return departureTimeReadable;
+    }
+
+    public void setDepartureTimeReadable(String departureTimeReadable) {
+        this.departureTimeReadable = departureTimeReadable;
+    }
+
     public String getArrivalStationName() {
         return arrivalStationName;
     }
 
     public void setArrivalStationName(String arrivalStationName) {
         this.arrivalStationName = arrivalStationName;
+    }
+
+    public long getArrivalTime() {
+        return arrivalTime;
+    }
+
+    public void setArrivalTime(long arrivalTime) {
+        this.arrivalTime = arrivalTime;
+    }
+
+    public String getArrivalTimeReadable() {
+        return arrivalTimeReadable;
+    }
+
+    public void setArrivalTimeReadable(String arrivalTimeReadable) {
+        this.arrivalTimeReadable = arrivalTimeReadable;
     }
 
     public String getTrainCategory() {

@@ -30,6 +30,7 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/thin_card_height"
         android:layout_marginTop="3dp"
+        android:layout_marginBottom="30dp"
         android:background="?android:attr/selectableItemBackground"
         android:clickable="true"
         android:elevation="@dimen/basic_card_elevation"
@@ -101,7 +102,8 @@
     <android.support.design.widget.CoordinatorLayout
         android:id="@+id/cl_header_0"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:elevation="1dp"
         android:clipToPadding="false"
         android:paddingBottom="5dp"
         >
@@ -372,8 +374,12 @@
 
 
     <RelativeLayout
+        android:id="@+id/rl_journey_solutions"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:elevation="0dp"
+        android:clickable="true"
+        android:layout_marginTop="-30dp"
         android:layout_marginBottom="-6dp">
 
         <android.support.v7.widget.RecyclerView
