@@ -205,9 +205,13 @@ public class JourneySolutionsAdapter extends RecyclerView.Adapter<RecyclerView.V
 
             holder.llChanges = (LinearLayout) itemView.findViewById(R.id.ll_changes);
 
+            holder.btnRefresh.setOnClickListener(view -> {
+                Log.d("Requested refresh for item ", getAdapterPosition()-1);
+                presenter.onJourneyRefreshRequested(getAdapterPosition()-1);
+            });
 
             holder.btnPin.setOnClickListener(view -> {
-                Log.d("Requested notification for item number ", getAdapterPosition());
+                Log.d("Requested notification for item number ", getAdapterPosition()-1);
                 presenter.onNotificationRequested(getAdapterPosition()-1);
             });
 

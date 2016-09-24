@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
@@ -26,6 +27,7 @@ import android.widget.EditText;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -68,6 +70,12 @@ public class JourneyActivity extends AppCompatActivity implements JourneyContrac
     private ImageButton btnHeaderToggleFavorite;
 
     private SEARCH_PANEL_STATUS journeySearchFragmentViewState;
+
+    private ProgressBar progressBar;
+
+    // NO SOLUTION FOUND
+    private RelativeLayout rlEmptyJourneyBox;
+    private Button btnChangeStations;
 
     //  RESULTS
     private RelativeLayout rlJourneySolutions;
@@ -171,6 +179,17 @@ public class JourneyActivity extends AppCompatActivity implements JourneyContrac
             presenter.onFavouriteButtonClick();
         });
 
+        progressBar = (ProgressBar) findViewById(R.id.loading_spinner);
+
+        // NO SOLUTIONS FOUND
+        rlEmptyJourneyBox = (RelativeLayout) findViewById(R.id.rl_empty_journey_box);
+        btnChangeStations = (Button) findViewById(R.id.btn_change_stations);
+
+        btnChangeStations.setOnClickListener(view -> {
+            setJourneySearchFragmentViewStatus(SEARCH_PANEL_STATUS.ACTIVE);
+        });
+
+
         // RESULTS
         rlJourneySolutions = (RelativeLayout) findViewById(R.id.rl_journey_solutions);
         rvJourneySolutions = (RecyclerView) findViewById(R.id.rv_journey_solutions);
@@ -220,18 +239,18 @@ public class JourneyActivity extends AppCompatActivity implements JourneyContrac
         if (status == SEARCH_PANEL_STATUS.INACTIVE) {
             this.cvHeader.setVisibility(View.VISIBLE);
             this.clHeader.setVisibility(View.GONE);
-//            this.btnRefresh.setVisibility(View.VISIBLE);
             this.iactDepartureStation.dismissDropDown();
             this.iactArrivalStation.dismissDropDown();
             getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
             this.presenter.setFavouriteButtonStatus();
+//            this.btnRefresh.setVisibility(View.VISIBLE);
 //            InputMethodManager imm = (InputMethodManage).getSystemService(Context.INPUT_METHOD_SERVICE);
 //            imm.hideSoftInputFromWindow(this.btnSearchJourney.getWindowToken(), 0);
         } else if (status == SEARCH_PANEL_STATUS.ACTIVE) {
             this.cvHeader.setVisibility(View.GONE);
             this.clHeader.setVisibility(View.VISIBLE);
-//            this.btnRefresh.setVisibility(View.GONE);
             getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+//            this.btnRefresh.setVisibility(View.GONE);
         }
     }
 
@@ -288,23 +307,35 @@ public class JourneyActivity extends AppCompatActivity implements JourneyContrac
 
     @Override
     public void showProgress() {
-
+        progressBar.setVisibility(View.VISIBLE);
+        rlJourneySolutions.setVisibility(View.GONE);
+        rlEmptyJourneyBox.setVisibility(View.GONE);
     }
 
     @Override
     public void hideProgress() {
-
+        progressBar.setVisibility(View.GONE);
+        rlJourneySolutions.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void updateSolutionsList(List<SolutionList.Solution> solutionList) {
-        Log.d(journeySolutionsAdapter.solutionList.size(), "solutions found");
+        Log.d("Successfully updated list");
         journeySolutionsAdapter.notifyDataSetChanged();
     }
 
     @Override
-    public void showError(String message) {
+    public void updateSolution(int elementIndex) {
+        Log.d("Successfully updated item");
+        journeySolutionsAdapter.notifyItemChanged(elementIndex+1);
+    }
 
+    @Override
+    public void showSnackbar(String message) {
+        Log.d(message);
+        Snackbar snackbar = Snackbar
+                .make(rlJourneySolutions, "Welcome to AndroidHive", Snackbar.LENGTH_LONG);
+        snackbar.show();
     }
 
     /**

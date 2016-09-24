@@ -6,6 +6,7 @@ import com.annimon.stream.Collectors;
 import com.annimon.stream.Stream;
 import com.google.gson.Gson;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.BaseView;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.JourneyWithDelay;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.PreferredJourney;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.PreferredStation;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.SolutionList;
@@ -179,6 +180,7 @@ public class JourneyPresenter implements JourneyContract.Presenter, JourneyContr
     @Override
     public void searchFromIntent() {
         Log.d("instant");
+        view.showProgress();
         new SearchInstantlyStrategy().searchJourney(departureStation.getStationShortId(),
                 arrivalStation.getStationShortId(),
                 0, true, true, this);
@@ -186,6 +188,7 @@ public class JourneyPresenter implements JourneyContract.Presenter, JourneyContr
 
     @Override
     public void searchFromSearch() {
+        view.showProgress();
         if (PresenterUtilities.isInstant(hour, HOUR)) {
             Log.d("Instant Search");
             new SearchInstantlyStrategy().searchJourney(departureStation.getStationShortId(),
@@ -220,23 +223,50 @@ public class JourneyPresenter implements JourneyContract.Presenter, JourneyContr
     }
 
     @Override
+    public void onJourneyRefreshRequested(int elementIndex) {
+        ServiceFactory.createRetrofitService(JourneyService.class, JourneyService.SERVICE_ENDPOINT)
+                .getDelay(journeySolutions.get(elementIndex).solution.trainId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<JourneyWithDelay>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.d(e.getMessage());
+                    }
+
+                    @Override
+                    public void onNext(JourneyWithDelay journeyWithDelay) {
+                        journeySolutions.get(elementIndex).solution.departurePlatform = journeyWithDelay.departurePlatform;
+                        journeySolutions.get(elementIndex).solution.timeDifference = journeyWithDelay.timeDifference;
+                        journeySolutions.get(elementIndex).solution.progress= journeyWithDelay.progress;
+                        view.updateSolution(elementIndex);
+                    }
+                });
+    }
+
+    @Override
     public List<SolutionList.Solution> getSolutionList() {
         return journeySolutions;
     }
 
     @Override
     public void onStationNotFound() {
-        view.showError("Station not found");
+        view.showSnackbar("Station not found");
     }
 
     @Override
     public void onJourneyNotFound() {
-        view.showError("Journey not found");
+        view.showSnackbar("Journey not found");
     }
 
     @Override
     public void onServerError() {
-        view.showError("Server error");
+        view.showSnackbar("Server error");
     }
 
     @Override
@@ -294,6 +324,7 @@ public class JourneyPresenter implements JourneyContract.Presenter, JourneyContr
 
                         @Override
                         public void onNext(List<SolutionList.Solution> solutionList) {
+                            Log.d(solutionList.size(), "new solutions found");
                             journeySolutions.addAll(solutionList);
                             listener.onSuccess();
                             // TODO perform checks
@@ -306,6 +337,7 @@ public class JourneyPresenter implements JourneyContract.Presenter, JourneyContr
 
         @Override
         public void searchJourney(String departureStationId, String arrivalStationId, long timestamp, boolean isPreemptive, boolean withDelays, OnJourneySearchFinishedListener listener) {
+            Log.d(timestamp);
             ServiceFactory.createRetrofitService(JourneyService.class, JourneyService.SERVICE_ENDPOINT).getJourneyBeforeTime(departureStationId, arrivalStationId, timestamp, withDelays, isPreemptive)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -321,6 +353,7 @@ public class JourneyPresenter implements JourneyContract.Presenter, JourneyContr
 
                         @Override
                         public void onNext(List<SolutionList.Solution> solutionList) {
+                            Log.d(solutionList.size(), "new solutions found");
                             solutionList.addAll(journeySolutions);
                             journeySolutions.clear();
                             journeySolutions.addAll(solutionList);

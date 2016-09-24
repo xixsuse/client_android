@@ -94,6 +94,8 @@ public interface JourneyContract {
 
         void onNotificationRequested(int elementIndex);
 
+        void onJourneyRefreshRequested(int elementIndex);
+
         /**
          * Getter for the solution list (it's a static field)
          * @return the current solution list
@@ -195,11 +197,13 @@ public interface JourneyContract {
          */
         void updateSolutionsList(List<SolutionList.Solution> solutionList);
 
+        void updateSolution(int elementIndex);
+
         /**
          * Shows an error
          * @param message to be send to the user
          */
-        void showError(String message);
+        void showSnackbar(String message);
 
         interface JourneySearchStrategy {
 

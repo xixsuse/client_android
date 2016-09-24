@@ -1,5 +1,6 @@
 package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.networking;
 
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.JourneyWithDelay;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.NotificationData;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.SolutionList;
 
@@ -48,5 +49,12 @@ public interface JourneyService {
 
     @GET("/train/{trainId}/header")
     Observable<NotificationData> getNotificationData(@Path("trainId") String trainId);
+
+    @GET("/station/{trainDepartureStationId}/train/{trainId}/delay")
+    Observable<JourneyWithDelay> getDelay(@Path("trainDepartureStationId") String trainDepartureStationId,
+                                          @Path("trainId") String trainId);
+
+    @GET("/train/{trainId}/delay")
+    Observable<JourneyWithDelay> getDelay(@Path("trainId") String trainId);
 
 }
