@@ -1,5 +1,8 @@
 package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeys;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 
 import com.annimon.stream.Collectors;
@@ -174,7 +177,7 @@ public class JourneyPresenter implements JourneyContract.Presenter, JourneyContr
     public void onLoadMoreItemsBefore() {
         new SearchBeforeTimeStrategy().searchJourney(departureStation.getStationShortId(),
                 arrivalStation.getStationShortId(),
-                journeySolutions.get(0).solution.departureTime-1, false, false, this);
+                journeySolutions.get(0).solution.departureTime - 1, false, false, this);
     }
 
     @Override
@@ -189,6 +192,7 @@ public class JourneyPresenter implements JourneyContract.Presenter, JourneyContr
     @Override
     public void searchFromSearch() {
         view.showProgress();
+        // TODO controlla connessione
         if (PresenterUtilities.isInstant(hour, HOUR)) {
             Log.d("Instant Search");
             new SearchInstantlyStrategy().searchJourney(departureStation.getStationShortId(),
@@ -207,7 +211,7 @@ public class JourneyPresenter implements JourneyContract.Presenter, JourneyContr
     public void onLoadMoreItemsAfter() {
         new SearchAfterTimeStrategy().searchJourney(departureStation.getStationShortId(),
                 arrivalStation.getStationShortId(),
-                journeySolutions.get(journeySolutions.size()-1).solution.departureTime+61, false, false, this);
+                journeySolutions.get(journeySolutions.size() - 1).solution.departureTime + 61, false, false, this);
     }
 
     @Override
@@ -243,7 +247,7 @@ public class JourneyPresenter implements JourneyContract.Presenter, JourneyContr
                     public void onNext(JourneyWithDelay journeyWithDelay) {
                         journeySolutions.get(elementIndex).solution.departurePlatform = journeyWithDelay.departurePlatform;
                         journeySolutions.get(elementIndex).solution.timeDifference = journeyWithDelay.timeDifference;
-                        journeySolutions.get(elementIndex).solution.progress= journeyWithDelay.progress;
+                        journeySolutions.get(elementIndex).solution.progress = journeyWithDelay.progress;
                         view.updateSolution(elementIndex);
                     }
                 });
@@ -275,6 +279,12 @@ public class JourneyPresenter implements JourneyContract.Presenter, JourneyContr
         view.updateSolutionsList(journeySolutions);
     }
 
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) view.getViewContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
 
     public static class SearchInstantlyStrategy implements JourneyContract.View.JourneySearchStrategy {
 
@@ -292,14 +302,19 @@ public class JourneyPresenter implements JourneyContract.Presenter, JourneyContr
                         @Override
                         public void onError(Throwable e) {
                             Log.d(e.getMessage());
+                            // TODO controlla 500
                         }
 
                         @Override
                         public void onNext(List<SolutionList.Solution> solutionList) {
-                            journeySolutions.clear();
-                            journeySolutions.addAll(solutionList);
-                            listener.onSuccess();
-                            // TODO perform checks
+                            if (solutionList.size() == 0) {
+                                listener.onJourneyNotFound();
+                            } else {
+                                journeySolutions.clear();
+                                journeySolutions.addAll(solutionList);
+                                listener.onSuccess();
+                                // TODO perform checks
+                            }
                         }
                     });
         }
@@ -319,6 +334,7 @@ public class JourneyPresenter implements JourneyContract.Presenter, JourneyContr
 
                         @Override
                         public void onError(Throwable e) {
+                            // TODO controlla 500
                             Log.d(e.getMessage());
                         }
 
@@ -348,6 +364,7 @@ public class JourneyPresenter implements JourneyContract.Presenter, JourneyContr
 
                         @Override
                         public void onError(Throwable e) {
+                            // TODO controlla 500
                             Log.d(e.getMessage());
                         }
 

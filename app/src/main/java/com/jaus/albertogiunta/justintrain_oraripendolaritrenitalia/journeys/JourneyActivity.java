@@ -334,7 +334,7 @@ public class JourneyActivity extends AppCompatActivity implements JourneyContrac
     public void showSnackbar(String message) {
         Log.d(message);
         Snackbar snackbar = Snackbar
-                .make(rlJourneySolutions, "Welcome to AndroidHive", Snackbar.LENGTH_LONG);
+                .make(rlJourneySolutions, message, Snackbar.LENGTH_LONG);
         snackbar.show();
     }
 

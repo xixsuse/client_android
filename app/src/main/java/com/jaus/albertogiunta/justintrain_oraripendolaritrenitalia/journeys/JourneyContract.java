@@ -199,6 +199,8 @@ public interface JourneyContract {
 
         void updateSolution(int elementIndex);
 
+//        void showOfflineWithMessage(String message);
+
         /**
          * Shows an error
          * @param message to be send to the user
