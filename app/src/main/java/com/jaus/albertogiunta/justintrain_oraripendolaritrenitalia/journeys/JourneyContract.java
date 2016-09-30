@@ -144,20 +144,6 @@ public interface JourneyContract {
         void setTime(String time);
 
         /**
-         * Shows an error under the Autocomplete Edit Text if something wrong happens during the
-         * search in the database
-         * @param error message for the user
-         */
-        void showDepartureStationNameError(String error);
-
-        /**
-         * Shows an error under the Autocomplete Edit Text if something wrong happens during the
-         * search in the database
-         * @param error message for the user
-         */
-        void showArrivalStationNameError(String error);
-
-        /**
          * Called when everything goes right after the click on the search button.
          */
         void onValidSearchParameters();

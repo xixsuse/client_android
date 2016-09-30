@@ -1,31 +1,20 @@
 package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeys;
 
+import android.app.Activity;
 import android.content.Context;
-import android.graphics.Rect;
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Filter;
-import android.widget.Filterable;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -33,7 +22,6 @@ import android.widget.TextView;
 
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.R;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.SolutionList;
-import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.InstantAutoCompleteTextView;
 
 import java.util.List;
 
@@ -43,6 +31,9 @@ public class JourneyActivity extends AppCompatActivity implements JourneyContrac
 
     public static final String JOURNEY_PARAM = "journey";
     public static final String SEARCH_PANEL_STATUS_PARAM = "searchPanelStatus";
+    public static final int DEPARTURE_WANTED = 1;
+    public static final int ARRIVAL_WANTED = 2;
+
 
     //  SEARCH
     private JourneyContract.Presenter presenter;
@@ -50,12 +41,9 @@ public class JourneyActivity extends AppCompatActivity implements JourneyContrac
     private CoordinatorLayout clHeader;
 
     private FloatingActionButton btnSearchJourney;
-    private TextInputLayout tilDepartureStationInputLayout;
-    private TextInputLayout tilArrivalStationInputLayout;
-    private InstantAutoCompleteTextView iactDepartureStation;
-    private InstantAutoCompleteTextView iactArrivalStation;
-    private Button btnClearDeparture;
-    private Button btnClearArrival;
+
+    private TextView tvDepartureStation;
+    private TextView tvArrivalStation;
     private ImageButton btnSwapStations;
     private TextView tvMinusHour;
     private TextView tvMinusMinusHour;
@@ -83,7 +71,6 @@ public class JourneyActivity extends AppCompatActivity implements JourneyContrac
     private RecyclerView rvJourneySolutions;
     private ImageButton btnRefresh;
 
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -94,12 +81,8 @@ public class JourneyActivity extends AppCompatActivity implements JourneyContrac
         this.clHeader = (CoordinatorLayout) findViewById(R.id.cl_header_0);
         this.btnSearchJourney = (FloatingActionButton) findViewById(R.id.fab_search_journeys);
 
-        this.tilDepartureStationInputLayout = (TextInputLayout) findViewById(R.id.til_departure_station);
-        this.tilArrivalStationInputLayout = (TextInputLayout) findViewById(R.id.til_arrival_station);
-        this.iactDepartureStation = (InstantAutoCompleteTextView) findViewById(R.id.iatv_departure_station);
-        this.iactArrivalStation = (InstantAutoCompleteTextView) findViewById(R.id.iatv_arrival_station);
-        this.btnClearDeparture = (Button) findViewById(R.id.btn_clear_departure_station);
-        this.btnClearArrival = (Button) findViewById(R.id.btn_clear_arrival_station);
+        this.tvDepartureStation = (TextView) findViewById(R.id.tv_departure_station);
+        this.tvArrivalStation = (TextView) findViewById(R.id.tv_arrival_station);
         this.btnSwapStations = (ImageButton) findViewById(R.id.btn_swap_station_names);
         this.tvMinusHour = (TextView) findViewById(R.id.tv_minus_hour);
         this.tvMinusMinusHour = (TextView) findViewById(R.id.tv_minus_minus_hour);
@@ -113,41 +96,12 @@ public class JourneyActivity extends AppCompatActivity implements JourneyContrac
         this.btnHeaderSwapStationNames = (ImageButton) findViewById(R.id.btn_header_swap_station_names);
         this.btnHeaderToggleFavorite = (ImageButton) findViewById(R.id.btn_toggle_favourite);
 
-
-        // TEXT INPUT LAYOUT
-        tilDepartureStationInputLayout.setErrorEnabled(true);
-        tilArrivalStationInputLayout.setErrorEnabled(true);
-        takeOffError(tilDepartureStationInputLayout);
-        takeOffError(tilArrivalStationInputLayout);
-
-        // AUTOCOMPLETE TEXT VIEW
-        final AutocompleteAdapter departureAdapter = new AutocompleteAdapter(getApplicationContext(), iactDepartureStation);
-        final AutocompleteAdapter arrivalAdapter = new AutocompleteAdapter(getApplicationContext(), iactArrivalStation);
-
-        setOnTouchListener(this.iactDepartureStation);
-        setOnTouchListener(this.iactArrivalStation);
-
-        setOnEditorAction(this.iactDepartureStation);
-        setOnEditorAction(this.iactArrivalStation);
-
-        this.btnClearDeparture.setOnClickListener(v -> clearFields(iactDepartureStation));
-        this.btnClearArrival.setOnClickListener(v -> clearFields(iactArrivalStation));
-
-        this.iactDepartureStation.addTextChangedListener(setTextWatcher(btnClearDeparture));
-        this.iactArrivalStation.addTextChangedListener(setTextWatcher(btnClearArrival));
-
-        this.iactDepartureStation.setOnItemClickListener((adapterView, view, i, l) ->
-                onAutocompleteItemClick(iactDepartureStation, iactArrivalStation));
-        this.iactArrivalStation.setOnItemClickListener((adapterView, view, i, l) ->
-                onAutocompleteItemClick(iactArrivalStation, iactDepartureStation));
-
+        onStationNameTextViewClick(this.tvDepartureStation, DEPARTURE_WANTED);
+        onStationNameTextViewClick(this.tvArrivalStation, ARRIVAL_WANTED);
 
         // SWAP BUTTON
         this.btnSwapStations.setOnClickListener(v -> {
-            swapStations(this.iactDepartureStation, this.iactArrivalStation);
-//            swapStations(this.tvHeaderDepartureStation, this.tvHeaderArrivalStation);
-            iactDepartureStation.dismissDropDown();
-            iactArrivalStation.dismissDropDown();
+            swapStations(this.tvDepartureStation, this.tvArrivalStation);
         });
 
         // TIME PANEL
@@ -229,6 +183,19 @@ public class JourneyActivity extends AppCompatActivity implements JourneyContrac
     }
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == Activity.RESULT_OK && data != null) {
+            String stationName = data.getStringExtra("stationName");
+            if (requestCode == DEPARTURE_WANTED) {
+                this.tvDepartureStation.setText(stationName);
+            } else if (requestCode == ARRIVAL_WANTED) {
+                this.tvArrivalStation.setText(stationName);
+            }
+        }
+    }
+
+    @Override
     public Context getViewContext() {
         return getApplicationContext();
     }
@@ -239,8 +206,6 @@ public class JourneyActivity extends AppCompatActivity implements JourneyContrac
         if (status == SEARCH_PANEL_STATUS.INACTIVE) {
             this.cvHeader.setVisibility(View.VISIBLE);
             this.clHeader.setVisibility(View.GONE);
-            this.iactDepartureStation.dismissDropDown();
-            this.iactArrivalStation.dismissDropDown();
             getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
             this.presenter.setFavouriteButtonStatus();
 //            this.btnRefresh.setVisibility(View.VISIBLE);
@@ -263,25 +228,13 @@ public class JourneyActivity extends AppCompatActivity implements JourneyContrac
     public void setStationNames(String departureStationName, String arrivalStationName) {
         this.tvHeaderDepartureStation.setText(departureStationName);
         this.tvHeaderArrivalStation.setText(arrivalStationName);
-        this.iactDepartureStation.setText(departureStationName);
-        this.iactArrivalStation.setText(arrivalStationName);
+        this.tvDepartureStation.setText(departureStationName);
+        this.tvArrivalStation.setText(arrivalStationName);
     }
 
     @Override
     public void setTime(String time) {
         tvDepartureTime.setText(time);
-    }
-
-    @Override
-    public void showDepartureStationNameError(String error) {
-        this.tilDepartureStationInputLayout.setError(error);
-        Log.d(error);
-    }
-
-    @Override
-    public void showArrivalStationNameError(String error) {
-        this.tilArrivalStationInputLayout.setError(error);
-        Log.d(error);
     }
 
     @Override
@@ -338,28 +291,35 @@ public class JourneyActivity extends AppCompatActivity implements JourneyContrac
         snackbar.show();
     }
 
+    private void onStationNameTextViewClick(TextView tv, int code) {
+       tv.setOnClickListener(view -> {
+            Intent myIntent = new Intent(JourneyActivity.this, StationSearchActivity.class);
+            JourneyActivity.this.startActivityForResult(myIntent, code);
+        });
+    }
+
     /**
      * This interacepts a touch outside of a textview and hides the keyboard after it happens.
      *
      * @param event
      * @return
      */
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent event) {
-        if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            View v = getCurrentFocus();
-            if (v instanceof EditText) {
-                Rect outRect = new Rect();
-                v.getGlobalVisibleRect(outRect);
-                if (!outRect.contains((int) event.getRawX(), (int) event.getRawY())) {
-                    v.clearFocus();
-                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-                }
-            }
-        }
-        return super.dispatchTouchEvent(event);
-    }
+//    @Override
+//    public boolean dispatchTouchEvent(MotionEvent event) {
+//        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+//            View v = getCurrentFocus();
+//            if (v instanceof EditText) {
+//                Rect outRect = new Rect();
+//                v.getGlobalVisibleRect(outRect);
+//                if (!outRect.contains((int) event.getRawX(), (int) event.getRawY())) {
+//                    v.clearFocus();
+//                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+//                    imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+//                }
+//            }
+//        }
+//        return super.dispatchTouchEvent(event);
+//    }
 
 
     /**
@@ -380,7 +340,7 @@ public class JourneyActivity extends AppCompatActivity implements JourneyContrac
      * @param v
      */
     private void performSearch(View v) {
-        presenter.onSearchButtonClick(iactDepartureStation.getText().toString(), iactArrivalStation.getText().toString());
+        presenter.onSearchButtonClick(tvDepartureStation.getText().toString(), tvArrivalStation.getText().toString());
     }
 
     /**
@@ -388,168 +348,26 @@ public class JourneyActivity extends AppCompatActivity implements JourneyContrac
      *
      * @param editText
      */
-    private void hideSoftKeyboard(EditText editText) {
-        if (JourneyActivity.this.getCurrentFocus() != null && (JourneyActivity.this).getCurrentFocus() instanceof EditText) {
-            InputMethodManager imm = (InputMethodManager) JourneyActivity.this.getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
-        }
-    }
+//    private void hideSoftKeyboard(EditText editText) {
+//        if (JourneyActivity.this.getCurrentFocus() != null && (JourneyActivity.this).getCurrentFocus() instanceof EditText) {
+//            InputMethodManager imm = (InputMethodManager) JourneyActivity.this.getSystemService(Context.INPUT_METHOD_SERVICE);
+//            imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
+//        }
+//    }
 
     /**
      * Detect if should substitute ENTER key in soft keyboard with SEARCH key
      *
      * @param editText
      */
-    private void setOnEditorAction(EditText editText) {
-        editText.setOnEditorActionListener((textView, i, keyEvent) -> {
-            boolean handled = false;
-            if (i == EditorInfo.IME_ACTION_SEARCH) {
-                performSearch(textView);
-                handled = true;
-            }
-            return handled;
-        });
-    }
-
-    /**
-     * Text watcher for any autocomplete textview (hide and shows clear button)
-     *
-     * @param v
-     * @return
-     */
-    private TextWatcher setTextWatcher(Button v) {
-        return new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                if (charSequence.length() == 0) {
-                    v.setVisibility(View.GONE);
-                } else {
-                    v.setVisibility(View.VISIBLE);
-                }
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-
-            }
-        };
-    }
-
-    /**
-     * Clear the passed field and dismissed dropdown
-     *
-     * @param v
-     */
-    private void clearFields(InstantAutoCompleteTextView v) {
-        v.setText("");
-        v.dismissDropDown();
-    }
-
-    /**
-     * Switches AutocompleteTextView when an item of the autocomplete text view is pressed
-     *
-     * @param focusedView
-     * @param unfocusedView
-     */
-    private void onAutocompleteItemClick(@NonNull InstantAutoCompleteTextView focusedView, @NonNull InstantAutoCompleteTextView unfocusedView) {
-        if (unfocusedView.getText().toString().equals("")) {
-            unfocusedView.requestFocus();
-            unfocusedView.showDropDown();
-        } else {
-            hideSoftKeyboard(focusedView);
-        }
-    }
-
-    /**
-     * Toggles the error off whenever the user begins writing again in a mispelled field
-     *
-     * @param textInputLayout
-     */
-    private void takeOffError(TextInputLayout textInputLayout) {
-        //noinspection ConstantConditions
-        textInputLayout.getEditText().addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                textInputLayout.setError("");
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-            }
-        });
-    }
-
-    /**
-     * Shows the popup even when nothing is written in it
-     *
-     * @param textView
-     */
-    private void setOnTouchListener(InstantAutoCompleteTextView textView) {
-        textView.setOnTouchListener((v2, event) -> {
-            if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                if (textView.getText().toString().equals("")) {
-                    if (!textView.isPopupShowing()) {
-                        textView.showDropDown();
-                    }
-                }
-            }
-            return false;
-        });
-    }
-
-
-    private class AutocompleteAdapter extends ArrayAdapter<String> implements Filterable {
-
-        List<String> stationNames;
-
-        public AutocompleteAdapter(Context context, InstantAutoCompleteTextView resource) {
-            super(context, R.layout.item_autucomplete_station, 0);
-            resource.setAdapter(this);
-        }
-
-        @Override
-        public int getCount() {
-            return stationNames == null ? 0 : stationNames.size();
-        }
-
-        @Override
-        public String getItem(int position) {
-            return stationNames == null ? null : stationNames.get(position);
-        }
-
-        @Override
-        public Filter getFilter() {
-            return new Filter() {
-                // runs in another thread, hence i cannot perform querying with realm here cause it's not allowed
-                @Override
-                protected FilterResults performFiltering(CharSequence constraint) {
-                    FilterResults filterResults = new FilterResults();
-                    filterResults.count = 1; // instead of 0 in order to avoid the list flickering
-                    return filterResults;
-                }
-
-                // querying the DB and retrieving the stations names
-                @Override
-                protected void publishResults(@NonNull CharSequence constraint, FilterResults results) {
-//                    if (results.count == 1) stationNames = presenter.getRecentStations();
-                    stationNames = presenter.searchStationName(constraint.toString());
-                    notifyDataSetChanged();
-                }
-            };
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            return super.getView(position, convertView, parent);
-        }
-    }
+//    private void setOnEditorAction(EditText editText) {
+//        editText.setOnEditorActionListener((textView, i, keyEvent) -> {
+//            boolean handled = false;
+//            if (i == EditorInfo.IME_ACTION_SEARCH) {
+//                performSearch(textView);
+//                handled = true;
+//            }
+//            return handled;
+//        });
+//    }
 }

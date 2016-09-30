@@ -154,7 +154,6 @@ public class JourneyPresenter implements JourneyContract.Presenter, JourneyContr
             departureStation = new PreferredStation(PresenterUtilities.getStationObject(departureStationName, stationList));
             departureFound = true;
         } else {
-            view.showDepartureStationNameError(departureStationName + " not found!");
             Log.d(arrivalStationName + " not found!");
         }
 
@@ -162,7 +161,6 @@ public class JourneyPresenter implements JourneyContract.Presenter, JourneyContr
             arrivalStation = new PreferredStation(PresenterUtilities.getStationObject(arrivalStationName, stationList));
             arrivalFound = true;
         } else {
-            view.showArrivalStationNameError(arrivalStationName + " not found!");
             Log.d(departureStationName + " not found!");
         }
 

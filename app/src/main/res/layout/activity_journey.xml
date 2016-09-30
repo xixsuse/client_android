@@ -145,113 +145,46 @@
 
 
                     <!-- Top Panel -->
-                    <RelativeLayout
-                        android:id="@+id/rl_station_search_panel"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content">
+                    <TextView
+                        android:id="@+id/tv_departure_station"
+                        android:layout_width="300dp"
+                        android:layout_height="40dp"
+                        android:text="Seleziona partenza"
+                        android:textSize="20dp"
+                        android:clickable="true"
+                        />
+
+                    <TextView
+                        android:id="@+id/tv_arrival_station"
+                        android:layout_width="300dp"
+                        android:layout_height="40dp"
+                        android:text="Seleziona arrivo"
+                        android:textSize="20dp"
+                        android:clickable="true"
+                        android:layout_below="@id/tv_departure_station"
+                        />
 
 
-                        <!-- Departure Station -->
-                        <FrameLayout
-                            android:id="@+id/fl_departure_station"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content">
+                    <ImageButton
+                        android:id="@+id/btn_swap_station_names"
+                        android:layout_width="@dimen/btn_swap_stations_side"
+                        android:layout_height="@dimen/btn_swap_stations_side"
 
-                            <android.support.design.widget.TextInputLayout
-                                android:id="@+id/til_departure_station"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content">
+                        android:layout_toEndOf="@id/tv_arrival_station"
 
-                                <com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.InstantAutoCompleteTextView
-                                    android:id="@+id/iatv_departure_station"
-                                    android:layout_width="@dimen/iatv_station_width"
-                                    android:layout_height="wrap_content"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:backgroundTint="@android:color/transparent"
 
-                                    android:completionThreshold="1"
-                                    android:dropDownWidth="@dimen/iatv_station_width"
-                                    android:hint="@string/hint_departure"
-                                    android:imeOptions="actionNext"
-                                    android:inputType="textCapSentences|textNoSuggestions"
-                                    android:singleLine="true"/>
-                            </android.support.design.widget.TextInputLayout>
-
-                            <Button
-                                android:id="@+id/btn_clear_departure_station"
-                                android:layout_width="@dimen/btn_clear_tf_side"
-                                android:layout_height="@dimen/btn_clear_tf_side"
-                                android:layout_gravity="end|center_vertical"
-                                android:layout_marginBottom="@dimen/btn_clear_station_tf_margin"
-                                android:layout_marginEnd="@dimen/btn_clear_station_tf_margin"
-                                android:background="@drawable/ic_clear_tf"
-                                android:visibility="gone"/>
-                        </FrameLayout>
-
-
-                        <!-- Arrival Station -->
-                        <FrameLayout
-                            android:id="@+id/fl_arrival_station"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-
-                            android:layout_below="@id/fl_departure_station">
-
-                            <android.support.design.widget.TextInputLayout
-                                android:id="@+id/til_arrival_station"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content">
-
-                                <com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.InstantAutoCompleteTextView
-                                    android:id="@+id/iatv_arrival_station"
-                                    android:layout_width="@dimen/iatv_station_width"
-                                    android:layout_height="wrap_content"
-                                    android:completionThreshold="1"
-                                    android:dropDownHeight="match_parent"
-                                    android:dropDownWidth="@dimen/iatv_station_width"
-                                    android:hint="@string/hint_arrival"
-                                    android:imeOptions="actionSearch"
-                                    android:inputType="textCapSentences|textNoSuggestions"
-                                    android:singleLine="true"/>
-
-                            </android.support.design.widget.TextInputLayout>
-
-                            <Button
-                                android:id="@+id/btn_clear_arrival_station"
-                                android:layout_width="@dimen/btn_clear_tf_side"
-                                android:layout_height="@dimen/btn_clear_tf_side"
-                                android:layout_gravity="end|center_vertical"
-                                android:layout_marginBottom="@dimen/btn_clear_station_tf_margin"
-                                android:layout_marginEnd="@dimen/btn_clear_station_tf_margin"
-                                android:background="@drawable/ic_clear_tf"
-                                android:visibility="gone"/>
-
-                        </FrameLayout>
-
-
-                        <!-- Swap stations button -->
-                        <ImageButton
-                            android:id="@+id/btn_swap_station_names"
-                            android:layout_width="@dimen/btn_swap_stations_side"
-                            android:layout_height="@dimen/btn_swap_stations_side"
-
-                            android:layout_centerInParent="true"
-                            android:layout_marginStart="30dp"
-                            android:layout_toEndOf="@id/fl_departure_station"
-
-                            android:background="?attr/selectableItemBackgroundBorderless"
-                            android:backgroundTint="@android:color/transparent"
-
-                            android:clickable="true"
-                            android:padding="10dp"
-                            android:src="@drawable/ic_swap_vert"/>
-
-                    </RelativeLayout>
+                        android:clickable="true"
+                        android:padding="10dp"
+                        android:src="@drawable/ic_swap_vert"/>
 
 
                     <!-- Hour picker container -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_below="@id/rl_station_search_panel"
+                        android:layout_below="@id/tv_arrival_station"
                         android:orientation="vertical">
 
                         <!-- Title -->
