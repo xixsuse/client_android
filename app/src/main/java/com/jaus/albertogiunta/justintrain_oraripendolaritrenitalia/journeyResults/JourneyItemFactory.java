@@ -1,4 +1,4 @@
-package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeys;
+package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeyResults;
 
 import android.content.Context;
 import android.support.v4.content.ContextCompat;
@@ -23,18 +23,21 @@ public class JourneyItemFactory {
     private static final boolean OFF = false;
 
     private static JourneyItemFactory self = null;
-    private static Context context;
+    private Context context;
 
 
     private JourneyItemFactory() {
     }
 
-    public static synchronized JourneyItemFactory getInstance(Context c) {
+    public static synchronized JourneyItemFactory getInstance() {
         if (self == null) {
             self = new JourneyItemFactory();
         }
-        context = c;
         return self;
+    }
+
+    public void setContext(Context context) {
+        this.context = context;
     }
 
     /**
@@ -44,9 +47,9 @@ public class JourneyItemFactory {
      * @param journeyHolder it's the holder of the main solution view
      * @param s it's the main solution data model
      */
-    public void toggleHolder(List<View> listView, JourneySolutionsAdapter.JourneyHolder journeyHolder, SolutionList.Solution s) {
+    public void toggleHolder(List<View> listView, JourneyResultsAdapter.JourneyHolder journeyHolder, SolutionList.Solution s) {
 
-        JourneySolutionsAdapter.ChangeHolder jh = journeyHolder.holder;
+        JourneyResultsAdapter.ChangeHolder jh = journeyHolder.holder;
 
         jh.llChanges.removeAllViews(); // needed to avoid "view has already parent exception"
 
@@ -68,7 +71,7 @@ public class JourneyItemFactory {
                 View v = listView.get(i);
 
                 // create a new holder for this view
-                JourneySolutionsAdapter.ChangeHolder ch = new JourneySolutionsAdapter.ChangeHolder(v);
+                JourneyResultsAdapter.ChangeHolder ch = new JourneyResultsAdapter.ChangeHolder(v);
 
                 toggleAlways(ch, s.changes.changesList.get(i));
                 if (s.changes.changesList.get(i).timeDifference != null) {
@@ -90,7 +93,7 @@ public class JourneyItemFactory {
     }
 
 
-    private void toggleAlways(JourneySolutionsAdapter.ChangeHolder holder, SolutionList.Solution.Change solution) {
+    private void toggleAlways(JourneyResultsAdapter.ChangeHolder holder, SolutionList.Solution.Change solution) {
         // always
         setText(holder.tvDepartureTime, solution.departureTimeReadable);
         setText(holder.tvArrivalTime, solution.arrivalTimeReadable);
@@ -98,7 +101,7 @@ public class JourneyItemFactory {
     }
 
 
-    private void withTimeDifference(JourneySolutionsAdapter.ChangeHolder holder, SolutionList.Solution.Change solution) {
+    private void withTimeDifference(JourneyResultsAdapter.ChangeHolder holder, SolutionList.Solution.Change solution) {
         // show time difference
         // hide refresh
         setVisibility(holder.rlTimeDifference, ON);
@@ -127,7 +130,7 @@ public class JourneyItemFactory {
     }
 
 
-    private void withoutTimeDifference(JourneySolutionsAdapter.ChangeHolder jh) {
+    private void withoutTimeDifference(JourneyResultsAdapter.ChangeHolder jh) {
         // show refresh
         // hide time difference
         setVisibility(jh.btnRefresh, ON);
@@ -144,7 +147,7 @@ public class JourneyItemFactory {
         setVisibility(jh.btnPin, OFF);
     }
 
-    private void withChanges(JourneySolutionsAdapter.ChangeHolder jh, SolutionList.Solution s) {
+    private void withChanges(JourneyResultsAdapter.ChangeHolder jh, SolutionList.Solution s) {
         // show changes nubmer
         // hide train category
         setVisibility(jh.llChangesNumber, ON);
@@ -166,7 +169,7 @@ public class JourneyItemFactory {
 
     }
 
-    private void withoutChanges(JourneySolutionsAdapter.ChangeHolder jh, SolutionList.Solution.Change s) {
+    private void withoutChanges(JourneyResultsAdapter.ChangeHolder jh, SolutionList.Solution.Change s) {
         // show train category
         // hide changes number
         setVisibility(jh.tvTrainCategory, ON);
@@ -180,7 +183,7 @@ public class JourneyItemFactory {
 //        setVisibility(jh.llChanges, OFF);
     }
 
-    private void setChangeInfo(JourneySolutionsAdapter.ChangeHolder jh, SolutionList.Solution.Change s) {
+    private void setChangeInfo(JourneyResultsAdapter.ChangeHolder jh, SolutionList.Solution.Change s) {
         setVisibility(jh.hsvDepartureStationName, ON);
         setVisibility(jh.hsvArrivalStationName, ON);
 
@@ -243,7 +246,7 @@ public class JourneyItemFactory {
                         .plusMinutes(timeDifference));
     }
 
-    private static void setColors(Context context, JourneySolutionsAdapter.ChangeHolder h, int timeDifference) {
+    private static void setColors(Context context, JourneyResultsAdapter.ChangeHolder h, int timeDifference) {
         int color = ContextCompat.getColor(context, R.color.textLight);
         if (timeDifference == 0) {
             color = ContextCompat.getColor(context, R.color.ontime);

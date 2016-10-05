@@ -12,34 +12,33 @@ import android.support.v7.widget.Toolbar;
 import com.google.gson.Gson;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.R;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.PreferredJourney;
-import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeys.JourneyActivity;
-import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeys.JourneyContract;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeyResults.JourneyResultsActivity;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeySearch.JourneySearchActivity;
 
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import co.dift.ui.SwipeToAction;
 import trikita.log.Log;
 
-import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeys.JourneyActivity.JOURNEY_PARAM;
-import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeys.JourneyActivity.SEARCH_PANEL_STATUS_PARAM;
+import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_C.I_STATIONS;
 
 public class MainActivity extends AppCompatActivity implements FavouritesContract.View {
 
     FavouritesContract.Presenter presenter;
-    RecyclerView rvFavouriteJourneys;
+    @BindView(R.id.rv_favourite_journeys) RecyclerView rvFavouriteJourneys;
+    @BindView(R.id.toolbar) Toolbar toolbar;
     FavouriteJourneysAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
 
         presenter = new FavouritesPresenter(this);
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        rvFavouriteJourneys = (RecyclerView) findViewById(R.id.rv_favourite_journeys);
         adapter = new FavouriteJourneysAdapter(presenter.getPreferredJourneys());
         rvFavouriteJourneys.setAdapter(adapter);
         rvFavouriteJourneys.setHasFixedSize(true);
@@ -48,7 +47,7 @@ public class MainActivity extends AppCompatActivity implements FavouritesContrac
         SwipeToAction swipeToAction = new SwipeToAction(rvFavouriteJourneys, new SwipeToAction.SwipeListener<PreferredJourney>() {
             @Override
             public boolean swipeLeft(PreferredJourney itemData) {
-                Intent myIntent = new Intent(MainActivity.this, JourneyActivity.class);
+                Intent myIntent = new Intent(MainActivity.this, JourneyResultsActivity.class);
                 myIntent.putExtras(getBundle(itemData.swapStations()));
                 MainActivity.this.startActivity(myIntent);
                 return true;
@@ -56,7 +55,7 @@ public class MainActivity extends AppCompatActivity implements FavouritesContrac
 
             @Override
             public boolean swipeRight(PreferredJourney itemData) {
-                Intent myIntent = new Intent(MainActivity.this, JourneyActivity.class);
+                Intent myIntent = new Intent(MainActivity.this, JourneyResultsActivity.class);
                 myIntent.putExtras(getBundle(itemData));
                 MainActivity.this.startActivity(myIntent);
                 return true;
@@ -75,7 +74,7 @@ public class MainActivity extends AppCompatActivity implements FavouritesContrac
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab_search);
         fab.setOnClickListener(view -> {
-            Intent myIntent = new Intent(MainActivity.this, JourneyActivity.class);
+            Intent myIntent = new Intent(MainActivity.this, JourneySearchActivity.class);
             MainActivity.this.startActivity(myIntent);
         });
     }
@@ -117,8 +116,7 @@ public class MainActivity extends AppCompatActivity implements FavouritesContrac
 
     private Bundle getBundle(PreferredJourney journey) {
         Bundle bundle = new Bundle();
-        bundle.putString(JOURNEY_PARAM, new Gson().toJson(journey));
-        bundle.putString(SEARCH_PANEL_STATUS_PARAM, JourneyContract.View.SEARCH_PANEL_STATUS.INACTIVE.toString());
+        bundle.putString(I_STATIONS, new Gson().toJson(journey));
         Log.d("Sending",bundle);
         return bundle;
     }

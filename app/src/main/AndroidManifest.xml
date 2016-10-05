@@ -15,7 +15,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:windowSoftInputMode="adjustPan|adjustResize">
-        <activity android:name=".journeys.JourneyActivity">
+        <activity android:name=".journeySearch.JourneySearchActivity">
+        </activity>
+        <activity android:name=".journeyResults.JourneyResultsActivity">
         </activity>
         <activity
             android:name=".favourites.MainActivity"
@@ -23,23 +25,31 @@
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
+
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".journeys.StationSearchActivity" android:launchMode="singleTop">
-            <!--<intent-filter>-->
-                <!--<action android:name="android.intent.action.SEARCH" />-->
-            <!--</intent-filter>-->
-            <!--<meta-data android:name="android.app.default_searchable"-->
-                       <!--android:value=".journeys.StationSearchActivity" />-->
-            <meta-data android:name="android.app.searchable"
-                       android:resource="@xml/searchable"/>
+        <activity
+            android:name=".journeySearch.StationSearchActivity"
+            android:launchMode="singleTop">
+
+            <!-- <intent-filter> -->
+            <!-- <action android:name="android.intent.action.SEARCH" /> -->
+            <!-- </intent-filter> -->
+            <!-- <meta-data android:name="android.app.default_searchable" -->
+            <!-- android:value=".journeys.StationSearchActivity" /> -->
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable"/>
         </activity>
 
         <service
             android:name=".notification.NotificationService"
             android:exported="false">
         </service>
+
+        <activity android:name=".journeyResults.JourneyResultsActivity">
+        </activity>
     </application>
 
 </manifest>

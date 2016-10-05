@@ -127,7 +127,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_toEndOf="@+id/ll_departure_schedule"
-                android:src="@drawable/ic_arrow_forward"
+                card_view:srcCompat="@drawable/ic_arrow_forward"
                 />
 
             <LinearLayout
@@ -221,7 +221,7 @@
             android:background="?attr/selectableItemBackgroundBorderless"
             android:padding="8dp"
             android:scaleX="-1"
-            android:src="@drawable/ic_refresh"
+            card_view:srcCompat="@drawable/ic_refresh"
             android:tint="?attr/colorButtonNormal"
             android:visibility="gone"/>
 
@@ -241,7 +241,7 @@
                     android:id="@+id/ic_clock"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/ic_clock"
+                    card_view:srcCompat="@drawable/ic_clock"
                     />
 
                 <TextView
@@ -280,7 +280,7 @@
                     android:id="@+id/ic_platform"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/ic_platform"
+                    card_view:srcCompat="@drawable/ic_platform"
                     />
 
                 <TextView
@@ -318,7 +318,7 @@
             android:background="?attr/selectableItemBackgroundBorderless"
             android:paddingEnd="@dimen/basic_horizontal_margin"
             android:paddingStart="@dimen/basic_horizontal_margin"
-            android:src="@drawable/ic_pin"
+            card_view:srcCompat="@drawable/ic_pin"
             android:tint="@color/colorPrimaryDark"
             android:visibility="gone"
             />
@@ -332,7 +332,7 @@
             android:layout_marginBottom="-8dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:padding="8dp"
-            android:src="@drawable/ic_expand_more"
+            card_view:srcCompat="@drawable/ic_expand_more"
             android:visibility="gone"
             />
 

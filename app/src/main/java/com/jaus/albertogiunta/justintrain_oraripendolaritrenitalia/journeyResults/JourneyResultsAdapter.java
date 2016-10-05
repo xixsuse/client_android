@@ -1,4 +1,4 @@
-package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeys;
+package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeyResults;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -22,18 +22,19 @@ import trikita.log.Log;
 /**
  * Created by albertogiunta on 17/06/16.
  */
-public class JourneySolutionsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class JourneyResultsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    Context context;
-    JourneyItemFactory factory;
-    public List<SolutionList.Solution> solutionList;
-    JourneyContract.Presenter presenter;
+    private Context context;
+    private JourneyItemFactory factory;
+    private List<SolutionList.Solution> solutionList;
+    private JourneyResultsContract.Presenter presenter;
 
-    public JourneySolutionsAdapter(Context context, JourneyContract.Presenter presenter) {
+    public JourneyResultsAdapter(Context context, JourneyResultsContract.Presenter presenter) {
         this.context = context;
         this.presenter = presenter;
         this.solutionList = presenter.getSolutionList();
-        factory = JourneyItemFactory.getInstance(context);
+        factory = JourneyItemFactory.getInstance();
+        factory.setContext(context);
     }
 
     @Override

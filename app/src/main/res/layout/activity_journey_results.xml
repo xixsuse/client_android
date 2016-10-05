@@ -1,0 +1,180 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context=".journeySearch.JourneySearchActivity">
+
+    <!--<FrameLayout-->
+        <!--android:id="@+id/placeholder_journey_search"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:elevation="1dp">-->
+    <!--</FrameLayout>-->
+
+    <!--<FrameLayout-->
+        <!--android:id="@+id/placeholder_journey_solutions"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_marginTop="-30dp">-->
+    <!--</FrameLayout>-->
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/cv_header_1"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/thin_card_height"
+        android:layout_marginTop="3dp"
+        android:layout_marginBottom="30dp"
+        android:background="?android:attr/selectableItemBackground"
+        android:clickable="true"
+        android:elevation="@dimen/basic_card_elevation"
+        android:visibility="visible"
+        >
+
+        <RelativeLayout
+            android:id="@+id/rl_header_2"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <RelativeLayout
+                android:id="@+id/rl_station_names"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="120dp"
+                android:layout_marginStart="@dimen/basic_horizontal_margin">
+
+                <TextView
+                    android:id="@+id/tv_departure_station_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:text=""
+                    android:textSize="@dimen/fs_small_text"/>
+
+                <TextView
+                    android:id="@+id/tv_arrival_station_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tv_departure_station_name"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginStart="30dp"
+                    android:layout_marginTop="10dp"
+                    android:text=""
+                    android:textSize="@dimen/fs_small_text"/>
+
+            </RelativeLayout>
+
+            <ImageButton
+                android:id="@+id/btn_header_swap_station_names"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:layout_toStartOf="@+id/btn_toggle_favourite"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:backgroundTint="@android:color/transparent"
+                android:clickable="true"
+                app:srcCompat="@drawable/ic_swap_vert"
+
+                />
+
+            <ImageButton
+                android:id="@+id/btn_toggle_favourite"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="@dimen/basic_horizontal_margin"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:backgroundTint="@android:color/transparent"
+                android:clickable="true"
+                app:srcCompat="@drawable/ic_star_border"
+                />
+
+        </RelativeLayout>
+
+    </android.support.v7.widget.CardView>
+
+    <ProgressBar
+        android:visibility="gone"
+        android:id="@+id/loading_spinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminateTintMode="src_atop"
+        android:indeterminateTint="@color/colorPrimaryDark"
+        android:layout_gravity="center" />
+
+    <RelativeLayout
+        android:visibility="gone"
+        android:id="@+id/rl_empty_journey_box"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="-30dp"
+        android:layout_marginBottom="-6dp"
+        >
+
+        <TextView
+            android:id="@+id/tv_no_solutions_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Apparentemente non ci sono tratte di collegamento tra le stazioni inserite"
+            android:textStyle="italic"
+            android:layout_centerInParent="true"
+            android:textSize="18dp"
+            android:gravity="center"
+            android:padding="20dp"
+            />
+
+        <Button
+            android:id="@+id/btn_change_stations"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cambia stazioni!"
+            android:backgroundTint="@color/colorPrimaryDark"
+            android:textColor="@color/colorPrimary"
+            android:layout_below="@id/tv_no_solutions_message"
+            android:layout_centerHorizontal="true"
+            />
+
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:visibility="visible"
+        android:id="@+id/rl_journey_solutions"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:elevation="0dp"
+        android:clickable="true"
+        android:layout_marginTop="-30dp"
+        android:layout_marginBottom="-6dp">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_journey_solutions"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="@dimen/thin_card_height"
+            />
+
+        <ImageButton
+            android:id="@+id/btn_refresh"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/thin_card_height"
+            android:layout_marginEnd="-5dp"
+            android:layout_marginStart="-4dp"
+            android:layout_alignParentBottom="true"
+            android:clickable="true"
+            app:srcCompat="@drawable/ic_refresh"
+            android:backgroundTint="@color/colorPrimaryDark"
+            android:scaleX="-1"
+            android:elevation="4dp"
+            android:translationZ="5dp"
+            android:visibility="visible"
+            />
+    </RelativeLayout>
+
+</LinearLayout>

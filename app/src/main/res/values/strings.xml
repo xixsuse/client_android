@@ -18,4 +18,7 @@
 
     <string name="action_refresh">Aggiorna</string>
     <string name="action_end">Termina</string>
+    <string name="hint_select">Seleziona</string>
+    <string name="hint_time">Ora</string>
+    <string name="hint_date">Data</string>
 </resources>

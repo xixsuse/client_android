@@ -31,11 +31,11 @@ public class FavouritesPresenter implements FavouritesContract.Presenter {
 
     @Override
     public void onResuming(Bundle bundle) {
-        if (bundle != null) {
-            // no intent expected at this time, therefore this shouldn't happen
-        } else {
-            updatePreferredJourneys();
-        }
+        updatePreferredJourneys();
+//        if (bundle != null) {
+//            // no intent expected at this time, therefore this shouldn't happen
+//        } else {
+//        }
     }
 
     @Override

@@ -2,6 +2,8 @@ package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia;
 
 import android.app.Application;
 
+import net.danlew.android.joda.JodaTimeAndroid;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -26,7 +28,7 @@ public class MyApplication extends Application {
     public void onCreate() {
         super.onCreate();
         context = this;
-//        JodaTimeAndroid.init(this);
+        JodaTimeAndroid.init(this);
 
         copyBundledRealmFile(this.getResources().openRawResource(R.raw.station), Realm.DEFAULT_REALM_NAME);
         RealmConfiguration config = new RealmConfiguration.Builder(this)

@@ -1,4 +1,4 @@
-package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeys;
+package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeySearch;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;

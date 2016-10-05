@@ -1,20 +1,20 @@
-package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeys;
+package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeyResults;
 
 import android.content.Context;
 
-import com.google.gson.annotations.SerializedName;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.BasePresenter;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.BaseView;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.SolutionList;
 
 import java.util.List;
 
-public interface JourneyContract {
+/**
+ * Created by albertogiunta on 01/10/16.
+ */
+
+public interface JourneyResultsContract {
 
     interface Presenter extends BasePresenter {
-
-        // SEARCH
-        // TODO put the HOUR constant here?
 
         /**
          * It triggers an action when the user clicks on the "star" icon button.
@@ -29,41 +29,6 @@ public interface JourneyContract {
          * it will set the button status depending on that.
          */
         void setFavouriteButtonStatus();
-
-        /**
-         * It triggers an action when the user clicks on the "search" button.
-         * It will check for correspondance of the inserted stations, and if everything's alright
-         * it will fire the search. Otherwise it will notify the user with an error message.
-         * @param departureStationName name for the departure station
-         * @param arrivalStationName name for the arrival station
-         */
-        void onSearchButtonClick(String departureStationName, String arrivalStationName);
-        // TODO check if names are the same what to do
-
-        /**
-         * Acts as a listener for time changes. It's triggere by the user clicks on the time buttons
-         * and it will set the time in the view depending on the button that has been pressed.
-         * @param delta the number of hours to increment or decrement from the previous value
-         *              (The starting value is the current hour)
-         */
-        void onTimeChanged(int delta);
-
-        /**
-         * Called every time there's a change in the Autocomplete Text Views.
-         * @param stationName name (can be also partial) to be searched (case-insensitive)
-         * @return a list of matching station names
-         */
-        List<String> searchStationName(String stationName);
-
-
-        /**
-         * Swaps the Preferred Station objects inside of the presenter. Called on the swap button
-         * placed in the Search Panel in INACTIVE mode (only the header is visible).
-         * It will swap the objects and the actual names (in both panel modes)
-         */
-        void onSwapButtonClick();
-
-        // RESULTS
 
         /**
          * Called when the Load More (Before) button is clicked. It will search for another set of
@@ -101,71 +66,17 @@ public interface JourneyContract {
          * @return the current solution list
          */
         List<SolutionList.Solution> getSolutionList();
+
     }
 
     interface View extends BaseView {
-
-        enum SEARCH_PANEL_STATUS {
-            @SerializedName("ACTIVE")
-            ACTIVE,
-            @SerializedName("INACTIVE")
-            INACTIVE
-        }
-
         /**
          * Getter for the View Context (needed by the presenter in order to do stuff with
          * Shared Preferences)
+         *
          * @return the current view's context (getApplicationContext())
          */
         Context getViewContext();
-
-        // SEARCH
-
-        /**
-         * When called it will set the panel as Active (insert mode) or Inactive (Result mode)
-         * @param status the status to be set
-         */
-        void setJourneySearchFragmentViewStatus(SEARCH_PANEL_STATUS status);
-
-        /**
-         * Used by the presenter in order to know the state of the activity (search panel related)
-         * @return the current activity's state
-         */
-        SEARCH_PANEL_STATUS getJourneySearchFragmentViewStatus();
-
-
-        void setStationNames(String departureStationName, String arrivalStationName);
-
-        /**
-         * Callend whenever there's the need to set the time (on start up of the activity or after
-         * a change done by the user)
-         * @param time the already formatted string (hh:mm) to be set
-         */
-        void setTime(String time);
-
-        /**
-         * Called when everything goes right after the click on the search button.
-         */
-        void onValidSearchParameters();
-
-        /**
-         * Called when something bad happens after the click on the search button.
-         * Errors can be:
-         * - No results found
-         * - Server error
-         * - Client error
-         * - Generic error
-         */
-        void onInvalidSearchParameters();
-
-        /**
-         * Sets the status of the favourite button depending on if the current journey is favourite
-         * or not
-         * @param isPreferred the status to be set
-         */
-        void setFavouriteButtonStatus(boolean isPreferred);
-
-        // RESULTS
 
         /**
          * Hides everything and shows a loader
@@ -186,6 +97,16 @@ public interface JourneyContract {
         void updateSolution(int elementIndex);
 
 //        void showOfflineWithMessage(String message);
+
+        /**
+         * Sets the status of the favourite button depending on if the current journey is favourite
+         * or not
+         *
+         * @param isPreferred the status to be set
+         */
+        void setFavouriteButtonStatus(boolean isPreferred);
+
+        void setStationNames(String departure, String arrival);
 
         /**
          * Shows an error
@@ -238,5 +159,4 @@ public interface JourneyContract {
                                OnJourneySearchFinishedListener listener);
         }
     }
-
 }

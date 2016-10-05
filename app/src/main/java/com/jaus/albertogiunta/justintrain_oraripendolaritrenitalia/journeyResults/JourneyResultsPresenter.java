@@ -1,65 +1,57 @@
-package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeys;
+package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeyResults;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 
-import com.annimon.stream.Collectors;
-import com.annimon.stream.Stream;
 import com.google.gson.Gson;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.BaseView;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.JourneyWithDelay;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.PreferredJourney;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.PreferredStation;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.SolutionList;
-import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.Station4Database;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeyResults.JourneyResultsContract.View.JourneySearchStrategy.OnJourneySearchFinishedListener;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeySearch.PresenterUtilities;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.networking.JourneyService;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.networking.ServiceFactory;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.notification.NotificationService;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.PreferredStationsHelper;
 
 import org.joda.time.DateTime;
-import org.joda.time.LocalDateTime;
 
 import java.util.LinkedList;
 import java.util.List;
 
-import io.realm.Case;
-import io.realm.Realm;
-import io.realm.RealmResults;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import trikita.log.Log;
 
-import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeys.JourneyActivity.JOURNEY_PARAM;
-import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeys.JourneyActivity.SEARCH_PANEL_STATUS_PARAM;
-import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeys.JourneyContract.View.SEARCH_PANEL_STATUS.ACTIVE;
+import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_C.I_STATIONS;
+import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_C.I_TIME;
 
-public class JourneyPresenter implements JourneyContract.Presenter, JourneyContract.View.JourneySearchStrategy.OnJourneySearchFinishedListener {
 
-    private static final int HOUR = LocalDateTime.now().plusHours(2).getHourOfDay();
+public class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJourneySearchFinishedListener {
 
-    private JourneyContract.View view;
-    private RealmResults<Station4Database> stationList;
+    private JourneyResultsContract.View view;
 
     private static List<SolutionList.Solution> journeySolutions;
 
     private PreferredStation departureStation;
     private PreferredStation arrivalStation;
-    private int hour;
+    private DateTime dateTime;
 
-    public JourneyPresenter(JourneyContract.View view) {
+
+    public JourneyResultsPresenter(JourneyResultsContract.View view) {
         this.view = view;
-        this.stationList = Realm.getDefaultInstance().where(Station4Database.class).findAll();
         journeySolutions = new LinkedList<>();
-        this.hour = HOUR;
+        this.dateTime = DateTime.now().plusHours(2);
     }
 
     @Override
     public void subscribe(BaseView baseView) {
-        view = (JourneyContract.View) baseView;
+        view = (JourneyResultsContract.View) baseView;
     }
 
     @Override
@@ -68,28 +60,27 @@ public class JourneyPresenter implements JourneyContract.Presenter, JourneyContr
     }
 
     @Override
-    public void onLeaving(Bundle bundle) {
-        // Save value of member in saved state
-        bundle.putString(JOURNEY_PARAM, new Gson().toJson(new PreferredJourney(departureStation, arrivalStation)));
-        bundle.putString(SEARCH_PANEL_STATUS_PARAM, new Gson().toJson(view.getJourneySearchFragmentViewStatus()));
-    }
-
-    @Override
     public void onResuming(Bundle bundle) {
         if (bundle != null) {
             // Restore value of members from saved state
-            PreferredJourney journey = new Gson().fromJson(bundle.getString(JOURNEY_PARAM), PreferredJourney.class);
-            this.departureStation = journey.getStation1();
-            this.arrivalStation = journey.getStation2();
-
-            view.setJourneySearchFragmentViewStatus(new Gson()
-                    .fromJson(bundle.getString(SEARCH_PANEL_STATUS_PARAM, ACTIVE.toString()), JourneyContract.View.SEARCH_PANEL_STATUS.class));
-
-            searchFromIntent();
-            view.setStationNames(departureStation.getName(), arrivalStation.getName());
+            if (bundle.getString(I_STATIONS) != null) {
+                PreferredJourney journey = new Gson().fromJson(bundle.getString(I_STATIONS), PreferredJourney.class);
+                this.departureStation = journey.getStation1();
+                this.arrivalStation = journey.getStation2();
+                this.dateTime = new DateTime(bundle.getLong(I_TIME, DateTime.now().getMillis()));
+                Log.d(dateTime);
+                view.setStationNames(departureStation.getName(), arrivalStation.getName());
+                setFavouriteButtonStatus();
+                searchFromSearch();
+            }
         } else {
             // Probably initialize members with default values for a new instance
         }
+    }
+
+    @Override
+    public void onLeaving(Bundle bundle) {
+        bundle.putString(I_STATIONS, new Gson().toJson(new PreferredJourney(departureStation, arrivalStation)));
     }
 
     @Override
@@ -98,76 +89,6 @@ public class JourneyPresenter implements JourneyContract.Presenter, JourneyContr
             view.setFavouriteButtonStatus(true);
         } else {
             view.setFavouriteButtonStatus(false);
-        }
-    }
-
-    @Override
-    public void onFavouriteButtonClick() {
-        if (PresenterUtilities.isThisJourneyPreferred(departureStation, arrivalStation, view.getViewContext())) {
-            PreferredStationsHelper.removePreferredJourney(view.getViewContext(),
-                    departureStation,
-                    arrivalStation);
-            setFavouriteButtonStatus();
-        } else {
-            PreferredStationsHelper.setPreferredJourney(view.getViewContext(),
-                    new PreferredJourney(departureStation, arrivalStation));
-            setFavouriteButtonStatus();
-        }
-    }
-
-    @Override
-    public void onTimeChanged(int delta) {
-        hour += delta;
-        if (delta != 0) {
-            if (hour < 0) {
-                hour = 23;
-            } else if (hour > 24) {
-                hour = 1;
-            }
-        }
-        view.setTime((hour < 10 ? "0" + hour : Integer.toString(hour)).concat(":00"));
-    }
-
-    @Override
-    public List<String> searchStationName(String stationName) {
-        return Stream
-                .of(stationList.where().beginsWith("name", stationName, Case.INSENSITIVE).findAll())
-                .map(Station4Database::getName).collect(Collectors.toList());
-    }
-
-    @Override
-    public void onSwapButtonClick() {
-        if (departureStation != null && arrivalStation != null) {
-            PreferredStation temp = departureStation;
-            departureStation = arrivalStation;
-            arrivalStation = temp;
-            view.setStationNames(departureStation.getName(), arrivalStation.getName());
-        }
-    }
-
-    @Override
-    public void onSearchButtonClick(String departureStationName, String arrivalStationName) {
-        boolean departureFound = false;
-        boolean arrivalFound = false;
-
-        if (PresenterUtilities.isStationNameValid(departureStationName, stationList)) {
-            departureStation = new PreferredStation(PresenterUtilities.getStationObject(departureStationName, stationList));
-            departureFound = true;
-        } else {
-            Log.d(arrivalStationName + " not found!");
-        }
-
-        if (PresenterUtilities.isStationNameValid(arrivalStationName, stationList)) {
-            arrivalStation = new PreferredStation(PresenterUtilities.getStationObject(arrivalStationName, stationList));
-            arrivalFound = true;
-        } else {
-            Log.d(departureStationName + " not found!");
-        }
-
-        if (departureFound && arrivalFound) {
-            view.onValidSearchParameters();
-            journeySolutions.clear();
-            Log.d("Searching for: " + departureStation.toString(), arrivalStation.toString());
         }
     }
 
@@ -191,18 +112,33 @@ public class JourneyPresenter implements JourneyContract.Presenter, JourneyContr
     public void searchFromSearch() {
         view.showProgress();
         // TODO controlla connessione
-        if (PresenterUtilities.isInstant(hour, HOUR)) {
+        if (PresenterUtilities.isInstant(dateTime)) {
             Log.d("Instant Search");
             new SearchInstantlyStrategy().searchJourney(departureStation.getStationShortId(),
                     arrivalStation.getStationShortId(),
                     0, true, true, this);
         } else {
-            Log.d("NON Instant Search");
+            Log.d("NON Instant Search", dateTime);
+            // aggiungo due ore ma non so bene perchè
             new SearchAfterTimeStrategy().searchJourney(departureStation.getStationShortId(),
                     arrivalStation.getStationShortId(),
-                    DateTime.now().withHourOfDay(hour).toInstant().getMillis() / 1000, true, true, this);
+                    dateTime.plusHours(2).getMillis() / 1000, true, true, this);
         }
-        view.setStationNames(departureStation.getName(), arrivalStation.getName());
+//        view.setStationNames(departureStation.getName(), arrivalStation.getName());
+    }
+
+    @Override
+    public void onFavouriteButtonClick() {
+        if (PresenterUtilities.isThisJourneyPreferred(departureStation, arrivalStation, view.getViewContext())) {
+            PreferredStationsHelper.removePreferredJourney(view.getViewContext(),
+                    departureStation,
+                    arrivalStation);
+            setFavouriteButtonStatus();
+        } else {
+            PreferredStationsHelper.setPreferredJourney(view.getViewContext(),
+                    new PreferredJourney(departureStation, arrivalStation));
+            setFavouriteButtonStatus();
+        }
     }
 
     @Override
@@ -283,8 +219,7 @@ public class JourneyPresenter implements JourneyContract.Presenter, JourneyContr
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
-
-    public static class SearchInstantlyStrategy implements JourneyContract.View.JourneySearchStrategy {
+    public static class SearchInstantlyStrategy implements JourneyResultsContract.View.JourneySearchStrategy {
 
         @Override
         public void searchJourney(String departureStationId, String arrivalStationId, long timestamp, boolean isPreemptive, boolean withDelays, OnJourneySearchFinishedListener listener) {
@@ -318,7 +253,7 @@ public class JourneyPresenter implements JourneyContract.Presenter, JourneyContr
         }
     }
 
-    public static class SearchAfterTimeStrategy implements JourneyContract.View.JourneySearchStrategy {
+    public static class SearchAfterTimeStrategy implements JourneyResultsContract.View.JourneySearchStrategy {
 
         @Override
         public void searchJourney(String departureStationId, String arrivalStationId, long timestamp, boolean isPreemptive, boolean withDelays, OnJourneySearchFinishedListener listener) {
@@ -347,7 +282,7 @@ public class JourneyPresenter implements JourneyContract.Presenter, JourneyContr
         }
     }
 
-    public static class SearchBeforeTimeStrategy implements JourneyContract.View.JourneySearchStrategy {
+    public static class SearchBeforeTimeStrategy implements JourneyResultsContract.View.JourneySearchStrategy {
 
         @Override
         public void searchJourney(String departureStationId, String arrivalStationId, long timestamp, boolean isPreemptive, boolean withDelays, OnJourneySearchFinishedListener listener) {

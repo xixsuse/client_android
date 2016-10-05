@@ -1,10 +1,12 @@
-package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeys;
+package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeySearch;
 
 import android.content.Context;
 
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.PreferredStation;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.Station4Database;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.PreferredStationsHelper;
+
+import org.joda.time.DateTime;
 
 import io.realm.Case;
 import io.realm.RealmResults;
@@ -32,7 +34,8 @@ public class PresenterUtilities {
         return stationList.where().equalTo("name", stationName, Case.INSENSITIVE).findAll().get(0);
     }
 
-    public static boolean isInstant(int selectedHour, int originalHour) {
-        return selectedHour == originalHour;
+    public static boolean isInstant(DateTime selectedHour) {
+        return selectedHour.getHourOfDay() ==  DateTime.now().getHourOfDay() &&
+                selectedHour.getMinuteOfHour() == DateTime.now().getMinuteOfHour();
     }
 }

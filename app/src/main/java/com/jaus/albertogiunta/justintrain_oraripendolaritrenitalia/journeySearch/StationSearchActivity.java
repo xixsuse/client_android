@@ -1,4 +1,4 @@
-package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeys;
+package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeySearch;
 
 import android.app.SearchManager;
 import android.content.Context;
@@ -19,11 +19,13 @@ import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.Station
 import java.util.LinkedList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import trikita.log.Log;
 
 public class StationSearchActivity extends AppCompatActivity implements SearchedStationsAdapter.OnClickListener {
 
-    RecyclerView rvSearchedStations;
+    @BindView(R.id.rv_searched_stations) RecyclerView rvSearchedStations;
     SearchedStationsAdapter adapter;
     List<String> stationNames = new LinkedList<>(StationRealmUtils.getElement(""));
 
@@ -31,8 +33,7 @@ public class StationSearchActivity extends AppCompatActivity implements Searched
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_station_search);
-
-        rvSearchedStations = (RecyclerView) findViewById(R.id.rv_searched_stations);
+        ButterKnife.bind(this);
 
         adapter = new SearchedStationsAdapter(stationNames, this);
         rvSearchedStations.setAdapter(adapter);

@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical"
+              android:weightSum="4">
+
+
+    <LinearLayout
+        android:id="@+id/ll_stations"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="2"
+        android:orientation="horizontal"
+        android:weightSum="2"
+        >
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            >
+
+            <TextView
+                android:id="@+id/tv_departure"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:text="@string/hint_select"
+                android:textAlignment="center"
+                android:textAppearance="@style/TextAppearance.AppCompat.Button"
+                android:textSize="18sp"
+                />
+
+            <TextView
+                android:id="@+id/lbl_departure"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="40dp"
+                android:layout_above="@id/tv_departure"
+                android:text="@string/hint_departure"
+                android:textAppearance="@style/TextAppearance.AppCompat.Button"
+                android:textColor="#70000000"
+                />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            >
+
+            <TextView
+                android:id="@+id/tv_arrival"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:text="@string/hint_select"
+                android:textAlignment="center"
+                android:textAppearance="@style/TextAppearance.AppCompat.Button"
+                android:textSize="18sp"
+                />
+
+            <TextView
+                android:id="@+id/lbl_arrival"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="40dp"
+                android:layout_above="@id/tv_arrival"
+                android:text="@string/hint_arrival"
+                android:textAppearance="@style/TextAppearance.AppCompat.Button"
+                android:textColor="#70000000"
+                />
+        </RelativeLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal"
+        android:weightSum="2"
+        >
+
+        <RelativeLayout
+            android:id="@+id/rl_time"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <TextView
+                android:id="@+id/tv_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="06:00"
+                android:textAppearance="@style/TextAppearance.AppCompat.Button"
+                android:textSize="18sp"
+                />
+
+            <TextView
+                android:id="@+id/lbl_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="20dp"
+                android:layout_above="@id/tv_time"
+                android:text="@string/hint_time"
+                android:textAppearance="@style/TextAppearance.AppCompat.Button"
+                android:textColor="#70000000"
+                />
+
+            <TextView
+                android:id="@+id/tv_minus_one_hour"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_below="@id/tv_time"
+                android:layout_marginTop="20dp"
+                android:layout_marginStart="40dp"
+                android:gravity="center"
+                android:text="-1"
+                android:background="@drawable/roundbutton"
+                />
+
+            <TextView
+                android:id="@+id/tv_plus_one_hour"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="40dp"
+                android:layout_alignParentEnd="true"
+                android:layout_below="@id/tv_time"
+                android:gravity="center"
+                android:text="+1"
+                android:background="@drawable/roundbutton"
+                />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <TextView
+                android:id="@+id/tv_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="1 Ottobre"
+                android:textAppearance="@style/TextAppearance.AppCompat.Button"
+                android:textSize="18sp"
+                />
+
+            <TextView
+                android:id="@+id/lbl_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="20dp"
+                android:layout_above="@id/tv_date"
+                android:text="@string/hint_date"
+                android:textAppearance="@style/TextAppearance.AppCompat.Button"
+                android:textColor="#70000000"
+                />
+
+            <TextView
+                android:id="@+id/tv_minus_one_day"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="-1"
+                android:layout_below="@id/tv_date"
+                android:layout_marginTop="20dp"
+                android:layout_marginStart="40dp"
+                />
+
+            <TextView
+                android:id="@+id/tv_plus_one_day"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="+1"
+                android:layout_below="@id/tv_date"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="40dp"
+                android:layout_alignParentEnd="true"
+                />
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        >
+
+        <TextView
+        android:id="@+id/rl_border"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@drawable/border"
+        />
+
+        <Button
+            android:id="@+id/btn_search"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="Cerca"
+            android:textAppearance="@style/TextAppearance.AppCompat.Button"
+            android:textSize="40sp"
+            android:background="@android:color/transparent"
+            />
+    </LinearLayout>
+</LinearLayout>
