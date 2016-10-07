@@ -8,13 +8,11 @@ import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.Solution
 
 import java.util.List;
 
-/**
- * Created by albertogiunta on 01/10/16.
- */
-
-public interface JourneyResultsContract {
+interface JourneyResultsContract {
 
     interface Presenter extends BasePresenter {
+
+        void onSwapButtonClick();
 
         /**
          * It triggers an action when the user clicks on the "star" icon button.
@@ -42,13 +40,13 @@ public interface JourneyResultsContract {
          * intent with the swiped data.
          * It's an INSTANT kind of search.
          */
-        void searchFromIntent();
+        void searchInstantaneously();
 
         /**
          * Called when the search input data is VALID, after the user clicked on the search button.
          * It will either search with the INSTANT search or the SearchAFTER kind of search.
          */
-        void searchFromSearch();
+        void searchFromSearch(boolean isNewSearch);
 
         /**
          * Called when the Load More (After) button is clicked. It will search for another set of
@@ -66,7 +64,6 @@ public interface JourneyResultsContract {
          * @return the current solution list
          */
         List<SolutionList.Solution> getSolutionList();
-
     }
 
     interface View extends BaseView {
@@ -151,7 +148,8 @@ public interface JourneyResultsContract {
              * @param withDelays if you want N delays in the returned set of solutions
              * @param listener the listener that will call onSuccess or the other methods
              */
-            void searchJourney(String departureStationId,
+            void searchJourney(boolean isNewSearch,
+                               String departureStationId,
                                String arrivalStationId,
                                long timestamp,
                                boolean isPreemptive,

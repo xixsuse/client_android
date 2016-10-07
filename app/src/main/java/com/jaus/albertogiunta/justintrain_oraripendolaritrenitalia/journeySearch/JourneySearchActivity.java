@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.R;
@@ -25,6 +26,7 @@ public class JourneySearchActivity extends AppCompatActivity implements JourneyS
 
     @BindView(R.id.tv_departure) TextView tvDeparture;
     @BindView(R.id.tv_arrival) TextView tvArrival;
+    @BindView(R.id.btn_swap_station_names) ImageButton btnSwapStationNames;
     @BindView(R.id.tv_minus_one_hour) TextView tvMinusOneHour;
     @BindView(R.id.tv_plus_one_hour) TextView tvPlusOneHour;
     @BindView(R.id.tv_time) TextView tvTime;
@@ -43,6 +45,8 @@ public class JourneySearchActivity extends AppCompatActivity implements JourneyS
 
         onStationNameTextViewClick(this.tvDeparture, I_CODE_DEPARTURE);
         onStationNameTextViewClick(this.tvArrival, I_CODE_ARRIVAL);
+
+        btnSwapStationNames.setOnClickListener(v -> presenter.onSwapButtonClick(tvDeparture.getText().toString(), tvArrival.getText().toString()));
 
         // TIME PANEL
         tvMinusOneHour.setOnClickListener(v -> presenter.onTimeChanged(-1));

@@ -32,7 +32,7 @@ import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.
 import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_C.I_TIME;
 
 
-public class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJourneySearchFinishedListener {
+class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJourneySearchFinishedListener {
 
     private JourneyResultsContract.View view;
 
@@ -43,7 +43,7 @@ public class JourneyResultsPresenter implements JourneyResultsContract.Presenter
     private DateTime dateTime;
 
 
-    public JourneyResultsPresenter(JourneyResultsContract.View view) {
+    JourneyResultsPresenter(JourneyResultsContract.View view) {
         this.view = view;
         journeySolutions = new LinkedList<>();
         this.dateTime = DateTime.now().plusHours(2);
@@ -71,9 +71,10 @@ public class JourneyResultsPresenter implements JourneyResultsContract.Presenter
                 Log.d(dateTime);
                 view.setStationNames(departureStation.getName(), arrivalStation.getName());
                 setFavouriteButtonStatus();
-                searchFromSearch();
+                searchFromSearch(true);
             }
         } else {
+            Log.d("no bundle found");
             // Probably initialize members with default values for a new instance
         }
     }
@@ -94,33 +95,33 @@ public class JourneyResultsPresenter implements JourneyResultsContract.Presenter
 
     @Override
     public void onLoadMoreItemsBefore() {
-        new SearchBeforeTimeStrategy().searchJourney(departureStation.getStationShortId(),
+        new SearchBeforeTimeStrategy().searchJourney(false, departureStation.getStationShortId(),
                 arrivalStation.getStationShortId(),
                 journeySolutions.get(0).solution.departureTime - 1, false, false, this);
     }
 
     @Override
-    public void searchFromIntent() {
+    public void searchInstantaneously() {
         Log.d("instant");
         view.showProgress();
-        new SearchInstantlyStrategy().searchJourney(departureStation.getStationShortId(),
+        new SearchInstantlyStrategy().searchJourney(true, departureStation.getStationShortId(),
                 arrivalStation.getStationShortId(),
                 0, true, true, this);
     }
 
     @Override
-    public void searchFromSearch() {
+    public void searchFromSearch(boolean isNewSearch) {
         view.showProgress();
         // TODO controlla connessione
         if (PresenterUtilities.isInstant(dateTime)) {
             Log.d("Instant Search");
-            new SearchInstantlyStrategy().searchJourney(departureStation.getStationShortId(),
+            new SearchInstantlyStrategy().searchJourney(isNewSearch, departureStation.getStationShortId(),
                     arrivalStation.getStationShortId(),
                     0, true, true, this);
         } else {
             Log.d("NON Instant Search", dateTime);
             // aggiungo due ore ma non so bene perchè
-            new SearchAfterTimeStrategy().searchJourney(departureStation.getStationShortId(),
+            new SearchAfterTimeStrategy().searchJourney(isNewSearch, departureStation.getStationShortId(),
                     arrivalStation.getStationShortId(),
                     dateTime.plusHours(2).getMillis() / 1000, true, true, this);
         }
@@ -142,8 +143,17 @@ public class JourneyResultsPresenter implements JourneyResultsContract.Presenter
     }
 
     @Override
+    public void onSwapButtonClick() {
+        PreferredStation temp = departureStation;
+        departureStation = arrivalStation;
+        arrivalStation = temp;
+        searchFromSearch(true);
+        view.setStationNames(departureStation.getName(), arrivalStation.getName());
+    }
+
+    @Override
     public void onLoadMoreItemsAfter() {
-        new SearchAfterTimeStrategy().searchJourney(departureStation.getStationShortId(),
+        new SearchAfterTimeStrategy().searchJourney(false, departureStation.getStationShortId(),
                 arrivalStation.getStationShortId(),
                 journeySolutions.get(journeySolutions.size() - 1).solution.departureTime + 61, false, false, this);
     }
@@ -219,10 +229,10 @@ public class JourneyResultsPresenter implements JourneyResultsContract.Presenter
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
-    public static class SearchInstantlyStrategy implements JourneyResultsContract.View.JourneySearchStrategy {
+    private static class SearchInstantlyStrategy implements JourneyResultsContract.View.JourneySearchStrategy {
 
         @Override
-        public void searchJourney(String departureStationId, String arrivalStationId, long timestamp, boolean isPreemptive, boolean withDelays, OnJourneySearchFinishedListener listener) {
+        public void searchJourney(boolean isNewSearch, String departureStationId, String arrivalStationId, long timestamp, boolean isPreemptive, boolean withDelays, OnJourneySearchFinishedListener listener) {
             Log.d(departureStationId, arrivalStationId, timestamp, isPreemptive, withDelays);
             ServiceFactory.createRetrofitService(JourneyService.class, JourneyService.SERVICE_ENDPOINT).getJourneyInstant(departureStationId, arrivalStationId, isPreemptive)
                     .subscribeOn(Schedulers.io())
@@ -253,10 +263,10 @@ public class JourneyResultsPresenter implements JourneyResultsContract.Presenter
         }
     }
 
-    public static class SearchAfterTimeStrategy implements JourneyResultsContract.View.JourneySearchStrategy {
+    private static class SearchAfterTimeStrategy implements JourneyResultsContract.View.JourneySearchStrategy {
 
         @Override
-        public void searchJourney(String departureStationId, String arrivalStationId, long timestamp, boolean isPreemptive, boolean withDelays, OnJourneySearchFinishedListener listener) {
+        public void searchJourney(boolean isNewSearch, String departureStationId, String arrivalStationId, long timestamp, boolean isPreemptive, boolean withDelays, OnJourneySearchFinishedListener listener) {
             ServiceFactory.createRetrofitService(JourneyService.class, JourneyService.SERVICE_ENDPOINT).getJourneyAfterTime(departureStationId, arrivalStationId, timestamp, withDelays, isPreemptive)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -274,6 +284,9 @@ public class JourneyResultsPresenter implements JourneyResultsContract.Presenter
                         @Override
                         public void onNext(List<SolutionList.Solution> solutionList) {
                             Log.d(solutionList.size(), "new solutions found");
+                            if (isNewSearch) {
+                                journeySolutions.clear();
+                            }
                             journeySolutions.addAll(solutionList);
                             listener.onSuccess();
                             // TODO perform checks
@@ -282,10 +295,10 @@ public class JourneyResultsPresenter implements JourneyResultsContract.Presenter
         }
     }
 
-    public static class SearchBeforeTimeStrategy implements JourneyResultsContract.View.JourneySearchStrategy {
+    private static class SearchBeforeTimeStrategy implements JourneyResultsContract.View.JourneySearchStrategy {
 
         @Override
-        public void searchJourney(String departureStationId, String arrivalStationId, long timestamp, boolean isPreemptive, boolean withDelays, OnJourneySearchFinishedListener listener) {
+        public void searchJourney(boolean isNewSearch, String departureStationId, String arrivalStationId, long timestamp, boolean isPreemptive, boolean withDelays, OnJourneySearchFinishedListener listener) {
             Log.d(timestamp);
             ServiceFactory.createRetrofitService(JourneyService.class, JourneyService.SERVICE_ENDPOINT).getJourneyBeforeTime(departureStationId, arrivalStationId, timestamp, withDelays, isPreemptive)
                     .subscribeOn(Schedulers.io())

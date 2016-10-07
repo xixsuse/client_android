@@ -7,7 +7,7 @@ import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.BaseView;
 
 import java.util.List;
 
-public interface JourneySearchContract {
+interface JourneySearchContract {
 
     interface Presenter extends BasePresenter {
 
@@ -46,8 +46,10 @@ public interface JourneySearchContract {
          * Swaps the Preferred Station objects inside of the presenter. Called on the swap button
          * placed in the Search Panel in INACTIVE mode (only the header is visible).
          * It will swap the objects and the actual names (in both panel modes)
+         * @param departure string from the textview
+         * @param arrival string from the textview
          */
-        void onSwapButtonClick();
+        void onSwapButtonClick(String departure, String arrival);
 
         Bundle getBundle();
     }

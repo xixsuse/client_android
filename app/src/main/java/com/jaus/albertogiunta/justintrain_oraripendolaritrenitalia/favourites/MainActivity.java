@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity implements FavouritesContrac
         rvFavouriteJourneys.setHasFixedSize(true);
         rvFavouriteJourneys.setLayoutManager(new LinearLayoutManager(this));
 
-        SwipeToAction swipeToAction = new SwipeToAction(rvFavouriteJourneys, new SwipeToAction.SwipeListener<PreferredJourney>() {
+        new SwipeToAction(rvFavouriteJourneys, new SwipeToAction.SwipeListener<PreferredJourney>() {
             @Override
             public boolean swipeLeft(PreferredJourney itemData) {
                 Intent myIntent = new Intent(MainActivity.this, JourneyResultsActivity.class);

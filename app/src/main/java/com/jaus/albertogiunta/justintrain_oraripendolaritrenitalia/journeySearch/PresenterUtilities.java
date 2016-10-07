@@ -22,15 +22,12 @@ public class PresenterUtilities {
                         arrivalStation);
     }
 
-    public static boolean isStationNameValid(String stationName, RealmResults<Station4Database> stationList) {
+    static boolean isStationNameValid(String stationName, RealmResults<Station4Database> stationList) {
         RealmResults<Station4Database> matchingStations = stationList.where().equalTo("name", stationName, Case.INSENSITIVE).findAll();
-        if (matchingStations.size() == 1 && !stationName.isEmpty()) {
-            return true;
-        }
-        return false;
+        return matchingStations.size() == 1 && !stationName.isEmpty();
     }
 
-    public static Station4Database getStationObject(String stationName, RealmResults<Station4Database> stationList) {
+    static Station4Database getStationObject(String stationName, RealmResults<Station4Database> stationList) {
         return stationList.where().equalTo("name", stationName, Case.INSENSITIVE).findAll().get(0);
     }
 

@@ -9,12 +9,12 @@ import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.Preferr
 import java.util.LinkedList;
 import java.util.List;
 
-public class FavouritesPresenter implements FavouritesContract.Presenter {
+class FavouritesPresenter implements FavouritesContract.Presenter {
 
-    FavouritesContract.View view;
-    List<PreferredJourney> preferredJourneys;
+    private FavouritesContract.View view;
+    private List<PreferredJourney> preferredJourneys;
 
-    public FavouritesPresenter(FavouritesContract.View view) {
+    FavouritesPresenter(FavouritesContract.View view) {
         this.view = view;
         preferredJourneys = new LinkedList<>(PreferredStationsHelper.getAllAsObject(view.getViewContext()));
     }
@@ -32,10 +32,6 @@ public class FavouritesPresenter implements FavouritesContract.Presenter {
     @Override
     public void onResuming(Bundle bundle) {
         updatePreferredJourneys();
-//        if (bundle != null) {
-//            // no intent expected at this time, therefore this shouldn't happen
-//        } else {
-//        }
     }
 
     @Override

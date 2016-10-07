@@ -12,29 +12,26 @@ import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.Preferre
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import co.dift.ui.SwipeToAction;
 
-public class FavouriteJourneysAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+class FavouriteJourneysAdapter extends RecyclerView.Adapter<FavouriteJourneysAdapter.ViewHolder> {
 
     private List<PreferredJourney> list = new ArrayList<>();
-
-    public FavouriteJourneysAdapter(List<PreferredJourney> list) {
+    FavouriteJourneysAdapter(List<PreferredJourney> list) {
         this.list = list;
     }
 
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
-        return new PreferredJourneyViewHolder(layoutInflater.inflate(R.layout.item_favourite_journey, parent, false));
+        return new ViewHolder(layoutInflater.inflate(R.layout.item_favourite_journey, parent, false));
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        PreferredJourney pj = list.get(position);
-        PreferredJourneyViewHolder vh = (PreferredJourneyViewHolder) holder;
-        vh.tvPreferredStation1.setText(pj.getStation1().getName());
-        vh.tvPreferredStation2.setText(pj.getStation2().getName());
-        vh.data = pj;
+    public void onBindViewHolder(ViewHolder holder, int position) {
+        holder.bind(list.get(position));
     }
 
     @Override
@@ -43,15 +40,20 @@ public class FavouriteJourneysAdapter extends RecyclerView.Adapter<RecyclerView.
     }
 
 
-    protected class PreferredJourneyViewHolder extends SwipeToAction.ViewHolder {
+    class ViewHolder extends SwipeToAction.ViewHolder {
 
-        public TextView tvPreferredStation1;
-        public TextView tvPreferredStation2;
+        @BindView(R.id.tv_favourite_station_left) TextView tvPreferredStation1;
+        @BindView(R.id.tv_favourite_station_right) TextView tvPreferredStation2;
 
-        public PreferredJourneyViewHolder(View itemView) {
+        ViewHolder(View itemView) {
             super(itemView);
-            tvPreferredStation1 = (TextView) itemView.findViewById(R.id.tv_favourite_station_left);
-            tvPreferredStation2 = (TextView) itemView.findViewById(R.id.tv_favourite_station_right);
+            ButterKnife.bind(this, itemView);
+        }
+
+        void bind(PreferredJourney preferredJourney) {
+            tvPreferredStation1.setText(preferredJourney.getStation1().getName());
+            tvPreferredStation2.setText(preferredJourney.getStation2().getName());
+            data = preferredJourney;
         }
     }
 }

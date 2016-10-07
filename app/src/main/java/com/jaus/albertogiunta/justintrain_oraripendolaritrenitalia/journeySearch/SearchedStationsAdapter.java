@@ -10,12 +10,15 @@ import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.R;
 
 import java.util.List;
 
-public class SearchedStationsAdapter extends RecyclerView.Adapter<SearchedStationsAdapter.ViewHolder> {
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
-    protected List<String> stationNames;
+class SearchedStationsAdapter extends RecyclerView.Adapter<SearchedStationsAdapter.ViewHolder> {
+
+    private List<String> stationNames;
     private OnClickListener listener;
 
-    public SearchedStationsAdapter(List<String> stationNames, OnClickListener listener) {
+    SearchedStationsAdapter(List<String> stationNames, OnClickListener listener) {
         this.stationNames = stationNames;
         this.listener = listener;
     }
@@ -23,16 +26,13 @@ public class SearchedStationsAdapter extends RecyclerView.Adapter<SearchedStatio
     @Override
     public SearchedStationsAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_autucomplete_station, parent ,false);
-        ViewHolder vh = new ViewHolder(v);
-        return vh;
+        return new ViewHolder(v);
     }
 
     @Override
     public void onBindViewHolder(SearchedStationsAdapter.ViewHolder holder, int position) {
-        holder.tvStationName.setText(stationNames.get(position));
-        holder.tvStationName.setOnClickListener(view -> {
-            listener.onItemSelected(stationNames.get(position));
-        });
+        holder.bind(stationNames.get(position));
+        holder.tvStationName.setOnClickListener(view -> listener.onItemSelected(stationNames.get(position)));
     }
 
     @Override
@@ -40,12 +40,16 @@ public class SearchedStationsAdapter extends RecyclerView.Adapter<SearchedStatio
         return stationNames.size();
     }
 
-    protected static class ViewHolder extends RecyclerView.ViewHolder {
-        public TextView tvStationName;
+    static class ViewHolder extends RecyclerView.ViewHolder {
+        @BindView(R.id.tv_station_name) TextView tvStationName;
 
-        public ViewHolder(View itemView) {
+        ViewHolder(View itemView) {
             super(itemView);
-            this.tvStationName = (TextView) itemView.findViewById(R.id.tv_station_name);
+            ButterKnife.bind(this, itemView);
+        }
+
+        void bind(String stationName) {
+            tvStationName.setText(stationName);
         }
     }
 

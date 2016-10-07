@@ -21,27 +21,37 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import trikita.log.Log;
 
 public class JourneyResultsActivity extends AppCompatActivity implements JourneyResultsContract.View {
 
-    @BindView(R.id.cv_header_1) CardView cvHeader;
-    @BindView(R.id.tv_departure_station_name) TextView tvHeaderDepartureStation;
-    @BindView(R.id.tv_arrival_station_name) TextView tvHeaderArrivalStation;
-    @BindView(R.id.btn_header_swap_station_names) ImageButton btnHeaderSwapStationNames;
-    @BindView(R.id.btn_toggle_favourite) ImageButton btnHeaderToggleFavorite;
+    @BindView(R.id.cv_header_1)
+    CardView cvHeader;
+    @BindView(R.id.tv_departure_station_name)
+    TextView tvHeaderDepartureStation;
+    @BindView(R.id.tv_arrival_station_name)
+    TextView tvHeaderArrivalStation;
+    @BindView(R.id.btn_header_swap_station_names)
+    ImageButton btnHeaderSwapStationNames;
+    @BindView(R.id.btn_toggle_favourite)
+    ImageButton btnHeaderToggleFavorite;
 
-    @BindView(R.id.loading_spinner) ProgressBar progressBar;
+    @BindView(R.id.loading_spinner)
+    ProgressBar progressBar;
 
     // NO SOLUTION FOUND
-    @BindView(R.id.rl_empty_journey_box) RelativeLayout rlEmptyJourneyBox;
-    @BindView(R.id.btn_change_stations) Button btnChangeStations;
+    @BindView(R.id.rl_empty_journey_box)
+    RelativeLayout rlEmptyJourneyBox;
+    @BindView(R.id.btn_change_stations)
+    Button btnChangeStations;
 
     //  RESULTS
-    @BindView(R.id.rl_journey_solutions) RelativeLayout rlJourneySolutions;
-    @BindView(R.id.rv_journey_solutions) RecyclerView rvJourneySolutions;
-    @BindView(R.id.btn_refresh) ImageButton btnRefresh;
+    @BindView(R.id.rl_journey_solutions)
+    RelativeLayout rlJourneySolutions;
+    @BindView(R.id.rv_journey_solutions)
+    RecyclerView rvJourneySolutions;
+    @BindView(R.id.btn_refresh)
+    ImageButton btnRefresh;
 
     JourneyResultsAdapter mJourneyResultsAdapter;
     JourneyResultsPresenter presenter;
@@ -53,20 +63,18 @@ public class JourneyResultsActivity extends AppCompatActivity implements Journey
         ButterKnife.bind(this);
         presenter = new JourneyResultsPresenter(this);
 
+        cvHeader.setOnClickListener(v -> {
+
+        });
+        btnHeaderSwapStationNames.setOnClickListener(v-> presenter.onSwapButtonClick());
+        btnHeaderToggleFavorite.setOnClickListener(v -> presenter.onFavouriteButtonClick());
+
         mJourneyResultsAdapter = new JourneyResultsAdapter(this, presenter);
         rvJourneySolutions.setAdapter(mJourneyResultsAdapter);
         rvJourneySolutions.setHasFixedSize(true);
         rvJourneySolutions.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-    }
 
-    @OnClick(R.id.btn_toggle_favourite)
-    void onToggleFavoriteClicked() {
-        presenter.onFavouriteButtonClick();
-    }
-
-    @OnClick(R.id.btn_refresh)
-    void onRefreshClicked() {
-        presenter.searchFromSearch();
+        btnRefresh.setOnClickListener(v -> presenter.searchFromSearch(true));
     }
 
     @Override
@@ -120,7 +128,7 @@ public class JourneyResultsActivity extends AppCompatActivity implements Journey
     @Override
     public void updateSolution(int elementIndex) {
         Log.d("Successfully updated item");
-        mJourneyResultsAdapter.notifyItemChanged(elementIndex+1);
+        mJourneyResultsAdapter.notifyItemChanged(elementIndex + 1);
     }
 
 

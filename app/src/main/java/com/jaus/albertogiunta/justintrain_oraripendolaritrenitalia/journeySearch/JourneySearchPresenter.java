@@ -23,7 +23,7 @@ import trikita.log.Log;
 import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_C.I_STATIONS;
 import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_C.I_TIME;
 
-public class JourneySearchPresenter implements JourneySearchContract.Presenter {
+class JourneySearchPresenter implements JourneySearchContract.Presenter {
 
     private JourneySearchContract.View view;
     private RealmResults<Station4Database> stationList;
@@ -31,7 +31,7 @@ public class JourneySearchPresenter implements JourneySearchContract.Presenter {
     private PreferredStation arrivalStation;
     private DateTime dateTime;
 
-    public JourneySearchPresenter(JourneySearchContract.View view) {
+    JourneySearchPresenter(JourneySearchContract.View view) {
         this.view = view;
         this.stationList = Realm.getDefaultInstance().where(Station4Database.class).findAll();
         dateTime = DateTime.now().withMinuteOfHour(0);
@@ -63,6 +63,7 @@ public class JourneySearchPresenter implements JourneySearchContract.Presenter {
             this.arrivalStation = journey.getStation2();
             view.setStationNames(departureStation.getName(), arrivalStation.getName());
         } else {
+            Log.d("no bundle found");
             // Probably initialize members with default values for a new instance
         }
     }
@@ -88,12 +89,12 @@ public class JourneySearchPresenter implements JourneySearchContract.Presenter {
     }
 
     @Override
-    public void onSwapButtonClick() {
-        if (departureStation != null && arrivalStation != null) {
+    public void onSwapButtonClick(String departure, String arrival) {
+        if (!(departure.equals("Seleziona") && arrival.equals("Seleziona"))) {
             PreferredStation temp = departureStation;
             departureStation = arrivalStation;
             arrivalStation = temp;
-            view.setStationNames(departureStation.getName(), arrivalStation.getName());
+            view.setStationNames(arrival, departure);
         }
     }
 

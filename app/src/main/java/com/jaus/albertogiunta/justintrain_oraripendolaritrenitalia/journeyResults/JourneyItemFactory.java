@@ -17,7 +17,7 @@ import java.util.List;
 /**
  * SINGLETON CLASS
  */
-public class JourneyItemFactory {
+class JourneyItemFactory {
 
     private static final boolean ON = true;
     private static final boolean OFF = false;
@@ -29,7 +29,7 @@ public class JourneyItemFactory {
     private JourneyItemFactory() {
     }
 
-    public static synchronized JourneyItemFactory getInstance() {
+    static synchronized JourneyItemFactory getInstance() {
         if (self == null) {
             self = new JourneyItemFactory();
         }
@@ -47,7 +47,7 @@ public class JourneyItemFactory {
      * @param journeyHolder it's the holder of the main solution view
      * @param s it's the main solution data model
      */
-    public void toggleHolder(List<View> listView, JourneyResultsAdapter.JourneyHolder journeyHolder, SolutionList.Solution s) {
+    void toggleHolder(List<View> listView, JourneyResultsAdapter.JourneyHolder journeyHolder, SolutionList.Solution s) {
 
         JourneyResultsAdapter.ChangeHolder jh = journeyHolder.holder;
 
@@ -105,6 +105,7 @@ public class JourneyItemFactory {
         // show time difference
         // hide refresh
         setVisibility(holder.rlTimeDifference, ON);
+
         setVisibility(holder.btnRefresh, OFF);
 
         // show platform

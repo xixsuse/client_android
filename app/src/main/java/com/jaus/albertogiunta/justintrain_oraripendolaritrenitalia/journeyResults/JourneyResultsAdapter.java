@@ -19,17 +19,14 @@ import java.util.List;
 
 import trikita.log.Log;
 
-/**
- * Created by albertogiunta on 17/06/16.
- */
-public class JourneyResultsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+class JourneyResultsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private Context context;
     private JourneyItemFactory factory;
     private List<SolutionList.Solution> solutionList;
     private JourneyResultsContract.Presenter presenter;
 
-    public JourneyResultsAdapter(Context context, JourneyResultsContract.Presenter presenter) {
+    JourneyResultsAdapter(Context context, JourneyResultsContract.Presenter presenter) {
         this.context = context;
         this.presenter = presenter;
         this.solutionList = presenter.getSolutionList();
@@ -54,11 +51,6 @@ public class JourneyResultsAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-
-        if (holder instanceof LoadMoreBeforeHolder) {
-//            ((LoadMoreBeforeHolder) holder).btn.setOnClickListener(v -> mOnItemClickListener.onItemClick(solutionList.get(solutionList.size() - 1)));
-        }
-
         // if instance of JourneyHolder, create a list of views that will hold the changes (if there) and toggle the view
         if (holder instanceof JourneyHolder && solutionList.size() > 0) {
             List<View> listView = new LinkedList<>();
@@ -70,9 +62,12 @@ public class JourneyResultsAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             factory.toggleHolder(listView, (JourneyHolder) holder, solutionList.get(position - 1));
         }
 
-        if (holder instanceof LoadMoreAfterHolder) {
+//        if (holder instanceof LoadMoreBeforeHolder) {
+//            ((LoadMoreBeforeHolder) holder).btn.setOnClickListener(v -> mOnItemClickListener.onItemClick(solutionList.get(solutionList.size() - 1)));
+//        }
+//        if (holder instanceof LoadMoreAfterHolder) {
 //            ((LoadMoreAfterHolder) holder).btn.setOnClickListener(v -> mOnItemClickListener.onItemClick(solutionList.get(solutionList.size() - 1)));
-        }
+//        }
     }
 
     @Override
@@ -96,9 +91,9 @@ public class JourneyResultsAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
 
     private class VIEW_TYPES {
-        public static final int Header = 1;
-        public static final int Normal = 2;
-        public static final int Footer = 3;
+        static final int Header = 1;
+        static final int Normal = 2;
+        static final int Footer = 3;
     }
 
 
@@ -110,44 +105,44 @@ public class JourneyResultsAdapter extends RecyclerView.Adapter<RecyclerView.Vie
      * inside of changeHolder, and a solution view will be held inside of a JourneyHolder (which
      * also instantiate a changeHolder, besides other stuff).
      */
-    protected static class ChangeHolder {
+    static class ChangeHolder {
 
-        protected TextView tvTrainCategory;
+        TextView tvTrainCategory;
 
-        protected LinearLayout llChangesNumber;
-        protected TextView tvChangesNumber;
-        protected TextView tvChangesText;
+        LinearLayout llChangesNumber;
+        TextView tvChangesNumber;
+        TextView tvChangesText;
 
-        protected LinearLayout llDepartureSchedule;
-        protected TextView tvDepartureTime;
-        protected TextView tvDepartureTimeWithDelay;
-        protected HorizontalScrollView hsvDepartureStationName;
-        protected TextView tvDepartureStationName;
+        LinearLayout llDepartureSchedule;
+        TextView tvDepartureTime;
+        TextView tvDepartureTimeWithDelay;
+        HorizontalScrollView hsvDepartureStationName;
+        TextView tvDepartureStationName;
 
-        protected LinearLayout llArrivalSchedule;
-        protected TextView tvArrivalTime;
-        protected TextView tvArrivalTimeWithDelay;
-        protected HorizontalScrollView hsvArrivalStationName;
-        protected TextView tvArrivalStationName;
+        LinearLayout llArrivalSchedule;
+        TextView tvArrivalTime;
+        TextView tvArrivalTimeWithDelay;
+        HorizontalScrollView hsvArrivalStationName;
+        TextView tvArrivalStationName;
 
-        protected RelativeLayout rlTimeDifference;
-        protected TextView tvTimeDifference;
-        protected TextView tvTimeDifferenceText;
+        RelativeLayout rlTimeDifference;
+        TextView tvTimeDifference;
+        TextView tvTimeDifferenceText;
 
-        protected ImageButton btnRefresh;
+        ImageButton btnRefresh;
 
-        protected TextView tvLastingTime;
+        TextView tvLastingTime;
 
-        protected RelativeLayout rlPlatform;
-        protected TextView tvPlatform;
+        RelativeLayout rlPlatform;
+        TextView tvPlatform;
 
-        protected ImageButton btnPin;
-        protected ImageButton btnExpandCard;
+        ImageButton btnPin;
+        ImageButton btnExpandCard;
 
-        protected LinearLayout llChanges;
+        LinearLayout llChanges;
 
 
-        public ChangeHolder(View itemView) {
+        ChangeHolder(View itemView) {
 
 
             this.tvTrainCategory = (TextView) itemView.findViewById(R.id.tv_train_category);
@@ -195,11 +190,11 @@ public class JourneyResultsAdapter extends RecyclerView.Adapter<RecyclerView.Vie
      * Wraps a ChangeHolder and additional views
      * (it's the main item holder of the journey results recyclerView)
      */
-    protected class JourneyHolder extends RecyclerView.ViewHolder {
+    class JourneyHolder extends RecyclerView.ViewHolder {
 
         ChangeHolder holder;
 
-        public JourneyHolder(View itemView) {
+        JourneyHolder(View itemView) {
             super(itemView);
 
             holder = new ChangeHolder(itemView);
@@ -207,13 +202,13 @@ public class JourneyResultsAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             holder.llChanges = (LinearLayout) itemView.findViewById(R.id.ll_changes);
 
             holder.btnRefresh.setOnClickListener(view -> {
-                Log.d("Requested refresh for item ", getAdapterPosition()-1);
-                presenter.onJourneyRefreshRequested(getAdapterPosition()-1);
+                Log.d("Requested refresh for item ", getAdapterPosition() - 1);
+                presenter.onJourneyRefreshRequested(getAdapterPosition() - 1);
             });
 
             holder.btnPin.setOnClickListener(view -> {
-                Log.d("Requested notification for item number ", getAdapterPosition()-1);
-                presenter.onNotificationRequested(getAdapterPosition()-1);
+                Log.d("Requested notification for item number ", getAdapterPosition() - 1);
+                presenter.onNotificationRequested(getAdapterPosition() - 1);
             });
 
             holder.btnExpandCard.setOnClickListener(view -> {
@@ -229,27 +224,23 @@ public class JourneyResultsAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     }
 
 
-    protected class LoadMoreBeforeHolder extends RecyclerView.ViewHolder {
-        protected ImageButton btn;
+    private class LoadMoreBeforeHolder extends RecyclerView.ViewHolder {
+        ImageButton btn;
 
-        public LoadMoreBeforeHolder(View itemView) {
+        LoadMoreBeforeHolder(View itemView) {
             super(itemView);
             btn = (ImageButton) itemView.findViewById(R.id.search_before_btn);
-            btn.setOnClickListener(view -> {
-                presenter.onLoadMoreItemsBefore();
-            });
+            btn.setOnClickListener(view -> presenter.onLoadMoreItemsBefore());
         }
     }
 
-    protected class LoadMoreAfterHolder extends RecyclerView.ViewHolder {
-        protected ImageButton btn;
+    private class LoadMoreAfterHolder extends RecyclerView.ViewHolder {
+        ImageButton btn;
 
-        public LoadMoreAfterHolder(View itemView) {
+        LoadMoreAfterHolder(View itemView) {
             super(itemView);
             btn = (ImageButton) itemView.findViewById(R.id.search_after_btn);
-            btn.setOnClickListener(view -> {
-                presenter.onLoadMoreItemsAfter();
-            });
+            btn.setOnClickListener(view -> presenter.onLoadMoreItemsAfter());
         }
     }
 }

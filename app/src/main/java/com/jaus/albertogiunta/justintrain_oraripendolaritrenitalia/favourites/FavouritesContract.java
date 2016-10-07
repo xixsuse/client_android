@@ -8,7 +8,7 @@ import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.Preferre
 
 import java.util.List;
 
-public interface FavouritesContract {
+interface FavouritesContract {
 
     interface View extends BaseView {
 
