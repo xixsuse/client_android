@@ -1,4 +1,4 @@
-package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.favourites;
+package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeyFavourites;
 
 import android.os.Bundle;
 
@@ -16,7 +16,8 @@ class FavouritesPresenter implements FavouritesContract.Presenter {
 
     FavouritesPresenter(FavouritesContract.View view) {
         this.view = view;
-        preferredJourneys = new LinkedList<>(PreferredStationsHelper.getAllAsObject(view.getViewContext()));
+        preferredJourneys = new LinkedList<>();
+        updatePreferredJourneys();
     }
 
     @Override
@@ -31,22 +32,34 @@ class FavouritesPresenter implements FavouritesContract.Presenter {
 
     @Override
     public void onResuming(Bundle bundle) {
-        updatePreferredJourneys();
+        updateRequested();
     }
 
     @Override
     public void onLeaving(Bundle bundle) {
-
     }
 
     @Override
     public List<PreferredJourney> getPreferredJourneys() {
-        return this.preferredJourneys != null ? this.preferredJourneys : new LinkedList<>();
+        return this.preferredJourneys;
+    }
+
+    @Override
+    public void updateRequested() {
+        updatePreferredJourneys();
+        if (this.preferredJourneys != null && this.preferredJourneys.size() > 0) {
+            view.displayFavouriteJourneys();
+            view.updateFavouritesList(this.preferredJourneys);
+        } else {
+            view.displayEntryButton();
+        }
     }
 
     private void updatePreferredJourneys() {
         preferredJourneys.clear();
-        preferredJourneys.addAll(PreferredStationsHelper.getAllAsObject(view.getViewContext()));
-        view.updateFavouritesList(this.preferredJourneys);
+        List<PreferredJourney> pj = PreferredStationsHelper.getAllAsObject(view.getViewContext());
+        if (pj != null) {
+            preferredJourneys.addAll(pj);
+        }
     }
 }

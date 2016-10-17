@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_grey_lighter"
+    android:fitsSystemWindows="true"
+    tools:context=".journeyFavourites.FavouriteJourneysActivity">
+
+    <LinearLayout
+        android:id="@+id/ll_add_favourite"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:background="@drawable/border_radius"
+        android:orientation="horizontal"
+        app:cardCornerRadius="10dp"
+        android:layout_gravity="center"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:elevation="5dp"
+        android:visibility="gone"
+        >
+
+        <ImageButton
+            android:id="@+id/btn_add_new_favourite"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:layout_marginStart="16dp"
+            android:layout_gravity="center"
+            android:tint="@color/ic_light"
+            app:srcCompat="@drawable/ic_add_favourite"
+            />
+
+        <me.grantland.widget.AutofitTextView
+            android:id="@+id/lbl_add_new_favourite"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="Aggiungi una tratta ai Preferiti!"
+            android:layout_gravity="center"
+            android:textAlignment="center"
+            android:textColor="@color/txt_white"
+            android:textSize="@dimen/fs_basic_text"
+            android:textStyle="bold"
+            />
+
+    </LinearLayout>
+
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_favourite_journeys"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        >
+    </android.support.v7.widget.RecyclerView>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab_search_journey"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/fab_margin"
+        app:fabSize="normal"
+        app:srcCompat="@drawable/ic_search"/>
+
+</android.support.design.widget.CoordinatorLayout>

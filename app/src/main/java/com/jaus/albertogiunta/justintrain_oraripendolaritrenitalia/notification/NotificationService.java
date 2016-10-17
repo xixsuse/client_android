@@ -16,17 +16,13 @@ import trikita.log.Log;
 
 /**
  * An {@link IntentService} subclass for handling asynchronous task requests in
- * a service on a separate handler thread.
- * <p>
- * helper methods.
+ * a service on a separate handler thread
  */
 public class NotificationService extends IntentService {
-    private static final String ACTION_START_NOTIFICATION = "com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.action.START_NOTIFICATION";
-    private static final String ACTION_STOP_NOTIFICATION = "com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.action.STOP_NOTIFICATION";
-    private static final String ACTION_UPDATE_NOTIFICATION = "com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.action.UPDATE_NOTIFICATION";
-
-    private static final String EXTRA_NOTIFICATION_DATA = "com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.extra.NOTIFICATION_DATA";
-
+    public static final String ACTION_START_NOTIFICATION = "com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.action.START_NOTIFICATION";
+    public static final String ACTION_STOP_NOTIFICATION = "com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.action.STOP_NOTIFICATION";
+    public static final String ACTION_UPDATE_NOTIFICATION = "com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.action.UPDATE_NOTIFICATION";
+    public static final String EXTRA_NOTIFICATION_DATA = "com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.extra.NOTIFICATION_DATA";
 
     public NotificationService() {
         super("NotificationService");
@@ -51,7 +47,6 @@ public class NotificationService extends IntentService {
                 .subscribe(new Subscriber<NotificationData>() {
                     @Override
                     public void onCompleted() {
-
                     }
 
                     @Override
@@ -75,36 +70,17 @@ public class NotificationService extends IntentService {
                 });
     }
 
-    public static void startActionStopNotification(Context context, NotificationData notificationData) {
-//        Gson gson = new Gson();
-//        Intent intent = new Intent(context, NotificationService.class);
-//        intent.setAction(ACTION_START_NOTIFICATION);
-//        intent.putExtra(EXTRA_NOTIFICATION_DATA, gson.toJson(notificationData));
-//
-//        context.startService(intent);
-    }
-
-
-    public static void startActionUpdateNotification(Context context, NotificationData notificationData) {
-//        Gson gson = new Gson();
-//        Intent intent = new Intent(context, NotificationService.class);
-//        intent.setAction(ACTION_START_NOTIFICATION);
-//        intent.putExtra(EXTRA_NOTIFICATION_DATA, gson.toJson(notificationData));
-//
-//        context.startService(intent);
-    }
-
     @Override
     protected void onHandleIntent(Intent intent) {
         Gson gson = new Gson();
         if (intent != null) {
             final String action = intent.getAction();
+            Log.d(action);
             if (ACTION_START_NOTIFICATION.equals(action)) {
                 final String notificationData = intent.getStringExtra(EXTRA_NOTIFICATION_DATA);
                 handleActionStartNotification(gson.fromJson(notificationData, NotificationData.class));
             } else if (ACTION_STOP_NOTIFICATION.equals(action)) {
-                final String notificationData = intent.getStringExtra(EXTRA_NOTIFICATION_DATA);
-                handleActionStopNotification(gson.fromJson(notificationData, NotificationData.class));
+                handleActionStopNotification();
             } else if (ACTION_UPDATE_NOTIFICATION.equals(action)) {
                 final String notificationData = intent.getStringExtra(EXTRA_NOTIFICATION_DATA);
                 handleActionUpdateNotification(gson.fromJson(notificationData, NotificationData.class));
@@ -113,15 +89,14 @@ public class NotificationService extends IntentService {
     }
 
     private void handleActionStartNotification(NotificationData notificationData) {
-        TrainNotification.notify(this, notificationData);
-//        throw new UnsupportedOperationException("Not yet implemented");
+        TrainNotification.notify(this, notificationData, true);
     }
 
-    private void handleActionStopNotification(NotificationData notificationData) {
-        throw new UnsupportedOperationException("Not yet implemented");
+    private void handleActionStopNotification() {
+        TrainNotification.cancel(this);
     }
 
     private void handleActionUpdateNotification(NotificationData notificationData) {
-        throw new UnsupportedOperationException("Not yet implemented");
+        TrainNotification.notify(this, notificationData, false);
     }
 }

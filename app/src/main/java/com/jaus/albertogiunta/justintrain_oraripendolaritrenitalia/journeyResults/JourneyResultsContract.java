@@ -5,12 +5,15 @@ import android.content.Context;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.BasePresenter;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.BaseView;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.SolutionList;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_C;
 
 import java.util.List;
 
 interface JourneyResultsContract {
 
     interface Presenter extends BasePresenter {
+
+        void getFirstFeasableSolution();
 
         void onSwapButtonClick();
 
@@ -85,6 +88,10 @@ interface JourneyResultsContract {
          */
         void hideProgress();
 
+        void showErrorMessage(String tvMessage, String btnMessage, INTENT_C.ERROR_BTN intent);
+
+        void scrollToFirstFeasibleSolution(int position);
+
         /**
          * Called when a new set of solutions is ready. It will then notify the adapter
          * @param solutionList the solutionlist to be set in the adapter
@@ -127,8 +134,9 @@ interface JourneyResultsContract {
 
                 /**
                  * The server is unreachable or network not available?
+                 * @param exception
                  */
-                void onServerError();
+                void onServerError(Throwable exception);
 
                 /**
                  * The request has gone through. Everything's ok (but still it can be that there's

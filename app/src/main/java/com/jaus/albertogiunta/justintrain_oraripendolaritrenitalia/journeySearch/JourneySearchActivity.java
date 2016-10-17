@@ -2,11 +2,14 @@ package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeySearc
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.R;
@@ -23,17 +26,30 @@ public class JourneySearchActivity extends AppCompatActivity implements JourneyS
 
     //  SEARCH
     private JourneySearchContract.Presenter presenter;
-
-    @BindView(R.id.tv_departure) TextView tvDeparture;
-    @BindView(R.id.tv_arrival) TextView tvArrival;
-    @BindView(R.id.btn_swap_station_names) ImageButton btnSwapStationNames;
-    @BindView(R.id.tv_minus_one_hour) TextView tvMinusOneHour;
-    @BindView(R.id.tv_plus_one_hour) TextView tvPlusOneHour;
-    @BindView(R.id.tv_time) TextView tvTime;
-    @BindView(R.id.tv_minus_one_day) TextView tvMinusOneDay;
-    @BindView(R.id.tv_plus_one_day) TextView tvPlusOneDay;
-    @BindView(R.id.tv_date) TextView tvDate;
-    @BindView(R.id.btn_search) Button btnSearchJourney;
+    @BindView(R.id.rl_departure)
+    RelativeLayout rlDeparture;
+    @BindView(R.id.tv_departure)
+    TextView tvDeparture;
+    @BindView(R.id.rl_arrival)
+    RelativeLayout rlArrival;
+    @BindView(R.id.tv_arrival)
+    TextView tvArrival;
+    @BindView(R.id.btn_swap_station_names)
+    ImageButton btnSwapStationNames;
+    @BindView(R.id.tv_minus_one_hour)
+    TextView tvMinusOneHour;
+    @BindView(R.id.tv_plus_one_hour)
+    TextView tvPlusOneHour;
+    @BindView(R.id.tv_time)
+    TextView tvTime;
+    @BindView(R.id.tv_minus_one_day)
+    TextView tvMinusOneDay;
+    @BindView(R.id.tv_plus_one_day)
+    TextView tvPlusOneDay;
+    @BindView(R.id.tv_date)
+    TextView tvDate;
+    @BindView(R.id.btn_search)
+    Button btnSearchJourney;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -43,8 +59,13 @@ public class JourneySearchActivity extends AppCompatActivity implements JourneyS
         presenter = new JourneySearchPresenter(this);
 //        this.btnSwapStations = (ImageButton) findViewById(R.id.btn_swap_station_names);
 
-        onStationNameTextViewClick(this.tvDeparture, I_CODE_DEPARTURE);
-        onStationNameTextViewClick(this.tvArrival, I_CODE_ARRIVAL);
+        this.tvDeparture.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG);
+        this.tvArrival.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG);
+        this.tvTime.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG);
+        this.tvDate.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG);
+
+        onStationNameTextViewClick(this.rlDeparture, I_CODE_DEPARTURE);
+        onStationNameTextViewClick(this.rlArrival, I_CODE_ARRIVAL);
 
         btnSwapStationNames.setOnClickListener(v -> presenter.onSwapButtonClick(tvDeparture.getText().toString(), tvArrival.getText().toString()));
 
@@ -125,7 +146,7 @@ public class JourneySearchActivity extends AppCompatActivity implements JourneyS
         Log.d("Parameters: NOT VALID");
     }
 
-    private void onStationNameTextViewClick(TextView tv, int code) {
+    private void onStationNameTextViewClick(View tv, int code) {
         tv.setOnClickListener(view -> {
             Intent myIntent = new Intent(JourneySearchActivity.this, StationSearchActivity.class);
             JourneySearchActivity.this.startActivityForResult(myIntent, code);

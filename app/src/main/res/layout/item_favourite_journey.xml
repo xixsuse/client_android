@@ -1,37 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:autofit="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/thin_card_height"
-    android:layout_marginTop="5dp"
-    android:layout_marginBottom="5dp"
+    android:layout_height="75dp"
+    xmlns:card_view="http://schemas.android.com/tools"
+    android:layout_marginBottom="0dp"
     android:elevation="4dp"
+    card_view:contentPadding="5dp"
+    autofit:cardCornerRadius="0dp"
     >
 
     <RelativeLayout
-        android:tag="reveal-right"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/colorAccent"
+        android:background="@color/bg_grey_lighter"
+        android:tag="reveal-right"
         >
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
+            android:layout_marginStart="-25dp"
             android:layout_centerVertical="true"
-            android:layout_marginStart="20dp"
-            android:src="@android:drawable/ic_media_rew"
-            android:tint="#ffffffff"
+            autofit:srcCompat="@drawable/ic_swipe_left"
             />
     </RelativeLayout>
 
-
     <RelativeLayout
-        android:tag="reveal-left"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/early1"
+        android:background="@color/bg_grey_lighter"
+        android:tag="reveal-left"
         >
 
         <ImageView
@@ -39,50 +40,61 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:layout_marginRight="20dp"
-            android:src="@android:drawable/ic_media_ff"
-            android:tint="#ffffffff"
+            autofit:srcCompat="@drawable/ic_swipe_right"
+            android:layout_marginEnd="-25dp"
             />
     </RelativeLayout>
 
-
     <RelativeLayout
-        android:tag="front"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingStart="@dimen/basic_horizontal_margin"
-        android:paddingEnd="@dimen/basic_horizontal_margin"
         android:background="#ffffff"
+        android:paddingEnd="@dimen/basic_horizontal_margin"
+        android:paddingStart="@dimen/basic_horizontal_margin"
+        android:tag="front"
         >
 
-        <TextView
+        <View
+            android:id="@+id/dummy"
+            android:layout_width="1sp"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:visibility="invisible"/>
+
+        <me.grantland.widget.AutofitTextView
             android:id="@+id/tv_favourite_station_left"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:textSize="20dp"
-            android:textStyle="bold"
+            android:layout_toLeftOf="@id/dummy"
+            android:maxLines="1"
             android:text="Ciao"
+            android:textAlignment="textStart"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            autofit:minTextSize="14sp"
             />
 
-        <TextView
+        <me.grantland.widget.AutofitTextView
             android:id="@+id/tv_favourite_station_right"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
-            android:textSize="20dp"
-            android:textStyle="bold"
+            android:layout_toRightOf="@id/dummy"
+            android:maxLines="1"
             android:text="Ciao"
+            android:textAlignment="textEnd"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            autofit:minTextSize="14sp"
             />
-
     </RelativeLayout>
 
-
-    <!--<View-->
-        <!--android:layout_width="fill_parent"-->
-        <!--android:layout_height="0.5dp"-->
-        <!--android:background="#ccc"-->
-        <!--/>-->
-
+    <View
+        android:layout_gravity="bottom"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/bg_grey_lighter"
+        />
 </android.support.v7.widget.CardView>

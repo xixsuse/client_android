@@ -1,4 +1,4 @@
-package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.favourites;
+package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeyFavourites;
 
 import android.content.Context;
 
@@ -25,6 +25,10 @@ interface FavouritesContract {
          */
         Context getViewContext();
         // TODO put it in BaseView
+
+        void displayFavouriteJourneys();
+
+        void displayEntryButton();
     }
 
     interface Presenter extends BasePresenter {
@@ -35,6 +39,7 @@ interface FavouritesContract {
          */
         List<PreferredJourney> getPreferredJourneys();
 
+        void updateRequested();
     }
 
 }

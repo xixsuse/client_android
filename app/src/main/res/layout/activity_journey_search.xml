@@ -1,97 +1,173 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:orientation="vertical"
-              android:weightSum="4">
+              android:weightSum="4"
+              android:baselineAligned="false">
 
-
-    <LinearLayout
-        android:id="@+id/ll_stations"
+    <android.support.v7.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="2"
-        android:orientation="horizontal"
-        android:weightSum="2"
+        android:backgroundTint="@color/bg_dark"
+        app:cardCornerRadius="0dp"
+        app:cardElevation="7dp"
         >
 
-        <RelativeLayout
+        <LinearLayout
+            android:id="@+id/ll_stations"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:weightSum="2"
             >
 
-            <TextView
-                android:id="@+id/tv_departure"
+            <RelativeLayout
+                android:id="@+id/rl_departure"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp"
-                android:text="@string/hint_select"
-                android:textAlignment="center"
-                android:textAppearance="@style/TextAppearance.AppCompat.Button"
-                android:textSize="18sp"
-                />
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true"
+                >
 
-            <TextView
-                android:id="@+id/lbl_departure"
+                <TextView
+                    android:id="@+id/tv_departure"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:paddingEnd="16dp"
+                    android:paddingStart="16dp"
+                    android:text="@string/hint_select"
+                    android:textAlignment="center"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Button"
+                    android:textColor="@color/txt_white"
+                    android:textSize="18sp"
+                    />
+
+                <TextView
+                    android:id="@+id/lbl_departure"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_above="@id/tv_departure"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginBottom="40dp"
+                    android:text="@string/hint_departure"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Button"
+                    android:textColor="@color/txt_grey_lighter"
+                    />
+            </RelativeLayout>
+
+            <LinearLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_marginBottom="40dp"
-                android:layout_above="@id/tv_departure"
-                android:text="@string/hint_departure"
-                android:textAppearance="@style/TextAppearance.AppCompat.Button"
-                android:textColor="#70000000"
-                />
-        </RelativeLayout>
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:weightSum="11"
+                android:baselineAligned="false">
 
-        <ImageButton
-            android:id="@+id/btn_swap_station_names"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/ic_swap_horiz"
-            android:layout_gravity="center"
-            />
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="0dp"
+                    android:layout_gravity="center"
+                    android:layout_weight=".5"
+                    />
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            >
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="0dp"
+                    android:layout_gravity="center"
+                    android:layout_weight="4"
+                    android:background="@color/bg_grey"
+                    />
 
-            <TextView
-                android:id="@+id/tv_arrival"
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="0dp"
+                    android:layout_gravity="center"
+                    android:layout_weight=".5"
+                    />
+
+                <ImageButton
+                    android:id="@+id/btn_swap_station_names"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:background="@drawable/ic_swap_horiz"
+                    android:backgroundTint="@color/btn_cyan"
+                    android:clickable="true"
+                    />
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="0dp"
+                    android:layout_gravity="center"
+                    android:layout_weight=".5"
+                    />
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="0dp"
+                    android:layout_gravity="center"
+                    android:layout_weight="4"
+                    android:background="@color/bg_grey"
+                    />
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="0dp"
+                    android:layout_gravity="center"
+                    android:layout_weight=".5"
+                    />
+
+
+            </LinearLayout>
+
+
+            <RelativeLayout
+                android:id="@+id/rl_arrival"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp"
-                android:text="@string/hint_select"
-                android:textAlignment="center"
-                android:textAppearance="@style/TextAppearance.AppCompat.Button"
-                android:textSize="18sp"
-                />
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true"
+                >
 
-            <TextView
-                android:id="@+id/lbl_arrival"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_marginBottom="40dp"
-                android:layout_above="@id/tv_arrival"
-                android:text="@string/hint_arrival"
-                android:textAppearance="@style/TextAppearance.AppCompat.Button"
-                android:textColor="#70000000"
-                />
-        </RelativeLayout>
-    </LinearLayout>
+                <TextView
+                    android:id="@+id/tv_arrival"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:paddingEnd="16dp"
+                    android:paddingStart="16dp"
+                    android:text="@string/hint_select"
+                    android:textAlignment="center"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Button"
+                    android:textColor="@color/txt_white"
+                    android:textSize="18sp"
+                    />
+
+                <TextView
+                    android:id="@+id/lbl_arrival"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_above="@id/tv_arrival"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginBottom="40dp"
+                    android:text="@string/hint_arrival"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Button"
+                    android:textColor="@color/txt_grey_lighter"
+                    />
+            </RelativeLayout>
+        </LinearLayout>
+    </android.support.v7.widget.CardView>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_weight="1.5"
         android:orientation="horizontal"
         android:weightSum="2"
         >
@@ -116,38 +192,61 @@
                 android:id="@+id/lbl_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_above="@id/tv_time"
                 android:layout_centerHorizontal="true"
                 android:layout_marginBottom="20dp"
-                android:layout_above="@id/tv_time"
                 android:text="@string/hint_time"
                 android:textAppearance="@style/TextAppearance.AppCompat.Button"
                 android:textColor="#70000000"
                 />
 
-            <TextView
-                android:id="@+id/tv_minus_one_hour"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
                 android:layout_below="@id/tv_time"
+                android:layout_centerHorizontal="true"
+                android:layout_marginEnd="36dp"
+                android:layout_marginStart="36dp"
                 android:layout_marginTop="20dp"
-                android:layout_marginStart="40dp"
-                android:gravity="center"
-                android:text="-1"
-                android:background="@drawable/roundbutton"
-                />
+                android:background="@drawable/border_radius"
+                android:elevation="5dp"
+                android:orientation="horizontal"
+                android:weightSum="4"
+                >
 
-            <TextView
-                android:id="@+id/tv_plus_one_hour"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginEnd="40dp"
-                android:layout_alignParentEnd="true"
-                android:layout_below="@id/tv_time"
-                android:gravity="center"
-                android:text="+1"
-                android:background="@drawable/roundbutton"
-                />
+                <TextView
+                    android:id="@+id/tv_minus_one_hour"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="2"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:gravity="center"
+                    android:text="-1 h"
+                    android:textColor="@color/txt_white"
+                    android:textStyle="bold"
+                    />
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="15dp"
+                    android:layout_gravity="center"
+                    android:background="@color/bg_grey"
+                    />
+
+                <TextView
+                    android:id="@+id/tv_plus_one_hour"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="2"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:gravity="center"
+                    android:text="+1 h"
+                    android:textColor="@color/txt_white"
+                    android:textStyle="bold"
+                    />
+            </LinearLayout>
 
         </RelativeLayout>
 
@@ -170,61 +269,77 @@
                 android:id="@+id/lbl_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_above="@id/tv_date"
                 android:layout_centerHorizontal="true"
                 android:layout_marginBottom="20dp"
-                android:layout_above="@id/tv_date"
                 android:text="@string/hint_date"
                 android:textAppearance="@style/TextAppearance.AppCompat.Button"
                 android:textColor="#70000000"
                 />
 
-            <TextView
-                android:id="@+id/tv_minus_one_day"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text="-1"
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
                 android:layout_below="@id/tv_date"
+                android:layout_centerHorizontal="true"
+                android:layout_marginEnd="36dp"
+                android:layout_marginStart="36dp"
                 android:layout_marginTop="20dp"
-                android:layout_marginStart="40dp"
-                />
+                android:background="@drawable/border_radius"
+                android:elevation="5dp"
+                android:orientation="horizontal"
+                android:weightSum="4"
+                >
 
-            <TextView
-                android:id="@+id/tv_plus_one_day"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text="+1"
-                android:layout_below="@id/tv_date"
-                android:layout_marginTop="20dp"
-                android:layout_marginEnd="40dp"
-                android:layout_alignParentEnd="true"
-                />
+                <TextView
+                    android:id="@+id/tv_minus_one_day"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="2"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:gravity="center"
+                    android:text="-1 gg"
+                    android:textColor="@color/txt_white"
+                    android:textStyle="bold"
+                    />
 
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="15dp"
+                    android:layout_gravity="center"
+                    android:background="@color/bg_grey"
+                    />
+
+                <TextView
+                    android:id="@+id/tv_plus_one_day"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="2"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:gravity="center"
+                    android:text="+1 gg"
+                    android:textColor="@color/txt_white"
+                    android:textStyle="bold"
+                    />
+            </LinearLayout>
         </RelativeLayout>
-
     </LinearLayout>
 
-    <LinearLayout
+    <Button
+        android:id="@+id/btn_search"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:orientation="vertical"
-        >
-
-        <TextView
-        android:id="@+id/rl_border"
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:background="@drawable/border"
+        android:layout_gravity="bottom"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_weight=".4"
+        android:background="@drawable/border_radius"
+        android:elevation="5dp"
+        android:text="Cerca"
+        android:textSize="18sp"
+        android:textColor="@color/txt_white"
         />
-
-        <Button
-            android:id="@+id/btn_search"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="Cerca"
-            android:textAppearance="@style/TextAppearance.AppCompat.Button"
-            android:textSize="40sp"
-            android:background="@android:color/transparent"
-            />
-    </LinearLayout>
 </LinearLayout>
+

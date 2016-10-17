@@ -1,10 +1,10 @@
 package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeyResults;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.R;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.SolutionList;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_C;
 
 import java.util.List;
 
@@ -25,8 +26,9 @@ import trikita.log.Log;
 
 public class JourneyResultsActivity extends AppCompatActivity implements JourneyResultsContract.View {
 
-    @BindView(R.id.cv_header_1)
-    CardView cvHeader;
+    @BindView(R.id.rl_header_2)
+    RelativeLayout rlHeader2;
+
     @BindView(R.id.tv_departure_station_name)
     TextView tvHeaderDepartureStation;
     @BindView(R.id.tv_arrival_station_name)
@@ -42,8 +44,10 @@ public class JourneyResultsActivity extends AppCompatActivity implements Journey
     // NO SOLUTION FOUND
     @BindView(R.id.rl_empty_journey_box)
     RelativeLayout rlEmptyJourneyBox;
-    @BindView(R.id.btn_change_stations)
-    Button btnChangeStations;
+    @BindView(R.id.tv_error_message)
+    TextView tvErrorMessage;
+    @BindView(R.id.btn_go_to_search)
+    Button btnErrorMessage;
 
     //  RESULTS
     @BindView(R.id.rl_journey_solutions)
@@ -55,6 +59,7 @@ public class JourneyResultsActivity extends AppCompatActivity implements Journey
 
     JourneyResultsAdapter mJourneyResultsAdapter;
     JourneyResultsPresenter presenter;
+    Bundle state;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,9 +68,7 @@ public class JourneyResultsActivity extends AppCompatActivity implements Journey
         ButterKnife.bind(this);
         presenter = new JourneyResultsPresenter(this);
 
-        cvHeader.setOnClickListener(v -> {
-
-        });
+        rlHeader2.setOnClickListener(v -> presenter.getFirstFeasableSolution());
         btnHeaderSwapStationNames.setOnClickListener(v-> presenter.onSwapButtonClick());
         btnHeaderToggleFavorite.setOnClickListener(v -> presenter.onFavouriteButtonClick());
 
@@ -75,28 +78,61 @@ public class JourneyResultsActivity extends AppCompatActivity implements Journey
         rvJourneySolutions.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
 
         btnRefresh.setOnClickListener(v -> presenter.searchFromSearch(true));
+        presenter.onResuming(getIntent().getExtras());
+        presenter.searchFromSearch(true);
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        presenter.onLeaving(outState);
+        Log.d("ONSAVEINSTANCESTATE");
+//        presenter.onLeaving(outState);
         super.onSaveInstanceState(outState);
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
+        // non viene mai chiamato praticamente
+        Log.d("ONRESTOREINSTANCESTATE");
+//        super.onRestoreInstanceState(savedInstanceState);
         presenter.onResuming(savedInstanceState);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        presenter.onResuming(getIntent().getExtras());
+        Log.d("ONRESUME");
+        // restore RecyclerView state
+//        if (state != null) {
+//            Parcelable listState = state.getParcelable(S_STATION_LIST);
+//            rvJourneySolutions.getLayoutManager().onRestoreInstanceState(listState);
+//        }
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        Log.d("ONRESTART");
+    }
+
+    @Override
+    protected void onPause() {
+        Log.d("ONPAUSE");
+        // save RecyclerView state
+//        state = new Bundle();
+//        Parcelable rvState = rvJourneySolutions.getLayoutManager().onSaveInstanceState();
+//        state.putParcelable(S_STATION_LIST, rvState);
+        super.onPause();
+    }
+
+    @Override
+    protected void onStop() {
+        Log.d("ONSTOP");
+        super.onPause();
     }
 
     @Override
     protected void onDestroy() {
+        Log.d("ONDESTROY");
         presenter.unsubscribe();
         super.onDestroy();
     }
@@ -120,9 +156,41 @@ public class JourneyResultsActivity extends AppCompatActivity implements Journey
     }
 
     @Override
+    public void showErrorMessage(String tvMessage, String btnMessage, INTENT_C.ERROR_BTN intent) {
+        progressBar.setVisibility(View.GONE);
+        rlJourneySolutions.setVisibility(View.GONE);
+        rlEmptyJourneyBox.setVisibility(View.VISIBLE);
+        btnErrorMessage.setText(btnMessage);
+        tvErrorMessage.setText(tvMessage);
+        btnErrorMessage.setOnClickListener(v -> {
+            switch (intent) {
+                case CONN_SETTINGS:
+                    Log.d("intent a settings");
+                    Intent i = new Intent(Intent.ACTION_MAIN);
+                    i.setClassName("com.android.phone", "com.android.phone.NetworkSetting");
+                    startActivity(i);
+                    break;
+                case SEND_REPORT:
+                    Log.d("intent a report");
+                    break;
+                case NO_SOLUTIONS:
+                    Log.d("intent a ricerca");
+                    break;
+            }
+        });
+    }
+
+    @Override
+    public void scrollToFirstFeasibleSolution(int position) {
+        Log.d("scrolling to ", position);
+        ((LinearLayoutManager) rvJourneySolutions.getLayoutManager()).scrollToPositionWithOffset(position, 0);
+    }
+
+    @Override
     public void updateSolutionsList(List<SolutionList.Solution> solutionList) {
         Log.d("Successfully updated list");
-        mJourneyResultsAdapter.notifyDataSetChanged();
+//        mJourneyResultsAdapter.notifyDataSetChanged();
+        mJourneyResultsAdapter.notifyItemRangeChanged(0, mJourneyResultsAdapter.getItemCount());
     }
 
     @Override

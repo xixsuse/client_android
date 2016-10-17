@@ -15,41 +15,40 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:windowSoftInputMode="adjustPan|adjustResize">
-        <activity android:name=".journeySearch.JourneySearchActivity">
-        </activity>
-        <activity android:name=".journeyResults.JourneyResultsActivity">
+        <activity
+            android:name=".journeySearch.JourneySearchActivity"
+            android:label="Cerca tratta"
+            android:theme="@style/AppThemeNoShadowActionbar"
+            >
         </activity>
         <activity
-            android:name=".favourites.MainActivity"
-            android:label="@string/title_activity_main"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:name=".journeyResults.JourneyResultsActivity"
+            android:label="Soluzioni"
+            android:theme="@style/AppThemeNoShadowActionbar"
+            >
+        </activity>
+        <activity
+            android:name=".journeyFavourites.FavouriteJourneysActivity"
+            android:label="Just In Train"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
-
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
         <activity
             android:name=".journeySearch.StationSearchActivity"
-            android:launchMode="singleTop">
-
-            <!-- <intent-filter> -->
-            <!-- <action android:name="android.intent.action.SEARCH" /> -->
-            <!-- </intent-filter> -->
-            <!-- <meta-data android:name="android.app.default_searchable" -->
-            <!-- android:value=".journeys.StationSearchActivity" /> -->
+            android:launchMode="singleTop"
+            android:label="Cerca stazione"
+            >
             <meta-data
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable"/>
         </activity>
-
         <service
             android:name=".notification.NotificationService"
             android:exported="false">
         </service>
-
-        <activity android:name=".journeyResults.JourneyResultsActivity">
-        </activity>
     </application>
 
 </manifest>

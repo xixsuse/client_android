@@ -45,7 +45,7 @@ class JourneyResultsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             case VIEW_TYPES.Footer:
                 return new LoadMoreAfterHolder(layoutInflater.inflate(R.layout.item_load_after, parent, false));
             default:
-                return new JourneyHolder(layoutInflater.inflate(R.layout.item_journey, parent, false));
+                throw new RuntimeException("there is no type that matches the type " + viewType);
         }
     }
 

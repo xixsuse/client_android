@@ -16,13 +16,16 @@ import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeySearch
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.networking.JourneyService;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.networking.ServiceFactory;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.notification.NotificationService;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_C;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.PreferredStationsHelper;
 
 import org.joda.time.DateTime;
 
+import java.net.ConnectException;
 import java.util.LinkedList;
 import java.util.List;
 
+import retrofit2.adapter.rxjava.HttpException;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -71,7 +74,6 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
                 Log.d(dateTime);
                 view.setStationNames(departureStation.getName(), arrivalStation.getName());
                 setFavouriteButtonStatus();
-                searchFromSearch(true);
             }
         } else {
             Log.d("no bundle found");
@@ -82,6 +84,7 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
     @Override
     public void onLeaving(Bundle bundle) {
         bundle.putString(I_STATIONS, new Gson().toJson(new PreferredJourney(departureStation, arrivalStation)));
+        bundle.putLong(I_TIME, dateTime.getMillis());
     }
 
     @Override
@@ -139,6 +142,33 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
             PreferredStationsHelper.setPreferredJourney(view.getViewContext(),
                     new PreferredJourney(departureStation, arrivalStation));
             setFavouriteButtonStatus();
+        }
+    }
+
+    @Override
+    public void getFirstFeasableSolution() {
+        int firstFeasableSolution = 0;
+        DateTime.now();
+        for (SolutionList.Solution solution : journeySolutions) {
+            if (solution.solution.timeDifference == null) {
+                firstFeasableSolution++;
+            } else {
+                DateTime dep = new DateTime(solution.solution.departureTime * 1000).minusHours(2).plusMinutes(solution.solution.timeDifference);
+                Log.d(DateTime.now(), dep, firstFeasableSolution);
+                if (DateTime.now().isAfter(dep)) {
+                    firstFeasableSolution++;
+                } else {
+                    if (firstFeasableSolution + 1 >= journeySolutions.size()) {
+                        // prendo l'ultimo elemento contando il footer
+                        view.scrollToFirstFeasibleSolution(journeySolutions.size() - 2);
+                    } else {
+                        // prendo l'elemento contando l'header
+                        Log.d(journeySolutions.get(firstFeasableSolution).solution.departureTimeReadable);
+                        view.scrollToFirstFeasibleSolution(firstFeasableSolution + 1);
+                    }
+                    break;
+                }
+            }
         }
     }
 
@@ -204,17 +234,36 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
 
     @Override
     public void onStationNotFound() {
-        view.showSnackbar("Station not found");
+        view.showSnackbar("Si è verificato un problema!");
     }
 
     @Override
     public void onJourneyNotFound() {
-        view.showSnackbar("Journey not found");
+        view.showSnackbar("Si è verificato un problema!");
+        view.showErrorMessage("La tratta inserita non ha viaggi disponibili", "Cambia stazioni", INTENT_C.ERROR_BTN.NO_SOLUTIONS);
     }
 
     @Override
-    public void onServerError() {
-        view.showSnackbar("Server error");
+    public void onServerError(Throwable exception) {
+        if (view != null) {
+            view.showSnackbar("Si è verificato un problema!");
+            if (exception instanceof HttpException) {
+                Log.d(((HttpException) exception).response().errorBody(), ((HttpException) exception).response().code());
+                if (((HttpException) exception).response().code() == 500) {
+                    view.showErrorMessage("Il server sta avendo dei problemi", "Segnala il problema", INTENT_C.ERROR_BTN.SEND_REPORT);
+                }
+                // TODO controlla 500, 404 e non so che altro
+            } else if (exception instanceof ConnectException) {
+                Log.d(exception.getMessage());
+                if (isNetworkAvailable()) {
+                    view.showErrorMessage("Il server sta avendo dei problemi", "Segnala il problema", INTENT_C.ERROR_BTN.SEND_REPORT);
+                } else {
+                    view.showErrorMessage("Assicurati di essere connesso a Internet", "Attiva connessione", INTENT_C.ERROR_BTN.CONN_SETTINGS);
+                }
+            } else {
+                Log.d(exception.toString());
+            }
+        }
     }
 
     @Override
@@ -244,19 +293,17 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
 
                         @Override
                         public void onError(Throwable e) {
-                            Log.d(e.getMessage());
-                            // TODO controlla 500
+                            listener.onServerError(e);
                         }
 
                         @Override
                         public void onNext(List<SolutionList.Solution> solutionList) {
-                            if (solutionList.size() == 0) {
-                                listener.onJourneyNotFound();
-                            } else {
-                                journeySolutions.clear();
-                                journeySolutions.addAll(solutionList);
+                            journeySolutions.clear();
+                            journeySolutions.addAll(solutionList);
+                            if (journeySolutions.size() > 0) {
                                 listener.onSuccess();
-                                // TODO perform checks
+                            } else {
+                                listener.onJourneyNotFound();
                             }
                         }
                     });
@@ -277,8 +324,7 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
 
                         @Override
                         public void onError(Throwable e) {
-                            // TODO controlla 500
-                            Log.d(e.getMessage());
+                            listener.onServerError(e);
                         }
 
                         @Override
@@ -288,8 +334,11 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
                                 journeySolutions.clear();
                             }
                             journeySolutions.addAll(solutionList);
-                            listener.onSuccess();
-                            // TODO perform checks
+                            if (journeySolutions.size() > 0) {
+                                listener.onSuccess();
+                            } else {
+                                listener.onJourneyNotFound();
+                            }
                         }
                     });
         }
@@ -310,16 +359,13 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
 
                         @Override
                         public void onError(Throwable e) {
-                            // TODO controlla 500
                             Log.d(e.getMessage());
                         }
 
                         @Override
                         public void onNext(List<SolutionList.Solution> solutionList) {
                             Log.d(solutionList.size(), "new solutions found");
-                            solutionList.addAll(journeySolutions);
-                            journeySolutions.clear();
-                            journeySolutions.addAll(solutionList);
+                            journeySolutions.addAll(0, solutionList);
                             listener.onSuccess();
                         }
                     });
