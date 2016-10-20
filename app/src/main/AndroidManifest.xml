@@ -24,7 +24,7 @@
         <activity
             android:name=".journeyResults.JourneyResultsActivity"
             android:label="Soluzioni"
-            android:theme="@style/AppThemeNoShadowActionbar"
+            android:theme="@style/AppTheme.NoActionBar"
             >
         </activity>
         <activity

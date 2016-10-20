@@ -1,15 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#F5F5F5</color>
-    <color name="colorPrimaryDark">#00E676</color>
-    <color name="colorAccent">#007BFF</color>
-    <color name="textColorPrimary">#000000</color>
-
-    <color name="textLight">#30000000</color>
-
-    <color name="late1">#e76b6b</color>
-    <color name="ontime">#6bcce7</color>
-    <color name="early1">#6be77c</color>
+    <color name="late1">#EF5350</color>
+    <color name="ontime">#80D8FF</color>
+    <color name="early1">#9ccc65</color>
 
     <!-- BACKGROUNDS -->
     <color name="bg_darker">#37474F</color>
@@ -22,6 +15,7 @@
     <!-- TEXT -->
     <color name="txt_white">#FFFFFF</color>
     <color name="txt_red">#EF5350</color>
+    <color name="txt_orange">#FFCA28</color>
     <color name="txt_green">#9CCC65</color>
     <color name="txt_dark">#37474F</color>
     <color name="txt_grey">#9E9E9E</color>

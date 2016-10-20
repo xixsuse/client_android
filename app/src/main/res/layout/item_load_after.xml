@@ -2,7 +2,9 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/thin_card_height">
+                android:layout_height="60dp"
+                android:layout_marginBottom="50dp"
+    >
 
     <ImageButton
         android:id="@+id/search_after_btn"
@@ -12,7 +14,7 @@
         android:layout_centerInParent="true"
         android:background="?attr/selectableItemBackground"
         android:clickable="true"
-        app:srcCompat="@drawable/ic_arrow_downward"
+        app:srcCompat="@drawable/ic_chevron_down"
         />
 
 </RelativeLayout>

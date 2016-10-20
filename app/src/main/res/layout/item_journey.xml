@@ -1,23 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    android:orientation="vertical">
 
-        <!--<include layout="@layout/card_journey" android:id="@+id/cjJourney"/>-->
     <android.support.v7.widget.CardView
-        xmlns:card_view="http://schemas.android.com/apk/res-auto"
-        xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/cvJourney"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:card_view="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="12dp"
+        android:layout_marginEnd="4dp"
+        android:layout_marginStart="4dp"
         android:layout_marginTop="0dp"
-        android:elevation="@dimen/journey_item_elevation"
+        android:elevation="7dp"
         card_view:cardBackgroundColor="@color/cardview_light_background"
-        card_view:cardCornerRadius="@dimen/card_corner_radius"
+        card_view:cardCornerRadius="5dp"
         >
 
         <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -38,7 +39,18 @@
                     android:text="IC"
                     android:textSize="@dimen/fs_big_text"
                     android:textStyle="bold"
-                    android:visibility="gone"
+                    android:visibility="visible"
+                    />
+
+                <TextView
+                    android:id="@+id/tv_train_number"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="605"
+                    android:textSize="12sp"
+                    android:textStyle="normal"
+                    android:visibility="visible"
                     />
 
                 <LinearLayout
@@ -64,7 +76,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/changes"
-                        android:textColor="@color/textLight"
+                        android:textColor="@color/txt_white"
                         android:textSize="@dimen/fs_floating_title"
                         android:textStyle="italic"
                         />
@@ -101,7 +113,7 @@
                         android:text="7:44"
                         android:textColor="@color/late1"
                         android:textSize="@dimen/fs_small_text"
-                        android:visibility="gone"
+                        android:visibility="visible"
                         />
 
                     <HorizontalScrollView
@@ -120,10 +132,10 @@
                             android:focusable="true"
                             android:focusableInTouchMode="true"
                             android:marqueeRepeatLimit="marquee_forever"
+                            android:maxLines="1"
                             android:scrollHorizontally="true"
                             android:text="Torino Porta Nuova"
-                            android:textSize="@dimen/fs_floating_title"
-                            android:maxLines="1"/>
+                            android:textSize="@dimen/fs_floating_title"/>
                     </HorizontalScrollView>
 
                 </LinearLayout>
@@ -161,7 +173,7 @@
                         android:textAlignment="textEnd"
                         android:textColor="@color/late1"
                         android:textSize="@dimen/fs_small_text"
-                        android:visibility="gone"
+                        android:visibility="visible"
                         />
 
                     <HorizontalScrollView
@@ -180,11 +192,10 @@
                             android:focusable="true"
                             android:focusableInTouchMode="true"
                             android:marqueeRepeatLimit="marquee_forever"
+                            android:maxLines="1"
                             android:scrollHorizontally="true"
-                            android:singleLine="true"
                             android:text="Milano Centrale"
-                            android:textSize="@dimen/fs_floating_title"
-                            />
+                            android:textSize="@dimen/fs_floating_title"/>
                     </HorizontalScrollView>
                 </LinearLayout>
             </RelativeLayout>
@@ -194,7 +205,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
-                android:visibility="gone"
+                android:visibility="visible"
                 >
 
                 <TextView
@@ -213,7 +224,7 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@id/tv_time_difference"
                     android:layout_centerInParent="true"
-                    android:textColor="@color/textLight"
+                    android:textColor="@color/txt_white"
                     android:textSize="@dimen/fs_floating_title"
                     android:textStyle="italic"/>
             </RelativeLayout>
@@ -226,9 +237,9 @@
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:padding="8dp"
                 android:scaleX="-1"
-                app:srcCompat="@drawable/ic_refresh"
                 android:tint="?attr/colorButtonNormal"
-                android:visibility="gone"/>
+                android:visibility="gone"
+                app:srcCompat="@drawable/ic_refresh"/>
 
             <LinearLayout
                 android:id="@+id/ll_journey_info"
@@ -257,7 +268,7 @@
                         android:layout_marginStart="10dp"
                         android:layout_toEndOf="@id/ic_clock"
                         android:text="@string/lasting_time_title"
-                        android:textColor="@color/textLight"
+                        android:textColor="@color/txt_white"
                         android:textSize="@dimen/fs_small_text"
                         />
 
@@ -278,7 +289,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="30dp"
-                    android:visibility="gone"
+                    android:visibility="visible"
                     >
 
                     <ImageView
@@ -296,7 +307,7 @@
                         android:layout_marginStart="10dp"
                         android:layout_toEndOf="@id/ic_platform"
                         android:text="@string/platform_title"
-                        android:textColor="@color/textLight"
+                        android:textColor="@color/txt_white"
                         android:textSize="@dimen/fs_small_text"
                         />
 
@@ -323,9 +334,9 @@
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:paddingEnd="@dimen/basic_horizontal_margin"
                 android:paddingStart="@dimen/basic_horizontal_margin"
+                android:tint="@color/bg_dark"
+                android:visibility="visible"
                 app:srcCompat="@drawable/ic_pin"
-                android:tint="@color/colorPrimaryDark"
-                android:visibility="gone"
                 />
 
             <ImageButton
@@ -337,8 +348,8 @@
                 android:layout_marginBottom="-8dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:padding="8dp"
-                app:srcCompat="@drawable/ic_expand_more"
                 android:visibility="gone"
+                app:srcCompat="@drawable/ic_expand_more"
                 />
 
         </RelativeLayout>
@@ -348,10 +359,10 @@
         android:id="@+id/ll_changes"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginTop="-8dp"
         android:layout_marginBottom="16dp"
-        android:visibility="gone"
+        android:layout_marginTop="-8dp"
+        android:orientation="vertical"
+        android:visibility="visible"
         />
 
 </LinearLayout>

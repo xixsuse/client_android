@@ -108,6 +108,7 @@ class JourneyResultsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     static class ChangeHolder {
 
         TextView tvTrainCategory;
+        TextView tvTrainNumber;
 
         LinearLayout llChangesNumber;
         TextView tvChangesNumber;
@@ -146,6 +147,7 @@ class JourneyResultsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
 
             this.tvTrainCategory = (TextView) itemView.findViewById(R.id.tv_train_category);
+            this.tvTrainNumber = (TextView) itemView.findViewById(R.id.tv_train_number);
             this.tvChangesNumber = (TextView) itemView.findViewById(R.id.tv_changes_number);
             this.tvChangesText = (TextView) itemView.findViewById(R.id.tv_changes_text);
 

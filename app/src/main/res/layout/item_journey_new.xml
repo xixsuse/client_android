@@ -1,0 +1,441 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:card_view="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    >
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/cv_journey"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="4dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="0dp"
+        android:elevation="7dp"
+        card_view:cardBackgroundColor="@color/bg_white"
+        card_view:cardCornerRadius="5dp"
+        >
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                      android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:layout_marginBottom="12dp"
+                      android:layout_marginEnd="4dp"
+                      android:layout_marginStart="4dp"
+                      android:layout_marginTop="12dp"
+                      android:orientation="horizontal"
+                      android:weightSum="16"
+            >
+
+            <LinearLayout
+                android:id="@+id/ll_train_identification"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:orientation="vertical"
+                android:visibility="visible"
+                >
+
+                <me.grantland.widget.AutofitTextView
+                    android:id="@+id/tv_train_category"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:maxLines="1"
+                    android:text="FR"
+                    android:textSize="@dimen/fs_big_text"
+                    android:textStyle="bold"
+                    card_view:minTextSize="10sp"
+                    />
+
+                <TextView
+                    android:id="@+id/tv_train_number"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="605"
+                    android:textSize="12sp"
+                    android:textStyle="normal"
+                    />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_changes_number"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:orientation="vertical"
+                android:visibility="gone"
+                >
+
+                <TextView
+                    android:id="@+id/tv_changes_number"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="1"
+                    android:textAlignment="center"
+                    android:textSize="@dimen/fs_big_text"
+                    android:textStyle="bold"
+                    />
+
+                <TextView
+                    android:id="@+id/tv_changes_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="@string/changes"
+                    android:textColor="@color/txt_white"
+                    android:textSize="@dimen/fs_floating_title"
+                    android:textStyle="italic"
+                    />
+            </LinearLayout>
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1.3"
+                />
+
+            <RelativeLayout
+                android:id="@+id/rl_time_schedule"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="8">
+
+                <LinearLayout
+                    android:id="@+id/ll_departure_schedule"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    >
+
+                    <TextView
+                        android:id="@+id/tv_departure_time"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="17:20"
+                        android:textSize="@dimen/fs_big_text"
+                        />
+
+                    <TextView
+                        android:id="@+id/tv_departure_time_with_delay"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="7:44"
+                        android:textColor="@color/late1"
+                        android:textSize="@dimen/fs_small_text"
+                        android:visibility="visible"
+                        />
+                </LinearLayout>
+
+                <ImageView
+                    android:id="@+id/iv_from_to"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toEndOf="@id/ll_departure_schedule"
+                    android:layout_toStartOf="@id/ll_arrival_schedule"
+                    app:srcCompat="@drawable/ic_arrow_forward"
+                    />
+
+                <LinearLayout
+                    android:id="@+id/ll_arrival_schedule"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:orientation="vertical"
+                    >
+
+                    <TextView
+                        android:id="@+id/tv_arrival_time"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="10:24"
+                        android:textSize="@dimen/fs_big_text"
+                        />
+
+                    <TextView
+                        android:id="@+id/tv_arrival_time_with_delay"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="11:41"
+                        android:textAlignment="textEnd"
+                        android:textColor="@color/late1"
+                        android:textSize="@dimen/fs_small_text"
+                        android:visibility="visible"
+                        />
+                </LinearLayout>
+            </RelativeLayout>
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1.3"
+                />
+
+            <RelativeLayout
+                android:id="@+id/rl_time_difference"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity=""
+                android:layout_weight="2.5"
+                android:visibility="visible"
+                >
+
+                <TextView
+                    android:id="@+id/tv_time_difference"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:text="4'"
+                    android:textColor="@color/late1"
+                    android:textSize="@dimen/fs_big_text"
+                    />
+
+                <me.grantland.widget.AutofitTextView
+                    android:id="@+id/tv_time_difference_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tv_time_difference"
+                    android:layout_centerInParent="true"
+                    android:maxLines="1"
+                    android:text="Rallentando"
+                    android:textColor="@color/txt_white"
+                    android:textSize="@dimen/fs_floating_title"
+                    android:textStyle="italic"
+                    card_view:minTextSize="8dp"
+                    />
+            </RelativeLayout>
+
+            <ImageButton
+                android:id="@+id/btn_refresh_journey"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="2.5"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:scaleX="-1"
+                android:tint="@color/btn_dark_cyan"
+                android:visibility="gone"
+                app:srcCompat="@drawable/ic_refresh"
+                />
+        </LinearLayout>
+    </android.support.v7.widget.CardView>
+
+    <!--<android.support.v7.widget.CardView-->
+    <!--android:id="@+id/cv_journey_details"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="50dp"-->
+    <!--android:layout_marginBottom="12dp"-->
+    <!--android:layout_marginEnd="12dp"-->
+    <!--android:layout_marginStart="12dp"-->
+    <!--android:background="@drawable/bottom_border"-->
+    <!--android:backgroundTint="@color/bg_dark"-->
+    <!--android:elevation="2dp"-->
+    <!--android:layout_below="@id/cv_journey"-->
+    <!--&gt;-->
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_below="@id/cv_journey"
+        android:layout_marginBottom="12dp"
+        android:layout_marginEnd="12dp"
+        android:layout_marginStart="12dp"
+        android:background="@drawable/bottom_border"
+        android:backgroundTint="@color/bg_dark"
+        android:elevation="2dp"
+        >
+
+        <RelativeLayout
+            android:id="@+id/rl_lasting_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="12dp"
+            >
+
+            <ImageView
+                android:id="@+id/ic_clock"
+                android:layout_width="16dp"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/ic_clock"
+                />
+
+            <me.grantland.widget.AutofitTextView
+                android:id="@+id/tv_lasting_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="5dp"
+                android:layout_toEndOf="@id/ic_clock"
+                android:maxLines="1"
+                android:text="1h 20'"
+                android:textColor="@color/txt_white"
+                android:textSize="12dp"
+                />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/rl_platform"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="24dp"
+            android:layout_toEndOf="@id/rl_lasting_time"
+            android:visibility="visible"
+            >
+
+            <ImageView
+                android:id="@+id/ic_platform"
+                android:layout_width="16dp"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/ic_platform"
+                />
+
+            <TextView
+                android:id="@+id/tv_platform"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="5dp"
+                android:layout_toEndOf="@id/ic_platform"
+                android:maxLines="1"
+                android:text="4 bis"
+                android:textColor="@color/txt_white"
+                android:textSize="12dp"
+                />
+        </RelativeLayout>
+
+        <!-- aggiungi icone-->
+
+        <LinearLayout
+            android:id="@+id/ll_notification"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/radius_bottom_right"
+            android:paddingEnd="12dp"
+            android:paddingStart="12dp"
+            >
+
+            <ImageView
+                android:id="@+id/btn_pin"
+                android:layout_width="24dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginEnd="8dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:tint="@color/btn_light_cyan"
+                android:visibility="visible"
+                app:srcCompat="@drawable/ic_pin2"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Notifica"
+                android:textColor="@color/txt_white"
+                android:textSize="@dimen/fs_small_text"
+                />
+
+        </LinearLayout>
+
+        <RelativeLayout
+            android:id="@+id/rl_changes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="4dp"
+            android:layout_marginStart="16dp"
+            android:layout_toEndOf="@id/rl_lasting_time"
+            android:layout_toStartOf="@id/ll_notification"
+            android:visibility="gone"
+            >
+
+            <ImageView
+                android:id="@+id/ic_changes"
+                android:layout_width="16dp"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="4dp"
+                app:srcCompat="@drawable/ic_change"
+                />
+
+            <HorizontalScrollView
+                android:id="@+id/hsv_changes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="4dp"
+                android:layout_toEndOf="@id/ic_changes"
+                android:background="@color/bg_darker"
+                android:padding="4dp"
+                android:scrollbars="none"
+                android:visibility="visible"
+                >
+
+                <TextView
+                    android:id="@+id/tv_change"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="marquee"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:marqueeRepeatLimit="marquee_forever"
+                    android:maxLines="1"
+                    android:scrollHorizontally="true"
+                    android:text="IC 603 > FR 3042"
+                    android:textColor="@color/txt_white"
+                    android:textSize="12dp"/>
+            </HorizontalScrollView>
+        </RelativeLayout>
+
+
+        <LinearLayout
+            android:id="@+id/ll_icons"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="8dp"
+            android:layout_toStartOf="@id/ll_notification"
+            android:visibility="visible"
+            >
+
+            <ImageView
+                android:id="@+id/ic_bolt"
+                android:layout_width="14dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:visibility="gone"
+                app:srcCompat="@drawable/ic_bolt"
+                />
+
+            <ImageView
+                android:id="@+id/ic_warning"
+                android:layout_width="24dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:visibility="gone"
+                app:srcCompat="@drawable/ic_warning_journey"
+                />
+
+            <ImageView
+                android:id="@+id/ic_cancelled"
+                android:layout_width="24dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:visibility="gone"
+                app:srcCompat="@drawable/ic_cancelled_journey"
+                />
+        </LinearLayout>
+
+    </RelativeLayout>
+
+    <!--</android.support.v7.widget.CardView>-->
+</RelativeLayout>

@@ -12,7 +12,7 @@
         android:layout_centerInParent="true"
         android:background="?attr/selectableItemBackground"
         android:clickable="true"
-        app:srcCompat="@drawable/ic_arrow_upward"
+        app:srcCompat="@drawable/ic_chevron_up"
         />
 
 </RelativeLayout>

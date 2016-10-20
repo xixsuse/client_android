@@ -153,6 +153,7 @@ class JourneyItemFactory {
         // hide train category
         setVisibility(jh.llChangesNumber, ON);
         setVisibility(jh.tvTrainCategory, OFF);
+        setVisibility(jh.tvTrainNumber, OFF);
 
         // hide platform
         setVisibility(jh.rlPlatform, OFF);
@@ -174,11 +175,13 @@ class JourneyItemFactory {
         // show train category
         // hide changes number
         setVisibility(jh.tvTrainCategory, ON);
+        setVisibility(jh.tvTrainNumber, ON);
         setVisibility(jh.llChangesNumber, OFF);
 
         // hide expand
         setVisibility(jh.btnExpandCard, OFF);
         setText(jh.tvTrainCategory, s.trainCategory);
+        setText(jh.tvTrainNumber, s.trainId);
 
         // hide changes
 //        setVisibility(jh.llChanges, OFF);
@@ -248,7 +251,7 @@ class JourneyItemFactory {
     }
 
     private static void setColors(Context context, JourneyResultsAdapter.ChangeHolder h, int timeDifference) {
-        int color = ContextCompat.getColor(context, R.color.textLight);
+        int color = ContextCompat.getColor(context, R.color.txt_white);
         if (timeDifference == 0) {
             color = ContextCompat.getColor(context, R.color.ontime);
         } else if (timeDifference > 0) {

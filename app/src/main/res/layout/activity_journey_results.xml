@@ -1,163 +1,221 @@
-<RelativeLayout
+<android.support.design.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".journeySearch.JourneySearchActivity">
+    tools:context=".journeySearch.JourneySearchActivity"
+    >
 
-    <RelativeLayout
-        android:id="@+id/rl_header_2"
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appbar"
         android:layout_width="match_parent"
-        android:layout_height="70dp"
-        android:background="@color/bg_dark"
-        android:clickable="true"
-        android:elevation="5dp"
+        android:layout_height="wrap_content"
+        app:elevation="0dp"
         >
 
-        <ImageView
-            android:id="@+id/iv_dots"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_alignParentStart="true"
-            android:layout_centerVertical="true"
-            android:layout_marginBottom="35dp"
-            android:layout_marginStart="8dp"
-            app:srcCompat="@drawable/ic_searched_journey"
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:layout_scrollFlags="scroll|enterAlways"
+            app:theme="@style/AppThemeNoShadowActionbar"
+            app:title="Soluzioni"
+            app:titleTextColor="@color/txt_white"
             />
 
-        <TextView
-            android:id="@+id/tv_departure_station_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_marginTop="10dp"
-            android:layout_toEndOf="@id/iv_dots"
-            android:text="Pesaro"
-            android:textColor="@color/txt_white"
-            android:textSize="@dimen/fs_small_text"
-            />
+    </android.support.design.widget.AppBarLayout>
 
-        <TextView
-            android:id="@+id/tv_arrival_station_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_marginBottom="10dp"
-            android:layout_toEndOf="@id/iv_dots"
-            android:text="Cesena"
-            android:textColor="@color/txt_white"
-            android:textSize="@dimen/fs_small_text"
-            />
-
-
-        <ImageButton
-            android:id="@+id/btn_header_swap_station_names"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginEnd="24dp"
-            android:layout_toStartOf="@+id/btn_toggle_favourite"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:backgroundTint="@android:color/transparent"
-            android:clickable="true"
-            app:srcCompat="@drawable/ic_swap_vert"
-            />
-
-        <ImageButton
-            android:id="@+id/btn_toggle_favourite"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:layout_marginEnd="@dimen/basic_horizontal_margin"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:backgroundTint="@android:color/transparent"
-            android:clickable="true"
-            app:srcCompat="@drawable/ic_star_border"
-            />
-
-    </RelativeLayout>
-
-
-    <ProgressBar
-        android:id="@+id/loading_spinner"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:indeterminateTint="@color/btn_dark_cyan"
-        android:indeterminateTintMode="src_atop"
-        android:visibility="gone"
-        />
-
+    <!-- Your scrolling content -->
     <RelativeLayout
-        android:id="@+id/rl_empty_journey_box"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_centerInParent="true"
-        android:visibility="gone"
-        >
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <TextView
-            android:id="@+id/tv_error_message"
+        <RelativeLayout
+            android:id="@+id/rl_header_2"
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:background="@color/bg_dark"
+            android:clickable="true"
+            android:elevation="5dp"
+            >
+
+            <ImageView
+                android:id="@+id/iv_dots"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:layout_marginBottom="35dp"
+                android:layout_marginStart="8dp"
+                app:srcCompat="@drawable/ic_searched_journey"
+                />
+
+            <ImageButton
+                android:id="@+id/btn_header_swap_station_names"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="24dp"
+                android:layout_toStartOf="@+id/btn_toggle_favourite"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:backgroundTint="@android:color/transparent"
+                android:clickable="true"
+                app:srcCompat="@drawable/ic_swap_vert"
+                />
+
+            <ImageButton
+                android:id="@+id/btn_toggle_favourite"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="@dimen/basic_horizontal_margin"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:backgroundTint="@android:color/transparent"
+                android:clickable="true"
+                app:srcCompat="@drawable/ic_star_border"
+                />
+
+            <HorizontalScrollView
+                android:id="@+id/hsv_departure_station_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:scrollbars="none"
+                android:visibility="visible"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="8dp"
+                android:background="@color/bg_dark"
+                android:padding="4dp"
+                android:layout_alignParentTop="true"
+                android:layout_toEndOf="@id/iv_dots"
+                android:layout_toStartOf="@id/btn_header_swap_station_names"
+                >
+
+                <TextView
+                    android:id="@+id/tv_departure_station_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Pesaro"
+                    android:textColor="@color/txt_white"
+                    android:textSize="@dimen/fs_small_text"
+                    android:ellipsize="marquee"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:marqueeRepeatLimit="marquee_forever"
+                    android:maxLines="1"
+                    android:scrollHorizontally="true"
+                    />
+            </HorizontalScrollView>
+
+            <HorizontalScrollView
+                android:id="@+id/hsv_arrival_station_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:scrollbars="none"
+                android:visibility="visible"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="8dp"
+                android:background="@color/bg_dark"
+                android:padding="4dp"
+                android:layout_alignParentTop="true"
+                android:layout_toEndOf="@id/iv_dots"
+                android:layout_toStartOf="@id/btn_header_swap_station_names"
+                android:layout_marginTop="35dp"
+                >
+
+                <TextView
+                    android:id="@+id/tv_arrival_station_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Cesena"
+                    android:textColor="@color/txt_white"
+                    android:textSize="@dimen/fs_small_text"
+                    android:ellipsize="marquee"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:marqueeRepeatLimit="marquee_forever"
+                    android:maxLines="1"
+                    android:scrollHorizontally="true"
+                    />
+            </HorizontalScrollView>
+
+
+        </RelativeLayout>
+
+
+        <ProgressBar
+            android:id="@+id/loading_spinner"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:gravity="center"
-            android:padding="20dp"
-            android:text="Messaggio"
-            android:textSize="18dp"
-            android:textStyle="italic"
+            android:indeterminateTint="@color/btn_dark_cyan"
+            android:indeterminateTintMode="src_atop"
+            android:visibility="visible"
             />
 
-        <Button
-            android:id="@+id/btn_go_to_search"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/tv_error_message"
-            android:layout_centerHorizontal="true"
-            android:backgroundTint="@color/colorPrimaryDark"
-            android:text="Testo"
-            android:textColor="@color/colorPrimary"
-            />
+        <RelativeLayout
+            android:id="@+id/rl_error"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            >
 
-    </RelativeLayout>
+            <TextView
+                android:id="@+id/tv_error_message"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:gravity="center"
+                android:padding="20dp"
+                android:text="Messaggio"
+                android:textSize="18dp"
+                android:textStyle="italic"
+                />
 
-
-    <RelativeLayout
-        android:id="@+id/rl_journey_solutions"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/rl_header_2"
-        android:clickable="true"
-        android:visibility="visible"
-        android:background="@color/bg_grey_lighter"
-        >
+            <Button
+                android:id="@+id/btn_error_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tv_error_message"
+                android:layout_centerHorizontal="true"
+                android:backgroundTint="@color/btn_dark_cyan"
+                android:text="Testo"
+                android:textColor="@color/txt_white"
+                />
+        </RelativeLayout>
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rv_journey_solutions"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            />
-
-        <ImageButton
-            android:id="@+id/btn_refresh"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_alignParentBottom="true"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
-            android:background="@drawable/border_radius"
+            android:layout_below="@id/rl_header_2"
+            android:background="@color/bg_grey_lighter"
             android:clickable="true"
-            android:elevation="5dp"
-            app:srcCompat="@drawable/ic_refresh"
+            android:visibility="gone"
             />
     </RelativeLayout>
 
-</RelativeLayout>
+
+    <ImageButton
+        android:id="@+id/btn_refresh"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:background="@drawable/border_radius"
+        android:clickable="true"
+        android:elevation="5dp"
+        app:srcCompat="@drawable/ic_refresh"
+        />
+</android.support.design.widget.CoordinatorLayout>

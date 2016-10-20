@@ -4,9 +4,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -26,6 +28,9 @@ import trikita.log.Log;
 
 public class JourneyResultsActivity extends AppCompatActivity implements JourneyResultsContract.View {
 
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+
     @BindView(R.id.rl_header_2)
     RelativeLayout rlHeader2;
 
@@ -42,22 +47,22 @@ public class JourneyResultsActivity extends AppCompatActivity implements Journey
     ProgressBar progressBar;
 
     // NO SOLUTION FOUND
-    @BindView(R.id.rl_empty_journey_box)
+    @BindView(R.id.rl_error)
     RelativeLayout rlEmptyJourneyBox;
     @BindView(R.id.tv_error_message)
     TextView tvErrorMessage;
-    @BindView(R.id.btn_go_to_search)
+    @BindView(R.id.btn_error_button)
     Button btnErrorMessage;
 
     //  RESULTS
-    @BindView(R.id.rl_journey_solutions)
-    RelativeLayout rlJourneySolutions;
+//    @BindView(R.id.rl_journey_solutions)
+//    RelativeLayout rlJourneySolutions;
     @BindView(R.id.rv_journey_solutions)
     RecyclerView rvJourneySolutions;
     @BindView(R.id.btn_refresh)
     ImageButton btnRefresh;
 
-    JourneyResultsAdapter mJourneyResultsAdapter;
+    JourneyResultsAdapterNew mJourneyResultsAdapter;
     JourneyResultsPresenter presenter;
     Bundle state;
 
@@ -68,11 +73,16 @@ public class JourneyResultsActivity extends AppCompatActivity implements Journey
         ButterKnife.bind(this);
         presenter = new JourneyResultsPresenter(this);
 
+        setSupportActionBar(toolbar);
+//        toolbar.setTitle("Soluzioni");
+//        getSupportActionBar().setElevation(0);
+
+
         rlHeader2.setOnClickListener(v -> presenter.getFirstFeasableSolution());
         btnHeaderSwapStationNames.setOnClickListener(v-> presenter.onSwapButtonClick());
         btnHeaderToggleFavorite.setOnClickListener(v -> presenter.onFavouriteButtonClick());
 
-        mJourneyResultsAdapter = new JourneyResultsAdapter(this, presenter);
+        mJourneyResultsAdapter = new JourneyResultsAdapterNew(this, presenter);
         rvJourneySolutions.setAdapter(mJourneyResultsAdapter);
         rvJourneySolutions.setHasFixedSize(true);
         rvJourneySolutions.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
@@ -145,20 +155,20 @@ public class JourneyResultsActivity extends AppCompatActivity implements Journey
     @Override
     public void showProgress() {
         progressBar.setVisibility(View.VISIBLE);
-        rlJourneySolutions.setVisibility(View.GONE);
+        rvJourneySolutions.setVisibility(View.GONE);
         rlEmptyJourneyBox.setVisibility(View.GONE);
     }
 
     @Override
     public void hideProgress() {
         progressBar.setVisibility(View.GONE);
-        rlJourneySolutions.setVisibility(View.VISIBLE);
+        rvJourneySolutions.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void showErrorMessage(String tvMessage, String btnMessage, INTENT_C.ERROR_BTN intent) {
         progressBar.setVisibility(View.GONE);
-        rlJourneySolutions.setVisibility(View.GONE);
+        rvJourneySolutions.setVisibility(View.GONE);
         rlEmptyJourneyBox.setVisibility(View.VISIBLE);
         btnErrorMessage.setText(btnMessage);
         tvErrorMessage.setText(tvMessage);
@@ -189,8 +199,8 @@ public class JourneyResultsActivity extends AppCompatActivity implements Journey
     @Override
     public void updateSolutionsList(List<SolutionList.Solution> solutionList) {
         Log.d("Successfully updated list");
-//        mJourneyResultsAdapter.notifyDataSetChanged();
-        mJourneyResultsAdapter.notifyItemRangeChanged(0, mJourneyResultsAdapter.getItemCount());
+        rvJourneySolutions.getRecycledViewPool().clear();
+        mJourneyResultsAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -204,7 +214,8 @@ public class JourneyResultsActivity extends AppCompatActivity implements Journey
     public void showSnackbar(String message) {
         Log.d(message);
         Snackbar snackbar = Snackbar
-                .make(rlJourneySolutions, message, Snackbar.LENGTH_LONG);
+                .make(rvJourneySolutions, message, Snackbar.LENGTH_LONG);
+        ((TextView) snackbar.getView().findViewById(android.support.design.R.id.snackbar_text)).setTextColor(ContextCompat.getColor(this, R.color.txt_white));
         snackbar.show();
     }
 
