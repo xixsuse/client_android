@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:orientation="vertical"
               android:layout_width="match_parent"
-              android:layout_height="75dp"
+              android:layout_height="@dimen/item_height_big"
               android:clickable="false"
               android:background="@color/bg_grey_lighter">
 
@@ -10,10 +10,10 @@
         android:id="@+id/lbl_favourite_journey_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="15dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginStart="@dimen/margin_default"
+        android:layout_marginTop="@dimen/margin_default"
         android:textStyle="bold"
-        android:text="Tratte Preferite"
+        android:text="@string/title_favourite_journeys"
         android:textColor="@color/txt_grey"
         />
 
@@ -21,10 +21,10 @@
         android:id="@+id/lbl_favourite_journey_subtitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="15dp"
-        android:layout_marginTop="4dp"
-        android:layout_marginBottom="15dp"
-        android:text="Scorri a destra o sinistra per i dettagli"
+        android:layout_marginStart="@dimen/margin_default"
+        android:layout_marginTop="@dimen/margin_smaller"
+        android:layout_marginBottom="@dimen/margin_default"
+        android:text="@string/subtitle_favourite_journeys"
         android:textColor="@color/txt_grey_lighter"
         />
 

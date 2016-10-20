@@ -5,10 +5,6 @@
     <string name="hint_departure">Partenza</string>
     <string name="hint_arrival">Arrivo</string>
     <string name="title_departure_time">Ora partenza</string>
-    <string name="minus_minus_hour">-4h</string>
-    <string name="minus_hour">-1h</string>
-    <string name="plus_hour">+1h</string>
-    <string name="plus_plus_hour">+4h</string>
     <string name="platform_title">Binario</string>
     <string name="lasting_time_title">Durata</string>
     <string name="delay">ritardo</string>
@@ -21,4 +17,16 @@
     <string name="hint_select"><u>Seleziona</u></string>
     <string name="hint_time">Ora</string>
     <string name="hint_date">Data</string>
+
+    <string name="action_share">Share</string>
+    <string name="action_reply">Reply</string>
+    <string name="title_favourite_journeys">Tratte Preferite</string>
+    <string name="subtitle_favourite_journeys">Scorri a destra o sinistra per i dettagli</string>
+    <string name="btn_favourite_journeys">Aggiungi una tratta ai Preferiti!</string>
+    <string name="notification">Notifica</string>
+    <string name="minus_hour">-1 h</string>
+    <string name="plus_hour">+1 h</string>
+    <string name="minus_day">-1 gg</string>
+    <string name="plus_day">+1 gg</string>
+    <string name="search">Cerca</string>
 </resources>

@@ -12,24 +12,24 @@
     <LinearLayout
         android:id="@+id/ll_add_favourite"
         android:layout_width="match_parent"
-        android:layout_height="70dp"
-        android:background="@drawable/border_radius"
-        android:orientation="horizontal"
-        app:cardCornerRadius="10dp"
+        android:layout_height="@dimen/btn_height_big"
         android:layout_gravity="center"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:elevation="5dp"
+        android:layout_marginEnd="@dimen/margin_default"
+        android:layout_marginStart="@dimen/margin_default"
+        android:background="@drawable/border_radius"
+        android:elevation="@dimen/elevation_default"
+        android:orientation="horizontal"
         android:visibility="gone"
+        app:cardCornerRadius="@dimen/radius_big"
         >
 
         <ImageButton
             android:id="@+id/btn_add_new_favourite"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
-            android:layout_marginStart="16dp"
             android:layout_gravity="center"
+            android:layout_marginStart="@dimen/margin_default"
+            android:background="@android:color/transparent"
             android:tint="@color/ic_light"
             app:srcCompat="@drawable/ic_add_favourite"
             />
@@ -38,12 +38,12 @@
             android:id="@+id/lbl_add_new_favourite"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:text="Aggiungi una tratta ai Preferiti!"
             android:layout_gravity="center"
+            android:layout_marginStart="@dimen/margin_small"
+            android:text="@string/btn_favourite_journeys"
             android:textAlignment="center"
             android:textColor="@color/txt_white"
-            android:textSize="@dimen/fs_basic_text"
+            android:textSize="@dimen/text_size_default_plus"
             android:textStyle="bold"
             />
 
@@ -63,7 +63,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/fab_margin"
+        android:layout_margin="@dimen/margin_default"
         app:fabSize="normal"
         app:srcCompat="@drawable/ic_search"/>
 

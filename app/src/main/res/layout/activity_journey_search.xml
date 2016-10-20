@@ -3,166 +3,165 @@
               xmlns:app="http://schemas.android.com/apk/res-auto"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
+              android:baselineAligned="false"
               android:orientation="vertical"
               android:weightSum="4"
-              android:baselineAligned="false">
+    >
 
-    <android.support.v7.widget.CardView
+    <LinearLayout
+        android:id="@+id/ll_stations"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="2"
-        android:backgroundTint="@color/bg_dark"
-        app:cardCornerRadius="0dp"
-        app:cardElevation="7dp"
+        android:background="@color/bg_dark"
+        android:elevation="@dimen/elevation_big"
+        android:orientation="horizontal"
+        android:weightSum="2"
         >
 
-        <LinearLayout
-            android:id="@+id/ll_stations"
+        <RelativeLayout
+            android:id="@+id/rl_departure"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="horizontal"
-            android:weightSum="2"
+            android:layout_weight="1"
+            android:background="?android:attr/selectableItemBackground"
+            android:clickable="true"
             >
 
-            <RelativeLayout
-                android:id="@+id/rl_departure"
+            <TextView
+                android:id="@+id/tv_departure"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="?android:attr/selectableItemBackground"
-                android:clickable="true"
-                >
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:paddingEnd="@dimen/margin_default"
+                android:paddingStart="@dimen/margin_default"
+                android:text="@string/hint_select"
+                android:textAlignment="center"
+                android:textAllCaps="true"
+                android:textColor="@color/txt_white"
+                android:textSize="@dimen/text_size_default_plus"
+                android:textStyle="bold"
+                />
 
-                <TextView
-                    android:id="@+id/tv_departure"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
-                    android:paddingEnd="16dp"
-                    android:paddingStart="16dp"
-                    android:text="@string/hint_select"
-                    android:textAlignment="center"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Button"
-                    android:textColor="@color/txt_white"
-                    android:textSize="18sp"
-                    />
-
-                <TextView
-                    android:id="@+id/lbl_departure"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_above="@id/tv_departure"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginBottom="40dp"
-                    android:text="@string/hint_departure"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Button"
-                    android:textColor="@color/txt_grey_lighter"
-                    />
-            </RelativeLayout>
-
-            <LinearLayout
+            <TextView
+                android:id="@+id/lbl_departure"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:weightSum="11"
-                android:baselineAligned="false">
+                android:layout_height="wrap_content"
+                android:layout_above="@id/tv_departure"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="@dimen/margin_very_big"
+                android:text="@string/hint_departure"
+                android:textAllCaps="true"
+                android:textColor="@color/txt_grey_lighter"
+                android:textStyle="bold"
+                />
+        </RelativeLayout>
 
-                <View
-                    android:layout_width="1dp"
-                    android:layout_height="0dp"
-                    android:layout_gravity="center"
-                    android:layout_weight=".5"
-                    />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:baselineAligned="false"
+            android:orientation="vertical"
+            android:weightSum="11">
 
-                <View
-                    android:layout_width="1dp"
-                    android:layout_height="0dp"
-                    android:layout_gravity="center"
-                    android:layout_weight="4"
-                    android:background="@color/bg_grey"
-                    />
+            <View
+                android:layout_width="@dimen/divider"
+                android:layout_height="0dp"
+                android:layout_gravity="center"
+                android:layout_weight=".5"
+                />
 
-                <View
-                    android:layout_width="1dp"
-                    android:layout_height="0dp"
-                    android:layout_gravity="center"
-                    android:layout_weight=".5"
-                    />
+            <View
+                android:layout_width="@dimen/divider"
+                android:layout_height="0dp"
+                android:layout_gravity="center"
+                android:layout_weight="4"
+                android:background="@color/bg_grey"
+                />
 
-                <ImageButton
-                    android:id="@+id/btn_swap_station_names"
-                    android:layout_width="wrap_content"
-                    android:layout_height="0dp"
-                    android:layout_gravity="center"
-                    android:layout_weight="1"
-                    android:background="@drawable/ic_swap_horiz"
-                    android:backgroundTint="@color/btn_cyan"
-                    android:clickable="true"
-                    />
+            <View
+                android:layout_width="@dimen/divider"
+                android:layout_height="0dp"
+                android:layout_gravity="center"
+                android:layout_weight=".5"
+                />
 
-                <View
-                    android:layout_width="1dp"
-                    android:layout_height="0dp"
-                    android:layout_gravity="center"
-                    android:layout_weight=".5"
-                    />
-
-                <View
-                    android:layout_width="1dp"
-                    android:layout_height="0dp"
-                    android:layout_gravity="center"
-                    android:layout_weight="4"
-                    android:background="@color/bg_grey"
-                    />
-
-                <View
-                    android:layout_width="1dp"
-                    android:layout_height="0dp"
-                    android:layout_gravity="center"
-                    android:layout_weight=".5"
-                    />
-
-
-            </LinearLayout>
-
-
-            <RelativeLayout
-                android:id="@+id/rl_arrival"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+            <ImageButton
+                android:id="@+id/btn_swap_station_names"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_gravity="center"
                 android:layout_weight="1"
-                android:background="?android:attr/selectableItemBackground"
+                android:background="@android:color/transparent"
                 android:clickable="true"
-                >
+                android:tint="@color/btn_cyan"
+                app:srcCompat="@drawable/ic_swap_horiz"
+                />
 
-                <TextView
-                    android:id="@+id/tv_arrival"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
-                    android:paddingEnd="16dp"
-                    android:paddingStart="16dp"
-                    android:text="@string/hint_select"
-                    android:textAlignment="center"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Button"
-                    android:textColor="@color/txt_white"
-                    android:textSize="18sp"
-                    />
+            <View
+                android:layout_width="@dimen/divider"
+                android:layout_height="0dp"
+                android:layout_gravity="center"
+                android:layout_weight=".5"
+                />
 
-                <TextView
-                    android:id="@+id/lbl_arrival"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_above="@id/tv_arrival"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginBottom="40dp"
-                    android:text="@string/hint_arrival"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Button"
-                    android:textColor="@color/txt_grey_lighter"
-                    />
-            </RelativeLayout>
+            <View
+                android:layout_width="@dimen/divider"
+                android:layout_height="0dp"
+                android:layout_gravity="center"
+                android:layout_weight="4"
+                android:background="@color/bg_grey"
+                />
+
+            <View
+                android:layout_width="@dimen/divider"
+                android:layout_height="0dp"
+                android:layout_gravity="center"
+                android:layout_weight=".5"
+                />
+
+
         </LinearLayout>
-    </android.support.v7.widget.CardView>
+
+
+        <RelativeLayout
+            android:id="@+id/rl_arrival"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="?android:attr/selectableItemBackground"
+            android:clickable="true"
+            >
+
+            <TextView
+                android:id="@+id/tv_arrival"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:paddingEnd="@dimen/margin_default"
+                android:paddingStart="@dimen/margin_default"
+                android:text="@string/hint_select"
+                android:textAlignment="center"
+                android:textAllCaps="true"
+                android:textColor="@color/txt_white"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                />
+
+            <TextView
+                android:id="@+id/lbl_arrival"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_above="@id/tv_arrival"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="40dp"
+                android:text="@string/hint_arrival"
+                android:textAppearance="@style/TextAppearance.AppCompat.Button"
+                android:textColor="@color/txt_grey_lighter"
+                />
+        </RelativeLayout>
+    </LinearLayout>
+    <!--</android.support.v7.widget.CardView>-->
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -185,7 +184,7 @@
                 android:layout_centerInParent="true"
                 android:text="06:00"
                 android:textAppearance="@style/TextAppearance.AppCompat.Button"
-                android:textSize="18sp"
+                android:textSize="@dimen/text_size_default_plus"
                 />
 
             <TextView
@@ -194,22 +193,23 @@
                 android:layout_height="wrap_content"
                 android:layout_above="@id/tv_time"
                 android:layout_centerHorizontal="true"
-                android:layout_marginBottom="20dp"
+                android:layout_marginBottom="@dimen/margin_default_plus"
                 android:text="@string/hint_time"
-                android:textAppearance="@style/TextAppearance.AppCompat.Button"
-                android:textColor="#70000000"
+                android:textAllCaps="true"
+                android:textColor="@color/txt_grey"
+                android:textStyle="bold"
                 />
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="35dp"
+                android:layout_height="@dimen/item_height_very_small"
                 android:layout_below="@id/tv_time"
                 android:layout_centerHorizontal="true"
-                android:layout_marginEnd="36dp"
-                android:layout_marginStart="36dp"
-                android:layout_marginTop="20dp"
+                android:layout_marginEnd="@dimen/margin_very_big"
+                android:layout_marginStart="@dimen/margin_very_big"
+                android:layout_marginTop="@dimen/margin_default_plus"
                 android:background="@drawable/border_radius"
-                android:elevation="5dp"
+                android:elevation="@dimen/elevation_default"
                 android:orientation="horizontal"
                 android:weightSum="4"
                 >
@@ -222,14 +222,14 @@
                     android:background="?android:attr/selectableItemBackground"
                     android:clickable="true"
                     android:gravity="center"
-                    android:text="-1 h"
+                    android:text="@string/minus_hour"
                     android:textColor="@color/txt_white"
                     android:textStyle="bold"
                     />
 
                 <View
-                    android:layout_width="1dp"
-                    android:layout_height="15dp"
+                    android:layout_width="@dimen/divider"
+                    android:layout_height="16dp"
                     android:layout_gravity="center"
                     android:background="@color/bg_grey"
                     />
@@ -242,7 +242,7 @@
                     android:background="?android:attr/selectableItemBackground"
                     android:clickable="true"
                     android:gravity="center"
-                    android:text="+1 h"
+                    android:text="@string/plus_hour"
                     android:textColor="@color/txt_white"
                     android:textStyle="bold"
                     />
@@ -261,8 +261,9 @@
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
                 android:text="1 Ottobre"
-                android:textAppearance="@style/TextAppearance.AppCompat.Button"
-                android:textSize="18sp"
+                android:textAllCaps="true"
+                android:textSize="@dimen/text_size_default_plus"
+                android:textStyle="bold"
                 />
 
             <TextView
@@ -271,22 +272,23 @@
                 android:layout_height="wrap_content"
                 android:layout_above="@id/tv_date"
                 android:layout_centerHorizontal="true"
-                android:layout_marginBottom="20dp"
+                android:layout_marginBottom="@dimen/margin_default_plus"
                 android:text="@string/hint_date"
-                android:textAppearance="@style/TextAppearance.AppCompat.Button"
-                android:textColor="#70000000"
+                android:textAllCaps="true"
+                android:textColor="@color/txt_grey"
+                android:textStyle="bold"
                 />
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="35dp"
+                android:layout_height="@dimen/item_height_very_small"
                 android:layout_below="@id/tv_date"
                 android:layout_centerHorizontal="true"
-                android:layout_marginEnd="36dp"
-                android:layout_marginStart="36dp"
-                android:layout_marginTop="20dp"
+                android:layout_marginEnd="@dimen/item_height_very_small"
+                android:layout_marginStart="@dimen/item_height_very_small"
+                android:layout_marginTop="@dimen/margin_default_plus"
                 android:background="@drawable/border_radius"
-                android:elevation="5dp"
+                android:elevation="@dimen/elevation_default"
                 android:orientation="horizontal"
                 android:weightSum="4"
                 >
@@ -299,14 +301,14 @@
                     android:background="?android:attr/selectableItemBackground"
                     android:clickable="true"
                     android:gravity="center"
-                    android:text="-1 gg"
+                    android:text="@string/minus_day"
                     android:textColor="@color/txt_white"
                     android:textStyle="bold"
                     />
 
                 <View
-                    android:layout_width="1dp"
-                    android:layout_height="15dp"
+                    android:layout_width="@dimen/divider"
+                    android:layout_height="16dp"
                     android:layout_gravity="center"
                     android:background="@color/bg_grey"
                     />
@@ -319,7 +321,7 @@
                     android:background="?android:attr/selectableItemBackground"
                     android:clickable="true"
                     android:gravity="center"
-                    android:text="+1 gg"
+                    android:text="@string/plus_day"
                     android:textColor="@color/txt_white"
                     android:textStyle="bold"
                     />
@@ -332,14 +334,14 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_gravity="bottom"
-        android:layout_marginEnd="16dp"
-        android:layout_marginStart="16dp"
+        android:layout_marginEnd="@dimen/margin_default"
+        android:layout_marginStart="@dimen/margin_default"
         android:layout_weight=".4"
         android:background="@drawable/border_radius"
-        android:elevation="5dp"
-        android:text="Cerca"
-        android:textSize="18sp"
+        android:elevation="@dimen/elevation_default"
+        android:text="@string/search"
         android:textColor="@color/txt_white"
+        android:textSize="@dimen/text_size_default_plus"
         />
 </LinearLayout>
 

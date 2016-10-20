@@ -44,7 +44,7 @@ public class JourneyResultsAdapterNew extends RecyclerView.Adapter {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
         switch (viewType) {
             case VIEW_TYPES.Normal:
-                return new JourneyHolder(layoutInflater.inflate(R.layout.item_journey_new, parent, false));
+                return new JourneyHolder(layoutInflater.inflate(R.layout.item_journey, parent, false));
             case VIEW_TYPES.Header:
                 return new LoadMoreBeforeHolder(layoutInflater.inflate(R.layout.item_load_before, parent, false));
             case VIEW_TYPES.Footer:
