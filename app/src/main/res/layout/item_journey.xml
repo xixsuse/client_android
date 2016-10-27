@@ -223,9 +223,9 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/item_journey_details"
         android:layout_below="@id/cv_journey"
-        android:layout_marginStart="@dimen/margin_default_minus"
-        android:layout_marginEnd="@dimen/margin_default_minus"
         android:layout_marginBottom="@dimen/margin_default"
+        android:layout_marginEnd="@dimen/margin_default_minus"
+        android:layout_marginStart="@dimen/margin_default_minus"
         android:background="@drawable/bottom_border"
         android:backgroundTint="@color/bg_dark"
         android:elevation="@dimen/elevation_smaller"
@@ -290,8 +290,6 @@
                 android:textSize="@dimen/text_size_smaller"
                 />
         </RelativeLayout>
-
-        <!-- aggiungi icone-->
 
         <LinearLayout
             android:id="@+id/ll_notification"

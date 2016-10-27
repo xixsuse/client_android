@@ -62,7 +62,7 @@ public class JourneyResultsActivity extends AppCompatActivity implements Journey
     @BindView(R.id.btn_refresh)
     ImageButton btnRefresh;
 
-    JourneyResultsAdapterNew mJourneyResultsAdapter;
+    JourneyResultsAdapter mJourneyResultsAdapter;
     JourneyResultsPresenter presenter;
     Bundle state;
 
@@ -82,7 +82,7 @@ public class JourneyResultsActivity extends AppCompatActivity implements Journey
         btnHeaderSwapStationNames.setOnClickListener(v-> presenter.onSwapButtonClick());
         btnHeaderToggleFavorite.setOnClickListener(v -> presenter.onFavouriteButtonClick());
 
-        mJourneyResultsAdapter = new JourneyResultsAdapterNew(this, presenter);
+        mJourneyResultsAdapter = new JourneyResultsAdapter(this, presenter);
         rvJourneySolutions.setAdapter(mJourneyResultsAdapter);
         rvJourneySolutions.setHasFixedSize(true);
         rvJourneySolutions.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
@@ -216,6 +216,7 @@ public class JourneyResultsActivity extends AppCompatActivity implements Journey
         Snackbar snackbar = Snackbar
                 .make(rvJourneySolutions, message, Snackbar.LENGTH_LONG);
         ((TextView) snackbar.getView().findViewById(android.support.design.R.id.snackbar_text)).setTextColor(ContextCompat.getColor(this, R.color.txt_white));
+        snackbar.setAction(R.string.action_refresh, view -> presenter.searchFromSearch(true)).setActionTextColor(ContextCompat.getColor(this, R.color.btn_cyan));
         snackbar.show();
     }
 

@@ -26,13 +26,13 @@ import butterknife.BindViews;
 import butterknife.ButterKnife;
 import trikita.log.Log;
 
-public class JourneyResultsAdapterNew extends RecyclerView.Adapter {
+public class JourneyResultsAdapter extends RecyclerView.Adapter {
 
     private Context context;
     private List<SolutionList.Solution> solutionList;
     private JourneyResultsContract.Presenter presenter;
 
-    JourneyResultsAdapterNew(Context context, JourneyResultsContract.Presenter presenter) {
+    JourneyResultsAdapter(Context context, JourneyResultsContract.Presenter presenter) {
         this.context = context;
         this.presenter = presenter;
         this.solutionList = presenter.getSolutionList();
@@ -177,6 +177,10 @@ public class JourneyResultsAdapterNew extends RecyclerView.Adapter {
                     ButterKnife.apply(timesWithDelay, ViewsUtils.GONE);
                 }
                 setColors(context, s.timeDifference);
+                rlTimeDifference.setOnLongClickListener(view -> {
+                    presenter.onJourneyRefreshRequested(getAdapterPosition()-1);
+                    return true;
+                });
             } else {
                 ButterKnife.apply(solutionWithDelay, ViewsUtils.GONE);
                 ButterKnife.apply(solutionWithoutDelay, ViewsUtils.VISIBLE);

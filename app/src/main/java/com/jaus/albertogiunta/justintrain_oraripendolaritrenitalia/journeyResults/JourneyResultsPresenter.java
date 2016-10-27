@@ -190,14 +190,15 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
 
     @Override
     public void onNotificationRequested(int elementIndex) {
-        NotificationService.startActionStartNotification(view.getViewContext(),
-                journeySolutions.get(elementIndex).solution.departureStationName,
-                journeySolutions.get(elementIndex).solution.departureTime,
-                journeySolutions.get(elementIndex).solution.departureTimeReadable,
-                journeySolutions.get(elementIndex).solution.arrivalStationName,
-                journeySolutions.get(elementIndex).solution.arrivalTime,
-                journeySolutions.get(elementIndex).solution.arrivalTimeReadable,
-                journeySolutions.get(elementIndex).solution.trainId);
+//        NotificationService.startActionStartNotification(view.getViewContext(),
+//                journeySolutions.get(elementIndex).solution.departureStationName,
+//                journeySolutions.get(elementIndex).solution.departureTime,
+//                journeySolutions.get(elementIndex).solution.departureTimeReadable,
+//                journeySolutions.get(elementIndex).solution.arrivalStationName,
+//                journeySolutions.get(elementIndex).solution.arrivalTime,
+//                journeySolutions.get(elementIndex).solution.arrivalTimeReadable,
+//                journeySolutions.get(elementIndex).solution.trainId);
+            NotificationService.startActionStartNotification(view.getViewContext(), journeySolutions.get(elementIndex).solution);
     }
 
     @Override

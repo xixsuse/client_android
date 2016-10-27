@@ -29,104 +29,117 @@ public class NotificationData {
         return departureStationName;
     }
 
-    public void setDepartureStationName(String departureStationName) {
+    public NotificationData setDepartureStationName(String departureStationName) {
         this.departureStationName = departureStationName;
+        return this;
     }
 
     public long getDepartureTime() {
         return departureTime;
     }
 
-    public void setDepartureTime(long departureTime) {
+    public NotificationData setDepartureTime(long departureTime) {
         this.departureTime = departureTime;
+        return this;
     }
 
     public String getDepartureTimeReadable() {
         return departureTimeReadable;
     }
 
-    public void setDepartureTimeReadable(String departureTimeReadable) {
+    public NotificationData setDepartureTimeReadable(String departureTimeReadable) {
         this.departureTimeReadable = departureTimeReadable;
+        return this;
     }
 
     public String getArrivalStationName() {
         return arrivalStationName;
     }
 
-    public void setArrivalStationName(String arrivalStationName) {
+    public NotificationData setArrivalStationName(String arrivalStationName) {
         this.arrivalStationName = arrivalStationName;
+        return this;
     }
 
     public long getArrivalTime() {
         return arrivalTime;
     }
 
-    public void setArrivalTime(long arrivalTime) {
+    public NotificationData setArrivalTime(long arrivalTime) {
         this.arrivalTime = arrivalTime;
+        return this;
     }
 
     public String getArrivalTimeReadable() {
         return arrivalTimeReadable;
     }
 
-    public void setArrivalTimeReadable(String arrivalTimeReadable) {
+    public NotificationData setArrivalTimeReadable(String arrivalTimeReadable) {
         this.arrivalTimeReadable = arrivalTimeReadable;
+        return this;
     }
 
     public String getTrainCategory() {
         return trainCategory;
     }
 
-    public void setTrainCategory(String trainCategory) {
+    public NotificationData setTrainCategory(String trainCategory) {
         this.trainCategory = trainCategory;
+        return this;
     }
 
     public String getTrainId() {
         return trainId;
     }
 
-    public void setTrainId(String trainId) {
+    public NotificationData setTrainId(String trainId) {
         this.trainId = trainId;
+        return this;
     }
 
     public String getTrainDepartureStationId() {
         return trainDepartureStationId;
     }
 
-    public void setTrainDepartureStationId(String trainDepartureStationId) {
+    public NotificationData setTrainDepartureStationId(String trainDepartureStationId) {
         this.trainDepartureStationId = trainDepartureStationId;
+        return this;
     }
 
     public int getTimeDifference() {
         return timeDifference;
     }
 
-    public void setTimeDifference(int timeDifference) {
+    public NotificationData setTimeDifference(int timeDifference) {
         this.timeDifference = timeDifference;
+        return this;
     }
 
     public int getProgress() {
         return progress;
     }
 
-    public void setProgress(int progress) {
+    public NotificationData setProgress(int progress) {
         this.progress = progress;
+        return this;
     }
 
     public String getLastSeenStationName() {
         return lastSeenStationName;
     }
 
-    public void setLastSeenStationName(String lastSeenStationName) {
+    public NotificationData setLastSeenStationName(String lastSeenStationName) {
         this.lastSeenStationName = lastSeenStationName;
+        return this;
     }
 
     public String getLastSeenTimeReadable() {
         return lastSeenTimeReadable;
     }
 
-    public void setLastSeenTimeReadable(String lastSeenTimeReadable) {
+    public NotificationData setLastSeenTimeReadable(String lastSeenTimeReadable) {
         this.lastSeenTimeReadable = lastSeenTimeReadable;
+        return this;
     }
 
     @Override
