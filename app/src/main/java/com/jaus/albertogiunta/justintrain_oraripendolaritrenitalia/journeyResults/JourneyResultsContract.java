@@ -4,8 +4,10 @@ import android.content.Context;
 
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.BasePresenter;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.BaseView;
-import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.SolutionList;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.Journey;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_C;
+
+import org.joda.time.DateTime;
 
 import java.util.List;
 
@@ -13,7 +15,7 @@ interface JourneyResultsContract {
 
     interface Presenter extends BasePresenter {
 
-        void getFirstFeasableSolution();
+//        void getFirstFeasableSolution();
 
         void onSwapButtonClick();
 
@@ -66,7 +68,7 @@ interface JourneyResultsContract {
          * Getter for the solution list (it's a static field)
          * @return the current solution list
          */
-        List<SolutionList.Solution> getSolutionList();
+        List<Journey.Solution> getSolutionList();
     }
 
     interface View extends BaseView {
@@ -90,13 +92,13 @@ interface JourneyResultsContract {
 
         void showErrorMessage(String tvMessage, String btnMessage, INTENT_C.ERROR_BTN intent);
 
-        void scrollToFirstFeasibleSolution(int position);
+//        void scrollToFirstFeasibleSolution(int position);
 
         /**
          * Called when a new set of solutions is ready. It will then notify the adapter
          * @param solutionList the solutionlist to be set in the adapter
          */
-        void updateSolutionsList(List<SolutionList.Solution> solutionList);
+        void updateSolutionsList(List<Journey.Solution> solutionList);
 
         void updateSolution(int elementIndex);
 
@@ -159,7 +161,7 @@ interface JourneyResultsContract {
             void searchJourney(boolean isNewSearch,
                                String departureStationId,
                                String arrivalStationId,
-                               long timestamp,
+                               DateTime timestamp,
                                boolean isPreemptive,
                                boolean withDelays,
                                OnJourneySearchFinishedListener listener);

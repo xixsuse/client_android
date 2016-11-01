@@ -177,8 +177,8 @@ class TrainNotification {
 
     private static String buildPredictor(NotificationData data) {
         DateTime now = DateTime.now();
-        DateTime dep = new DateTime(data.getDepartureTime() * 1000).minusHours(2).plusMinutes(data.getTimeDifference());
-        DateTime arr = new DateTime(data.getArrivalTime() * 1000).minusHours(2).plusMinutes(data.getTimeDifference());
+        DateTime dep = data.getDepartureTime().plusMinutes(data.getTimeDifference());
+        DateTime arr = data.getArrivalTime().plusMinutes(data.getTimeDifference());
         Log.d("now", now.toString());
 
         if (now.isBefore(dep)) {

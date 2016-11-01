@@ -82,8 +82,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:text="@string/changes"
-                    android:textColor="@color/txt_white"
+                    android:text="@string/changesList"
+                    android:textColor="@color/txt_grey_lighter"
                     android:textSize="@dimen/text_size_smaller"
                     android:textStyle="italic"
                     />

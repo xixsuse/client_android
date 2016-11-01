@@ -1,6 +1,6 @@
 package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data;
 
-
+@SuppressWarnings("unused")
 public class PreferredStation {
 
     private String stationShortId;

@@ -8,7 +8,7 @@
     <string name="platform_title">Binario</string>
     <string name="lasting_time_title">Durata</string>
     <string name="delay">ritardo</string>
-    <string name="changes">cambio</string>
+    <string name="changesList">cambio</string>
     <string name="change_title">Cambio</string>
     <string name="title_activity_main">MainActivity</string>
 

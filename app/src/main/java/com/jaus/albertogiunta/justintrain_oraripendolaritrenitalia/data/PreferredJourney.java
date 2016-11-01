@@ -2,6 +2,7 @@ package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data;
 
 import org.joda.time.DateTime;
 
+@SuppressWarnings("unused")
 public class PreferredJourney {
 
     private PreferredStation station1;

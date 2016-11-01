@@ -44,8 +44,8 @@ class FavouriteJourneysAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         if (holder instanceof JourneyViewHolder) {
             JourneyViewHolder vh = (JourneyViewHolder) holder;
             vh.bind(list.get(position - 1));
-        } else if (holder instanceof HeaderViewHolder) {
-            HeaderViewHolder vh = (HeaderViewHolder) holder;
+//        } else if (holder instanceof HeaderViewHolder) {
+//            HeaderViewHolder vh = (HeaderViewHolder) holder;
         }
     }
 

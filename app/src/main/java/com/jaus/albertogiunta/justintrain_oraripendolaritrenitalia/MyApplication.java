@@ -2,6 +2,8 @@ package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia;
 
 import android.app.Application;
 
+import com.facebook.stetho.Stetho;
+
 import net.danlew.android.joda.JodaTimeAndroid;
 
 import java.io.File;
@@ -13,9 +15,6 @@ import io.realm.Realm;
 import io.realm.RealmConfiguration;
 import io.realm.internal.IOException;
 
-/**
- * Created by albertogiunta on 27/05/16.
- */
 public class MyApplication extends Application {
 
     private static MyApplication context;
@@ -29,6 +28,7 @@ public class MyApplication extends Application {
         super.onCreate();
         context = this;
         JodaTimeAndroid.init(this);
+        Stetho.initializeWithDefaults(this);
 
         copyBundledRealmFile(this.getResources().openRawResource(R.raw.station), Realm.DEFAULT_REALM_NAME);
         RealmConfiguration config = new RealmConfiguration.Builder(this)

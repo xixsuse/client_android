@@ -7,10 +7,11 @@ import android.os.Bundle;
 
 import com.google.gson.Gson;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.BaseView;
-import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.JourneyWithDelay;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.Journey;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.PreferredJourney;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.PreferredStation;
-import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.SolutionList;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.Station4Database;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.TrainHeader;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeyResults.JourneyResultsContract.View.JourneySearchStrategy.OnJourneySearchFinishedListener;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeySearch.PresenterUtilities;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.networking.JourneyService;
@@ -25,6 +26,9 @@ import java.net.ConnectException;
 import java.util.LinkedList;
 import java.util.List;
 
+import io.realm.Case;
+import io.realm.Realm;
+import io.realm.RealmResults;
 import retrofit2.adapter.rxjava.HttpException;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
@@ -34,12 +38,11 @@ import trikita.log.Log;
 import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_C.I_STATIONS;
 import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_C.I_TIME;
 
-
 class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJourneySearchFinishedListener {
 
     private JourneyResultsContract.View view;
 
-    private static List<SolutionList.Solution> journeySolutions;
+    private static List<Journey.Solution> journeySolutions;
 
     private PreferredStation departureStation;
     private PreferredStation arrivalStation;
@@ -100,7 +103,7 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
     public void onLoadMoreItemsBefore() {
         new SearchBeforeTimeStrategy().searchJourney(false, departureStation.getStationShortId(),
                 arrivalStation.getStationShortId(),
-                journeySolutions.get(0).solution.departureTime - 1, false, false, this);
+                journeySolutions.get(0).getDepartureTime().minusSeconds(1), false, false, this);
     }
 
     @Override
@@ -109,7 +112,7 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
         view.showProgress();
         new SearchInstantlyStrategy().searchJourney(true, departureStation.getStationShortId(),
                 arrivalStation.getStationShortId(),
-                0, true, true, this);
+                null, true, true, this);
     }
 
     @Override
@@ -120,13 +123,13 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
             Log.d("Instant Search");
             new SearchInstantlyStrategy().searchJourney(isNewSearch, departureStation.getStationShortId(),
                     arrivalStation.getStationShortId(),
-                    0, true, true, this);
+                    null, true, true, this);
         } else {
             Log.d("NON Instant Search", dateTime);
             // aggiungo due ore ma non so bene perchè
             new SearchAfterTimeStrategy().searchJourney(isNewSearch, departureStation.getStationShortId(),
                     arrivalStation.getStationShortId(),
-                    dateTime.plusHours(2).getMillis() / 1000, true, true, this);
+                    dateTime, true, true, this);
         }
 //        view.setStationNames(departureStation.getName(), arrivalStation.getName());
     }
@@ -146,33 +149,6 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
     }
 
     @Override
-    public void getFirstFeasableSolution() {
-        int firstFeasableSolution = 0;
-        DateTime.now();
-        for (SolutionList.Solution solution : journeySolutions) {
-            if (solution.solution.timeDifference == null) {
-                firstFeasableSolution++;
-            } else {
-                DateTime dep = new DateTime(solution.solution.departureTime * 1000).minusHours(2).plusMinutes(solution.solution.timeDifference);
-                Log.d(DateTime.now(), dep, firstFeasableSolution);
-                if (DateTime.now().isAfter(dep)) {
-                    firstFeasableSolution++;
-                } else {
-                    if (firstFeasableSolution + 1 >= journeySolutions.size()) {
-                        // prendo l'ultimo elemento contando il footer
-                        view.scrollToFirstFeasibleSolution(journeySolutions.size() - 2);
-                    } else {
-                        // prendo l'elemento contando l'header
-                        Log.d(journeySolutions.get(firstFeasableSolution).solution.departureTimeReadable);
-                        view.scrollToFirstFeasibleSolution(firstFeasableSolution + 1);
-                    }
-                    break;
-                }
-            }
-        }
-    }
-
-    @Override
     public void onSwapButtonClick() {
         PreferredStation temp = departureStation;
         departureStation = arrivalStation;
@@ -185,32 +161,51 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
     public void onLoadMoreItemsAfter() {
         new SearchAfterTimeStrategy().searchJourney(false, departureStation.getStationShortId(),
                 arrivalStation.getStationShortId(),
-                journeySolutions.get(journeySolutions.size() - 1).solution.departureTime + 61, false, false, this);
+                journeySolutions.get(journeySolutions.size() - 1).getDepartureTime().plusMinutes(1), false, false, this);
     }
 
     @Override
     public void onNotificationRequested(int elementIndex) {
-//        NotificationService.startActionStartNotification(view.getViewContext(),
-//                journeySolutions.get(elementIndex).solution.departureStationName,
-//                journeySolutions.get(elementIndex).solution.departureTime,
-//                journeySolutions.get(elementIndex).solution.departureTimeReadable,
-//                journeySolutions.get(elementIndex).solution.arrivalStationName,
-//                journeySolutions.get(elementIndex).solution.arrivalTime,
-//                journeySolutions.get(elementIndex).solution.arrivalTimeReadable,
-//                journeySolutions.get(elementIndex).solution.trainId);
-            NotificationService.startActionStartNotification(view.getViewContext(), journeySolutions.get(elementIndex).solution);
+        NotificationService.startActionStartNotification(view.getViewContext(), journeySolutions.get(elementIndex));
     }
+
 
     @Override
     public void onJourneyRefreshRequested(int elementIndex) {
+        RealmResults<Station4Database> stationList = Realm.getDefaultInstance().where(Station4Database.class).findAll();
+        if (journeySolutions.get(elementIndex).isHasChanges()) {
+            for (int changeIndex = 0; changeIndex < journeySolutions.get(elementIndex).getChangesList().size(); changeIndex++) {
+                Station4Database tempDepartureStation = stationList.where().equalTo("name",
+                        journeySolutions.get(elementIndex).getChangesList().get(changeIndex).getDepartureStationName(),
+                        Case.INSENSITIVE).findAll().get(0);
+                Station4Database tempArrivalStation = stationList.where().equalTo("name",
+                        journeySolutions.get(elementIndex).getChangesList().get(changeIndex).getArrivalStationName(),
+                        Case.INSENSITIVE).findAll().get(0);
+                refreshChange(elementIndex, changeIndex,
+                        tempDepartureStation.getStationShortId(),
+                        tempArrivalStation.getStationShortId(),
+                        journeySolutions.get(elementIndex).getChangesList().get(changeIndex).getTrainId());
+            }
+        } else {
+            refreshChange(elementIndex, -1,
+                    departureStation.getStationShortId(),
+                    arrivalStation.getStationShortId(),
+                    journeySolutions.get(elementIndex).getTrainId());
+        }
+        Log.d("onJourneyRefreshRequested:");
+    }
+
+    private void refreshChange(int solutionIndex, int changeIndex, String departureStationId, String arrivalStationId, String trainId) {
+        Log.d("refreshChange:", solutionIndex, changeIndex, trainId);
         ServiceFactory.createRetrofitService(JourneyService.class, JourneyService.SERVICE_ENDPOINT)
-                .getDelay(journeySolutions.get(elementIndex).solution.trainId)
+                .getDelay(departureStationId,
+                        arrivalStationId,
+                        trainId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<JourneyWithDelay>() {
+                .subscribe(new Subscriber<TrainHeader>() {
                     @Override
                     public void onCompleted() {
-
                     }
 
                     @Override
@@ -219,17 +214,28 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
                     }
 
                     @Override
-                    public void onNext(JourneyWithDelay journeyWithDelay) {
-                        journeySolutions.get(elementIndex).solution.departurePlatform = journeyWithDelay.departurePlatform;
-                        journeySolutions.get(elementIndex).solution.timeDifference = journeyWithDelay.timeDifference;
-                        journeySolutions.get(elementIndex).solution.progress = journeyWithDelay.progress;
-                        view.updateSolution(elementIndex);
+                    public void onNext(TrainHeader trainHeader) {
+                        if (journeySolutions.get(solutionIndex).isHasChanges()) {
+                            journeySolutions.get(solutionIndex).getChangesList().get(changeIndex).setDeparturePlatform(trainHeader.getDeparturePlatform());
+                            journeySolutions.get(solutionIndex).getChangesList().get(changeIndex).setTimeDifference(trainHeader.getTimeDifference());
+                            journeySolutions.get(solutionIndex).getChangesList().get(changeIndex).setProgress(trainHeader.getProgress());
+                            journeySolutions.get(solutionIndex).getChangesList().get(changeIndex).postProcess();
+                        } else {
+                            journeySolutions.get(solutionIndex).setDeparturePlatform(trainHeader.getDeparturePlatform());
+                            journeySolutions.get(solutionIndex).setTimeDifference(trainHeader.getTimeDifference());
+                            journeySolutions.get(solutionIndex).setProgress(trainHeader.getProgress());
+                        }
+                        journeySolutions.get(solutionIndex).refreshData();
+
+                        if (!journeySolutions.get(solutionIndex).isHasChanges() || (journeySolutions.get(solutionIndex).isHasChanges() && changeIndex == journeySolutions.get(solutionIndex).getChangesList().size() - 1)) {
+                            view.updateSolution(solutionIndex);
+                        }
                     }
                 });
     }
 
     @Override
-    public List<SolutionList.Solution> getSolutionList() {
+    public List<Journey.Solution> getSolutionList() {
         return journeySolutions;
     }
 
@@ -282,12 +288,12 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
     private static class SearchInstantlyStrategy implements JourneyResultsContract.View.JourneySearchStrategy {
 
         @Override
-        public void searchJourney(boolean isNewSearch, String departureStationId, String arrivalStationId, long timestamp, boolean isPreemptive, boolean withDelays, OnJourneySearchFinishedListener listener) {
+        public void searchJourney(boolean isNewSearch, String departureStationId, String arrivalStationId, DateTime timestamp, boolean isPreemptive, boolean withDelays, OnJourneySearchFinishedListener listener) {
             Log.d(departureStationId, arrivalStationId, timestamp, isPreemptive, withDelays);
             ServiceFactory.createRetrofitService(JourneyService.class, JourneyService.SERVICE_ENDPOINT).getJourneyInstant(departureStationId, arrivalStationId, isPreemptive)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Subscriber<List<SolutionList.Solution>>() {
+                    .subscribe(new Subscriber<Journey>() {
                         @Override
                         public void onCompleted() {
                         }
@@ -298,9 +304,9 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
                         }
 
                         @Override
-                        public void onNext(List<SolutionList.Solution> solutionList) {
+                        public void onNext(Journey solutionList) {
                             journeySolutions.clear();
-                            journeySolutions.addAll(solutionList);
+                            journeySolutions.addAll(solutionList.getSolutions());
                             if (journeySolutions.size() > 0) {
                                 listener.onSuccess();
                             } else {
@@ -314,11 +320,11 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
     private static class SearchAfterTimeStrategy implements JourneyResultsContract.View.JourneySearchStrategy {
 
         @Override
-        public void searchJourney(boolean isNewSearch, String departureStationId, String arrivalStationId, long timestamp, boolean isPreemptive, boolean withDelays, OnJourneySearchFinishedListener listener) {
-            ServiceFactory.createRetrofitService(JourneyService.class, JourneyService.SERVICE_ENDPOINT).getJourneyAfterTime(departureStationId, arrivalStationId, timestamp, withDelays, isPreemptive)
+        public void searchJourney(boolean isNewSearch, String departureStationId, String arrivalStationId, DateTime timestamp, boolean isPreemptive, boolean withDelays, OnJourneySearchFinishedListener listener) {
+            ServiceFactory.createRetrofitService(JourneyService.class, JourneyService.SERVICE_ENDPOINT).getJourneyAfterTime(departureStationId, arrivalStationId, timestamp.toString("yyyy-MM-dd'T'HH:mmZ"), withDelays, isPreemptive)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Subscriber<List<SolutionList.Solution>>() {
+                    .subscribe(new Subscriber<Journey>() {
                         @Override
                         public void onCompleted() {
                         }
@@ -329,12 +335,12 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
                         }
 
                         @Override
-                        public void onNext(List<SolutionList.Solution> solutionList) {
-                            Log.d(solutionList.size(), "new solutions found");
+                        public void onNext(Journey solutionList) {
+                            Log.d(solutionList.getSolutions().size(), "new solutions found");
                             if (isNewSearch) {
                                 journeySolutions.clear();
                             }
-                            journeySolutions.addAll(solutionList);
+                            journeySolutions.addAll(solutionList.getSolutions());
                             if (journeySolutions.size() > 0) {
                                 listener.onSuccess();
                             } else {
@@ -348,12 +354,12 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
     private static class SearchBeforeTimeStrategy implements JourneyResultsContract.View.JourneySearchStrategy {
 
         @Override
-        public void searchJourney(boolean isNewSearch, String departureStationId, String arrivalStationId, long timestamp, boolean isPreemptive, boolean withDelays, OnJourneySearchFinishedListener listener) {
+        public void searchJourney(boolean isNewSearch, String departureStationId, String arrivalStationId, DateTime timestamp, boolean isPreemptive, boolean withDelays, OnJourneySearchFinishedListener listener) {
             Log.d(timestamp);
-            ServiceFactory.createRetrofitService(JourneyService.class, JourneyService.SERVICE_ENDPOINT).getJourneyBeforeTime(departureStationId, arrivalStationId, timestamp, withDelays, isPreemptive)
+            ServiceFactory.createRetrofitService(JourneyService.class, JourneyService.SERVICE_ENDPOINT).getJourneyBeforeTime(departureStationId, arrivalStationId, timestamp.toString("yyyy-MM-dd'T'HH:mmZ"), withDelays, isPreemptive)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Subscriber<List<SolutionList.Solution>>() {
+                    .subscribe(new Subscriber<Journey>() {
                         @Override
                         public void onCompleted() {
                         }
@@ -364,9 +370,9 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
                         }
 
                         @Override
-                        public void onNext(List<SolutionList.Solution> solutionList) {
-                            Log.d(solutionList.size(), "new solutions found");
-                            journeySolutions.addAll(0, solutionList);
+                        public void onNext(Journey solutionList) {
+                            Log.d(solutionList.getSolutions().size(), "new solutions found");
+                            journeySolutions.addAll(0, solutionList.getSolutions());
                             listener.onSuccess();
                         }
                     });

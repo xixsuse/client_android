@@ -12,11 +12,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.R;
-import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.SolutionList;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.Journey;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.ViewsUtils;
-
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -24,12 +21,11 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.BindViews;
 import butterknife.ButterKnife;
-import trikita.log.Log;
 
 public class JourneyResultsAdapter extends RecyclerView.Adapter {
 
     private Context context;
-    private List<SolutionList.Solution> solutionList;
+    private List<Journey.Solution> solutionList;
     private JourneyResultsContract.Presenter presenter;
 
     JourneyResultsAdapter(Context context, JourneyResultsContract.Presenter presenter) {
@@ -95,8 +91,8 @@ public class JourneyResultsAdapter extends RecyclerView.Adapter {
 
         @BindView(R.id.tv_changes_number)
         TextView tvChangesNumber;
-//        @BindView(R.id.tv_changes_text)
-//        TextView tvChangesText;
+        @BindView(R.id.tv_changes_text)
+        TextView tvChangesText;
 
         @BindView(R.id.tv_departure_time)
         TextView tvDepartureTime;
@@ -157,28 +153,27 @@ public class JourneyResultsAdapter extends RecyclerView.Adapter {
             ButterKnife.bind(this, itemView);
         }
 
-        void bind(SolutionList.Solution solution) {
-            SolutionList.Solution.Change s = solution.solution;
+        void bind(Journey.Solution solution) {
 
-            tvDepartureTime.setText(s.departureTimeReadable);
-            tvArrivalTime.setText(s.arrivalTimeReadable);
-            tvLastingTime.setText(s.duration);
+            tvDepartureTime.setText(solution.getDepartureTimeReadable());
+            tvArrivalTime.setText(solution.getArrivalTimeReadable());
+            tvLastingTime.setText(solution.getDuration());
             llNotification.setOnClickListener(v -> presenter.onNotificationRequested(getAdapterPosition() - 1));
 
-            if (solution.solution.timeDifference != null) {
+            if (solution.getTimeDifference() != null) {
                 ButterKnife.apply(solutionWithoutDelay, ViewsUtils.GONE);
                 ButterKnife.apply(solutionWithDelay, ViewsUtils.VISIBLE);
-                tvTimeDifference.setText(Integer.toString(s.timeDifference) + "'");
-                tvTimeDifferenceText.setText(setProgress(s.progress));
-                if (s.timeDifference != 0) {
-                    tvDepartureTimeWithDelay.setText(sumTimes(s.departureTimeReadable, s.timeDifference));
-                    tvArrivalTimeWithDelay.setText(sumTimes(s.arrivalTimeReadable, s.timeDifference));
+                tvTimeDifference.setText(Integer.toString(solution.getTimeDifference()) + "'");
+                tvTimeDifferenceText.setText(setProgress(solution.getProgress()));
+                if (solution.getTimeDifference() != 0) {
+                    tvDepartureTimeWithDelay.setText(solution.getDepartureTimeWithDelayReadable());
+                    tvArrivalTimeWithDelay.setText(solution.getArrivalTimeWithDelayReadable());
                 } else {
                     ButterKnife.apply(timesWithDelay, ViewsUtils.GONE);
                 }
-                setColors(context, s.timeDifference);
+                setColors(context, solution.getTimeDifference());
                 rlTimeDifference.setOnLongClickListener(view -> {
-                    presenter.onJourneyRefreshRequested(getAdapterPosition()-1);
+                    presenter.onJourneyRefreshRequested(getAdapterPosition() - 1);
                     return true;
                 });
             } else {
@@ -187,22 +182,24 @@ public class JourneyResultsAdapter extends RecyclerView.Adapter {
                 btnRefreshJourney.setOnClickListener(view -> presenter.onJourneyRefreshRequested(getAdapterPosition() - 1));
             }
 
-            if (!solution.hasChanges) {
+            if (!solution.isHasChanges()) {
                 ButterKnife.apply(solutionChangesViews, ViewsUtils.GONE);
                 ButterKnife.apply(solutionDirectViews, ViewsUtils.VISIBLE);
-                tvTrainCategory.setText(s.trainCategory);
-                tvTrainNumber.setText(s.trainId);
+                tvTrainCategory.setText(solution.getTrainCategory());
+                tvTrainNumber.setText(solution.getTrainId());
             } else {
                 ButterKnife.apply(solutionDirectViews, ViewsUtils.GONE);
                 ButterKnife.apply(solutionChangesViews, ViewsUtils.VISIBLE);
-                Log.d("bind:", solution.changes.changesNumber);
-                tvChangesNumber.setText(Integer.toString(solution.changes.changesNumber));
+                int changesNumber = solution.getChangesList().size() - 1;
+                String changesText = changesNumber == 1 ? "Cambio" : "Cambi";
+                tvChangesNumber.setText(Integer.toString(changesNumber));
+                tvChangesText.setText(changesText);
                 tvChange.setText(setChangesString(solution));
             }
 
-            if (!s.departurePlatform.equals("") && !solution.hasChanges) {
+            if (solution.getDeparturePlatform() != null && !solution.isHasChanges()) {
                 ButterKnife.apply(rlPlatform, ViewsUtils.VISIBLE);
-                tvPlatform.setText(s.departurePlatform);
+                tvPlatform.setText(solution.getDeparturePlatform());
             } else {
                 ButterKnife.apply(rlPlatform, ViewsUtils.GONE);
             }
@@ -210,10 +207,10 @@ public class JourneyResultsAdapter extends RecyclerView.Adapter {
             //TODO controlla se primo treno, in caso mostra bolt
         }
 
-        private String setChangesString(SolutionList.Solution solution) {
+        private String setChangesString(Journey.Solution solution) {
             List<String> changesStrings = new LinkedList<>();
-            for (SolutionList.Solution.Change c : solution.changes.changesList) {
-                changesStrings.add(c.trainCategory + " " + c.trainId);
+            for (Journey.Solution.Change c : solution.getChangesList()) {
+                changesStrings.add(c.getTrainCategory() + " " + c.getTrainId());
             }
             String string = "";
             for (String strings : changesStrings) {
@@ -223,12 +220,6 @@ public class JourneyResultsAdapter extends RecyclerView.Adapter {
                 return string.subSequence(0, string.length() - 3).toString();
             }
             return string;
-        }
-
-        private String sumTimes(String initialTime, int timeDifference) {
-            return DateTimeFormat.forPattern("HH:mm").print(
-                    DateTime.parse(initialTime, DateTimeFormat.forPattern("HH:mm"))
-                            .plusMinutes(timeDifference));
         }
 
         private void setColors(Context context, int timeDifference) {
@@ -247,16 +238,19 @@ public class JourneyResultsAdapter extends RecyclerView.Adapter {
         }
 
         private String setProgress(Integer progress) {
-            switch (progress) {
-                case 0:
-                    return "Costante";
-                case 1:
-                    return "Recuperando";
-                case 2:
-                    return "Rallentando";
-                default:
-                    return "";
+            if (progress != null) {
+                switch (progress) {
+                    case 0:
+                        return "Costante";
+                    case 1:
+                        return "Recuperando";
+                    case 2:
+                        return "Rallentando";
+                    default:
+                        return "";
+                }
             }
+            return "";
         }
     }
 

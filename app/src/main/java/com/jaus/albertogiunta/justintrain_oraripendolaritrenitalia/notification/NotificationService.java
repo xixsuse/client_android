@@ -5,8 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.google.gson.Gson;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.Journey;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.NotificationData;
-import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.SolutionList;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.networking.JourneyService;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.networking.ServiceFactory;
 
@@ -29,21 +29,13 @@ public class NotificationService extends IntentService {
         super("NotificationService");
     }
 
-    public static void startActionStartNotification(Context context, SolutionList.Solution.Change solution) {
-
-        // String departureStationName,
-        // long departureTime,
-        // String departureTimeReadable,
-        // String arrivalStationName,
-        // long arrivalTime,
-        // String arrivalTimeReadable,
-        // String trainId) {
+    public static void startActionStartNotification(Context context, Journey.Solution solution) {
 
         Intent intent = new Intent(context, NotificationService.class);
         intent.setAction(ACTION_START_NOTIFICATION);
 
         ServiceFactory.createRetrofitService(JourneyService.class, JourneyService.SERVICE_ENDPOINT)
-                .getNotificationData(solution.trainId)
+                .getNotificationData(solution.getTrainId())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<NotificationData>() {
@@ -59,12 +51,12 @@ public class NotificationService extends IntentService {
                     @Override
                     public void onNext(NotificationData notificationData) {
                         notificationData
-                                .setDepartureStationName(solution.departureStationName)
-                                .setDepartureTime(solution.departureTime)
-                                .setDepartureTimeReadable(solution.departureTimeReadable)
-                                .setArrivalStationName(solution.arrivalStationName)
-                                .setArrivalTime(solution.arrivalTime)
-                                .setArrivalTimeReadable(solution.arrivalTimeReadable);
+                                .setDepartureStationName(solution.getDepartureStationName())
+                                .setDepartureTime(solution.getDepartureTime())
+                                .setDepartureTimeReadable(solution.getDepartureTimeReadable())
+                                .setArrivalStationName(solution.getArrivalStationName())
+                                .setArrivalTime(solution.getArrivalTime())
+                                .setArrivalTimeReadable(solution.getArrivalTimeReadable());
                         Log.d("Notification Data: ", notificationData.toString());
 
                         intent.putExtra(EXTRA_NOTIFICATION_DATA, new Gson().toJson(notificationData));

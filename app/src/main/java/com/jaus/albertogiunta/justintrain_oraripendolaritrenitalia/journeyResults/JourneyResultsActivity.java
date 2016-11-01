@@ -17,7 +17,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.R;
-import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.SolutionList;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.Journey;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_C;
 
 import java.util.List;
@@ -64,7 +64,7 @@ public class JourneyResultsActivity extends AppCompatActivity implements Journey
 
     JourneyResultsAdapter mJourneyResultsAdapter;
     JourneyResultsPresenter presenter;
-    Bundle state;
+//    Bundle state;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,8 +77,7 @@ public class JourneyResultsActivity extends AppCompatActivity implements Journey
 //        toolbar.setTitle("Soluzioni");
 //        getSupportActionBar().setElevation(0);
 
-
-        rlHeader2.setOnClickListener(v -> presenter.getFirstFeasableSolution());
+//        rlHeader2.setOnClickListener(v -> presenter.getFirstFeasableSolution());
         btnHeaderSwapStationNames.setOnClickListener(v-> presenter.onSwapButtonClick());
         btnHeaderToggleFavorite.setOnClickListener(v -> presenter.onFavouriteButtonClick());
 
@@ -190,14 +189,14 @@ public class JourneyResultsActivity extends AppCompatActivity implements Journey
         });
     }
 
-    @Override
-    public void scrollToFirstFeasibleSolution(int position) {
-        Log.d("scrolling to ", position);
-        ((LinearLayoutManager) rvJourneySolutions.getLayoutManager()).scrollToPositionWithOffset(position, 0);
-    }
+//    @Override
+//    public void scrollToFirstFeasibleSolution(int position) {
+//        Log.d("scrolling to ", position);
+//        ((LinearLayoutManager) rvJourneySolutions.getLayoutManager()).scrollToPositionWithOffset(position, 0);
+//    }
 
     @Override
-    public void updateSolutionsList(List<SolutionList.Solution> solutionList) {
+    public void updateSolutionsList(List<Journey.Solution> solutionList) {
         Log.d("Successfully updated list");
         rvJourneySolutions.getRecycledViewPool().clear();
         mJourneyResultsAdapter.notifyDataSetChanged();

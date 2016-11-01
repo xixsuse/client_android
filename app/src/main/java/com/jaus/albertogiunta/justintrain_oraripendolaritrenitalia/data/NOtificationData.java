@@ -1,15 +1,15 @@
 package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data;
 
-/**
- * Created by albertogiunta on 04/08/16.
- */
+import org.joda.time.DateTime;
+
+@SuppressWarnings("unused")
 public class NotificationData {
 
     private String departureStationName;
-    private long departureTime;
+    private DateTime departureTime;
     private String departureTimeReadable;
     private String arrivalStationName;
-    private long arrivalTime;
+    private DateTime arrivalTime;
     private String arrivalTimeReadable;
 
     private String trainCategory;
@@ -34,11 +34,11 @@ public class NotificationData {
         return this;
     }
 
-    public long getDepartureTime() {
+    public DateTime getDepartureTime() {
         return departureTime;
     }
 
-    public NotificationData setDepartureTime(long departureTime) {
+    public NotificationData setDepartureTime(DateTime departureTime) {
         this.departureTime = departureTime;
         return this;
     }
@@ -61,11 +61,11 @@ public class NotificationData {
         return this;
     }
 
-    public long getArrivalTime() {
+    public DateTime getArrivalTime() {
         return arrivalTime;
     }
 
-    public NotificationData setArrivalTime(long arrivalTime) {
+    public NotificationData setArrivalTime(DateTime arrivalTime) {
         this.arrivalTime = arrivalTime;
         return this;
     }
