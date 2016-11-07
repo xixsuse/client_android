@@ -5,10 +5,14 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.Journey;
-import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.NotificationData;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.TrainHeader;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.networking.DateTimeAdapter;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.networking.JourneyService;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.networking.ServiceFactory;
+
+import org.joda.time.DateTime;
 
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
@@ -25,20 +29,37 @@ public class NotificationService extends IntentService {
     public static final String ACTION_UPDATE_NOTIFICATION = "com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.action.UPDATE_NOTIFICATION";
     public static final String EXTRA_NOTIFICATION_DATA = "com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.extra.NOTIFICATION_DATA";
 
+    Gson gson = new GsonBuilder()
+            .registerTypeAdapter(DateTime.class, new DateTimeAdapter())
+            .create();
+
     public NotificationService() {
         super("NotificationService");
     }
 
-    public static void startActionStartNotification(Context context, Journey.Solution solution) {
-
+    public static void startActionStartNotification(Context context, String journeyDepartureStationId, String journeyArrivalStationId, Journey.Solution solution) {
+        Log.d("startActionStartNotification:", "start");
         Intent intent = new Intent(context, NotificationService.class);
         intent.setAction(ACTION_START_NOTIFICATION);
+        String trainId;
+        if (solution.isHasChanges()) {
+            trainId = solution.getChangesList().get(0).getTrainId();
+            journeyArrivalStationId = solution.getChangesList().get(0).getArrivalStationName();
+        } else {
+            trainId = solution.getTrainId();
+        }
+        getData(journeyDepartureStationId,
+                journeyArrivalStationId,
+                trainId, context);
+    }
 
+    private static void getData(String journeyDepartureStationId, String journeyArrivalStationId, String trainId, Context context) {
+        Log.d("getData:");
         ServiceFactory.createRetrofitService(JourneyService.class, JourneyService.SERVICE_ENDPOINT)
-                .getNotificationData(solution.getTrainId())
+                .getDelay(journeyDepartureStationId, journeyArrivalStationId, trainId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<NotificationData>() {
+                .subscribe(new Subscriber<TrainHeader>() {
                     @Override
                     public void onCompleted() {
                     }
@@ -49,49 +70,29 @@ public class NotificationService extends IntentService {
                     }
 
                     @Override
-                    public void onNext(NotificationData notificationData) {
-                        notificationData
-                                .setDepartureStationName(solution.getDepartureStationName())
-                                .setDepartureTime(solution.getDepartureTime())
-                                .setDepartureTimeReadable(solution.getDepartureTimeReadable())
-                                .setArrivalStationName(solution.getArrivalStationName())
-                                .setArrivalTime(solution.getArrivalTime())
-                                .setArrivalTimeReadable(solution.getArrivalTimeReadable());
-                        Log.d("Notification Data: ", notificationData.toString());
-
-                        intent.putExtra(EXTRA_NOTIFICATION_DATA, new Gson().toJson(notificationData));
-                        context.startService(intent);
+                    public void onNext(TrainHeader trainHeader) {
+                        TrainNotification.notify(context, trainHeader, true);
                     }
                 });
     }
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        Gson gson = new Gson();
         if (intent != null) {
             final String action = intent.getAction();
             Log.d(action);
             if (ACTION_START_NOTIFICATION.equals(action)) {
-                final String notificationData = intent.getStringExtra(EXTRA_NOTIFICATION_DATA);
-                handleActionStartNotification(gson.fromJson(notificationData, NotificationData.class));
+                Log.d("onHandleIntent:", "start");
             } else if (ACTION_STOP_NOTIFICATION.equals(action)) {
-                handleActionStopNotification();
+                Log.d("onHandleIntent:", "stop");
+                TrainNotification.cancel(this);
             } else if (ACTION_UPDATE_NOTIFICATION.equals(action)) {
-                final String notificationData = intent.getStringExtra(EXTRA_NOTIFICATION_DATA);
-                handleActionUpdateNotification(gson.fromJson(notificationData, NotificationData.class));
+                Log.d("onHandleIntent:", "update");
+                TrainHeader trainHeader = gson.fromJson(intent.getStringExtra(EXTRA_NOTIFICATION_DATA), TrainHeader.class);
+                getData(trainHeader.getJourneyDepartureStationId(),
+                        trainHeader.getJourneyArrivalStationId(),
+                        trainHeader.getTrainId(), getApplicationContext());
             }
         }
-    }
-
-    private void handleActionStartNotification(NotificationData notificationData) {
-        TrainNotification.notify(this, notificationData, true);
-    }
-
-    private void handleActionStopNotification() {
-        TrainNotification.cancel(this);
-    }
-
-    private void handleActionUpdateNotification(NotificationData notificationData) {
-        TrainNotification.notify(this, notificationData, false);
     }
 }

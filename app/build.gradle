@@ -21,6 +21,7 @@ android {
         applicationId "com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia"
         minSdkVersion 19
         targetSdkVersion 24
+        multiDexEnabled true
         versionCode 1
         versionName "1.0"
         vectorDrawables.useSupportLibrary = true
@@ -45,6 +46,7 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
+    compile 'com.android.support:multidex:1.0.0'
     compile group: 'com.google.code.gson', name: 'gson', version: '1.7.2'
     // needed for Android Studio
     compile 'co.trikita:log:1.1.5'

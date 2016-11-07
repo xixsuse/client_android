@@ -16,7 +16,7 @@ interface JourneySearchContract {
 
         /**
          * It triggers an action when the user clicks on the "search" button.
-         * It will check for correspondance of the inserted stations, and if everything's alright
+         * It will check for correspondence of the inserted stations, and if everything's alright
          * it will fire the search. Otherwise it will notify the user with an error message.
          * @param departureStationName name for the departure station
          * @param arrivalStationName name for the arrival station
@@ -25,7 +25,7 @@ interface JourneySearchContract {
         // TODO check if names are the same what to do
 
         /**
-         * Acts as a listener for time changes. It's triggere by the user clicks on the time buttons
+         * Acts as a listener for time changes. It's triggered by the user clicks on the time buttons
          * and it will set the time in the view depending on the button that has been pressed.
          * @param delta the number of hours to increment or decrement from the previous value
          *              (The starting value is the current hour)

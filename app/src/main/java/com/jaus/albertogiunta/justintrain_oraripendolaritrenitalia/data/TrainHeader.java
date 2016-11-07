@@ -1,5 +1,7 @@
 package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data;
 
+import org.joda.time.DateTime;
+
 @SuppressWarnings("unused")
 public class TrainHeader {
 
@@ -8,12 +10,12 @@ public class TrainHeader {
 
     private String trainDepartureStationId;
     private String trainDeparturePlatform;
-    private String departureStationName;
+    private String trainDepartureStationName;
 
     private String arrivalStationId;
-    private String arrivalStationName;
+    private String trainArrivalStationName;
 
-    private int timeDifference;
+    private Integer timeDifference;
     private int progress;
 
     private String lastSeenStationName;
@@ -27,9 +29,15 @@ public class TrainHeader {
     private boolean isArrivedToDestination;
 
     private String journeyDepartureStationId;
+    private String journeyDepartureStationName;
+    private DateTime journeyDepartureTime;
     private String journeyArrivalStationId;
+    private String journeyArrivalStationName;
+    private DateTime journeyArrivalTime;
     private String departurePlatform;
-    private Boolean isVisited;
+    private Boolean isJourneyDepartureStationVisited;
+    private Boolean isJourneyArrivalStationVisited;
+    private int ETAToNextJourneyStation;
 
     public String getTrainCategory() {
         return trainCategory;
@@ -63,12 +71,12 @@ public class TrainHeader {
         this.trainDeparturePlatform = trainDeparturePlatform;
     }
 
-    public String getDepartureStationName() {
-        return departureStationName;
+    public String getTrainDepartureStationName() {
+        return trainDepartureStationName;
     }
 
-    public void setDepartureStationName(String departureStationName) {
-        this.departureStationName = departureStationName;
+    public void setTrainDepartureStationName(String trainDepartureStationName) {
+        this.trainDepartureStationName = trainDepartureStationName;
     }
 
     public String getArrivalStationId() {
@@ -79,19 +87,19 @@ public class TrainHeader {
         this.arrivalStationId = arrivalStationId;
     }
 
-    public String getArrivalStationName() {
-        return arrivalStationName;
+    public String getTrainArrivalStationName() {
+        return trainArrivalStationName;
     }
 
-    public void setArrivalStationName(String arrivalStationName) {
-        this.arrivalStationName = arrivalStationName;
+    public void setTrainArrivalStationName(String trainArrivalStationName) {
+        this.trainArrivalStationName = trainArrivalStationName;
     }
 
-    public int getTimeDifference() {
+    public Integer getTimeDifference() {
         return timeDifference;
     }
 
-    public void setTimeDifference(int timeDifference) {
+    public void setTimeDifference(Integer timeDifference) {
         this.timeDifference = timeDifference;
     }
 
@@ -167,12 +175,44 @@ public class TrainHeader {
         this.journeyDepartureStationId = journeyDepartureStationId;
     }
 
+    public String getJourneyDepartureStationName() {
+        return journeyDepartureStationName;
+    }
+
+    public void setJourneyDepartureStationName(String journeyDepartureStationName) {
+        this.journeyDepartureStationName = journeyDepartureStationName;
+    }
+
+    public DateTime getJourneyDepartureTime() {
+        return journeyDepartureTime;
+    }
+
+    public void setJourneyDepartureTime(DateTime journeyDepartureTime) {
+        this.journeyDepartureTime = journeyDepartureTime;
+    }
+
     public String getJourneyArrivalStationId() {
         return journeyArrivalStationId;
     }
 
     public void setJourneyArrivalStationId(String journeyArrivalStationId) {
         this.journeyArrivalStationId = journeyArrivalStationId;
+    }
+
+    public String getJourneyArrivalStationName() {
+        return journeyArrivalStationName;
+    }
+
+    public void setJourneyArrivalStationName(String journeyArrivalStationName) {
+        this.journeyArrivalStationName = journeyArrivalStationName;
+    }
+
+    public DateTime getJourneyArrivalTime() {
+        return journeyArrivalTime;
+    }
+
+    public void setJourneyArrivalTime(DateTime journeyArrivalTime) {
+        this.journeyArrivalTime = journeyArrivalTime;
     }
 
     public String getDeparturePlatform() {
@@ -183,11 +223,59 @@ public class TrainHeader {
         this.departurePlatform = departurePlatform;
     }
 
-    public Boolean getVisited() {
-        return isVisited;
+    public Boolean getJourneyDepartureStationVisited() {
+        return isJourneyDepartureStationVisited;
     }
 
-    public void setVisited(Boolean visited) {
-        isVisited = visited;
+    public void setJourneyDepartureStationVisited(Boolean journeyDepartureStationVisited) {
+        isJourneyDepartureStationVisited = journeyDepartureStationVisited;
+    }
+
+    public Boolean getJourneyArrivalStationVisited() {
+        return isJourneyArrivalStationVisited;
+    }
+
+    public void setJourneyArrivalStationVisited(Boolean journeyArrivalStationVisited) {
+        isJourneyArrivalStationVisited = journeyArrivalStationVisited;
+    }
+
+    public int getETAToNextJourneyStation() {
+        return ETAToNextJourneyStation;
+    }
+
+    public void setETAToNextJourneyStation(int ETAToNextJourneyStation) {
+        this.ETAToNextJourneyStation = ETAToNextJourneyStation;
+    }
+
+    @Override
+    public String toString() {
+        return "TrainHeader{" +
+                "trainCategory='" + trainCategory + '\'' +
+                ", trainId='" + trainId + '\'' +
+                ", trainDepartureStationId='" + trainDepartureStationId + '\'' +
+                ", trainDeparturePlatform='" + trainDeparturePlatform + '\'' +
+                ", trainDepartureStationName='" + trainDepartureStationName + '\'' +
+                ", arrivalStationId='" + arrivalStationId + '\'' +
+                ", trainArrivalStationName='" + trainArrivalStationName + '\'' +
+                ", timeDifference=" + timeDifference +
+                ", progress=" + progress +
+                ", lastSeenStationName='" + lastSeenStationName + '\'' +
+                ", lastSeenTimeReadable='" + lastSeenTimeReadable + '\'' +
+                ", cancelledStopsInfo='" + cancelledStopsInfo + '\'' +
+                ", firstClassOrientationCode=" + firstClassOrientationCode +
+                ", trainStatusCode=" + trainStatusCode +
+                ", isDeparted=" + isDeparted +
+                ", isArrivedToDestination=" + isArrivedToDestination +
+                ", journeyDepartureStationId='" + journeyDepartureStationId + '\'' +
+                ", journeyDepartureStationName='" + journeyDepartureStationName + '\'' +
+                ", journeyDepartureTime=" + journeyDepartureTime +
+                ", journeyArrivalStationId='" + journeyArrivalStationId + '\'' +
+                ", journeyArrivalStationName='" + journeyArrivalStationName + '\'' +
+                ", journeyArrivalTime=" + journeyArrivalTime +
+                ", departurePlatform='" + departurePlatform + '\'' +
+                ", isJourneyDepartureStationVisited=" + isJourneyDepartureStationVisited +
+                ", isJourneyArrivalStationVisited=" + isJourneyArrivalStationVisited +
+                ", ETAToNextJourneyStation=" + ETAToNextJourneyStation +
+                '}';
     }
 }

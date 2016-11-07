@@ -227,8 +227,8 @@ public class Journey implements PostProcessingEnabler.PostProcessable {
         }
 
         public void refreshData() {
-            timeDifference = 0;
             if (hasChanges) {
+                timeDifference = 0;
                 Log.d("refreshData:", changesList.toString());
                 for (int i = 0; i < changesList.size(); i++) {
                     if (changesList.get(i).getTimeDifference() != null) {

@@ -19,7 +19,7 @@
         android:background="@drawable/border_radius"
         android:elevation="@dimen/elevation_default"
         android:orientation="horizontal"
-        android:visibility="gone"
+        android:visibility="visible"
         app:cardCornerRadius="@dimen/radius_big"
         >
 
@@ -29,6 +29,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginStart="@dimen/margin_default"
+            android:paddingBottom="@dimen/margin_small"
             android:background="@android:color/transparent"
             android:tint="@color/ic_light"
             app:srcCompat="@drawable/ic_add_favourite"

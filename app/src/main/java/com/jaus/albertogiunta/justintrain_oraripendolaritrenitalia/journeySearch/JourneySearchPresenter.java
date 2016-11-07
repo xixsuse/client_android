@@ -22,6 +22,8 @@ import trikita.log.Log;
 
 import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_C.I_STATIONS;
 import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_C.I_TIME;
+import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.StationRealmUtils.getStation4DatabaseObject;
+import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.StationRealmUtils.isStationNameValid;
 
 class JourneySearchPresenter implements JourneySearchContract.Presenter {
 
@@ -114,15 +116,15 @@ class JourneySearchPresenter implements JourneySearchContract.Presenter {
         boolean departureFound = false;
         boolean arrivalFound = false;
 
-        if (PresenterUtilities.isStationNameValid(departureStationName, stationList)) {
-            departureStation = new PreferredStation(PresenterUtilities.getStationObject(departureStationName, stationList));
+        if (isStationNameValid(departureStationName, stationList)) {
+            departureStation = new PreferredStation(getStation4DatabaseObject(departureStationName, stationList));
             departureFound = true;
         } else {
             Log.d(arrivalStationName + " not found!");
         }
 
-        if (PresenterUtilities.isStationNameValid(arrivalStationName, stationList)) {
-            arrivalStation = new PreferredStation(PresenterUtilities.getStationObject(arrivalStationName, stationList));
+        if (isStationNameValid(arrivalStationName, stationList)) {
+            arrivalStation = new PreferredStation(getStation4DatabaseObject(arrivalStationName, stationList));
             arrivalFound = true;
         } else {
             Log.d(departureStationName + " not found!");

@@ -13,7 +13,6 @@ import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.Preferre
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.Station4Database;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.TrainHeader;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeyResults.JourneyResultsContract.View.JourneySearchStrategy.OnJourneySearchFinishedListener;
-import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeySearch.PresenterUtilities;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.networking.JourneyService;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.networking.ServiceFactory;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.notification.NotificationService;
@@ -37,6 +36,7 @@ import trikita.log.Log;
 
 import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_C.I_STATIONS;
 import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_C.I_TIME;
+import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.StationRealmUtils.isThisJourneyPreferred;
 
 class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJourneySearchFinishedListener {
 
@@ -92,7 +92,7 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
 
     @Override
     public void setFavouriteButtonStatus() {
-        if (PresenterUtilities.isThisJourneyPreferred(departureStation, arrivalStation, view.getViewContext())) {
+        if (isThisJourneyPreferred(departureStation, arrivalStation, view.getViewContext())) {
             view.setFavouriteButtonStatus(true);
         } else {
             view.setFavouriteButtonStatus(false);
@@ -119,7 +119,7 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
     public void searchFromSearch(boolean isNewSearch) {
         view.showProgress();
         // TODO controlla connessione
-        if (PresenterUtilities.isInstant(dateTime)) {
+        if (isInstant(dateTime)) {
             Log.d("Instant Search");
             new SearchInstantlyStrategy().searchJourney(isNewSearch, departureStation.getStationShortId(),
                     arrivalStation.getStationShortId(),
@@ -136,7 +136,7 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
 
     @Override
     public void onFavouriteButtonClick() {
-        if (PresenterUtilities.isThisJourneyPreferred(departureStation, arrivalStation, view.getViewContext())) {
+        if (isThisJourneyPreferred(departureStation, arrivalStation, view.getViewContext())) {
             PreferredStationsHelper.removePreferredJourney(view.getViewContext(),
                     departureStation,
                     arrivalStation);
@@ -166,7 +166,10 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
 
     @Override
     public void onNotificationRequested(int elementIndex) {
-        NotificationService.startActionStartNotification(view.getViewContext(), journeySolutions.get(elementIndex));
+        NotificationService.startActionStartNotification(view.getViewContext(),
+                departureStation.getStationShortId(),
+                arrivalStation.getStationShortId(),
+                journeySolutions.get(elementIndex));
     }
 
 
@@ -215,6 +218,7 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
 
                     @Override
                     public void onNext(TrainHeader trainHeader) {
+                        Log.d("onNext:", trainHeader.toString());
                         if (journeySolutions.get(solutionIndex).isHasChanges()) {
                             journeySolutions.get(solutionIndex).getChangesList().get(changeIndex).setDeparturePlatform(trainHeader.getDeparturePlatform());
                             journeySolutions.get(solutionIndex).getChangesList().get(changeIndex).setTimeDifference(trainHeader.getTimeDifference());
@@ -242,6 +246,11 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
     @Override
     public void onStationNotFound() {
         view.showSnackbar("Si è verificato un problema!");
+    }
+
+    private boolean isInstant(DateTime selectedHour) {
+        return selectedHour.getHourOfDay() == DateTime.now().getHourOfDay() &&
+                selectedHour.getMinuteOfHour() == DateTime.now().getMinuteOfHour();
     }
 
     @Override
@@ -318,10 +327,10 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
     }
 
     private static class SearchAfterTimeStrategy implements JourneyResultsContract.View.JourneySearchStrategy {
-
         @Override
         public void searchJourney(boolean isNewSearch, String departureStationId, String arrivalStationId, DateTime timestamp, boolean isPreemptive, boolean withDelays, OnJourneySearchFinishedListener listener) {
-            ServiceFactory.createRetrofitService(JourneyService.class, JourneyService.SERVICE_ENDPOINT).getJourneyAfterTime(departureStationId, arrivalStationId, timestamp.toString("yyyy-MM-dd'T'HH:mmZ"), withDelays, isPreemptive)
+            ServiceFactory.createRetrofitService(JourneyService.class, JourneyService.SERVICE_ENDPOINT)
+                    .getJourneyAfterTime(departureStationId, arrivalStationId, timestamp.toString("yyyy-MM-dd'T'HH:mmZ"), withDelays, isPreemptive)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new Subscriber<Journey>() {
@@ -349,6 +358,8 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
                         }
                     });
         }
+
+
     }
 
     private static class SearchBeforeTimeStrategy implements JourneyResultsContract.View.JourneySearchStrategy {

@@ -11,12 +11,12 @@ import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.R;
-import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.NotificationData;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.TrainHeader;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.networking.DateTimeAdapter;
 
 import org.joda.time.DateTime;
-
-import trikita.log.Log;
 
 import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.notification.NotificationService.ACTION_STOP_NOTIFICATION;
 import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.notification.NotificationService.ACTION_UPDATE_NOTIFICATION;
@@ -36,18 +36,23 @@ class TrainNotification {
      * Shows the notification, or updates a previously shown notification of
      * this type, with the given parameters.
      */
-    static void notify(final Context context, NotificationData notificationData, boolean hasVibration) {
+    static void notify(final Context context, TrainHeader trainHeader, boolean hasVibration) {
+
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter(DateTime.class, new DateTimeAdapter())
+                .create();
+
         final Resources res = context.getResources();
 
         // This image is used as the notification's large icon (thumbnail).
 //        final Bitmap picture = BitmapFactory.decodeResource(res, R.drawable.example_picture);
 
-        final String title = buildTitle(notificationData);
-        final String text = buildBody(notificationData);
-        final String smallText = buildSmallText(notificationData);
+        final String title = buildTitle(trainHeader);
+        final String text = buildBody(trainHeader);
+        final String smallText = buildSmallText(trainHeader);
 
         Intent iUpdate = new Intent(context, NotificationService.class);
-        iUpdate.putExtra(EXTRA_NOTIFICATION_DATA, new Gson().toJson(notificationData));
+        iUpdate.putExtra(EXTRA_NOTIFICATION_DATA, gson.toJson(trainHeader));
         iUpdate.setAction(ACTION_UPDATE_NOTIFICATION);
 
         Intent iStop = new Intent(context, NotificationService.class);
@@ -62,7 +67,7 @@ class TrainNotification {
                 // Use a default priority (recognized on devices running Android 4.1 or later)
                 .setPriority(NotificationCompat.PRIORITY_MAX)
                 // Set ticker text (preview) information for this notification.
-                .setTicker(buildTicker(notificationData))
+                .setTicker(buildTicker(trainHeader))
                 // Show expanded text content on devices running Android 4.1 or later.
                 .setStyle(new NotificationCompat.BigTextStyle()
                         .bigText(text)
@@ -112,17 +117,17 @@ class TrainNotification {
         }
     }
 
-    private static String buildTitle(NotificationData data) {
+    private static String buildTitle(TrainHeader data) {
         return new Builder()
                 .withString(data.getTrainCategory())
                 .withSpace()
                 .withString(data.getTrainId())
                 .withEndingSymbol("|")
-                .withSeparatedWords(data.getDepartureStationName(), String.valueOf((char) 187), data.getArrivalStationName())
+                .withSeparatedWords(data.getJourneyDepartureStationName(), String.valueOf((char) 187), data.getJourneyArrivalStationName())
                 .build();
     }
 
-    private static String buildBody(NotificationData data) {
+    private static String buildBody(TrainHeader data) {
         String delayPlusProgress = new Builder()
                 .withString(buildTimeDifferenceString(data.getTimeDifference()))
                 .withEndingSymbol("|")
@@ -132,11 +137,11 @@ class TrainNotification {
         return delayPlusProgress + "\n" + buildPredictor(data);
     }
 
-    private static String buildSmallText(NotificationData data) {
+    private static String buildSmallText(TrainHeader data) {
         return buildLastSeenString(data.getLastSeenTimeReadable(), data.getLastSeenStationName());
     }
 
-    private static String buildTicker(NotificationData data) {
+    private static String buildTicker(TrainHeader data) {
         return new Builder()
                 .withString(buildTimeDifferenceString(data.getTimeDifference()))
                 .withEndingSymbol("|")
@@ -175,39 +180,37 @@ class TrainNotification {
         }
     }
 
-    private static String buildPredictor(NotificationData data) {
-        DateTime now = DateTime.now();
-        DateTime dep = data.getDepartureTime().plusMinutes(data.getTimeDifference());
-        DateTime arr = data.getArrivalTime().plusMinutes(data.getTimeDifference());
-        Log.d("now", now.toString());
+    private static String buildPredictor(TrainHeader data) {
+        String prediction = "Probabile arrivo a ";
+        String station;
 
-        if (now.isBefore(dep)) {
-            return buildPrediction(data.getDepartureStationName(), (dep.minuteOfDay().get() - now.minuteOfDay().get()));
-        } else if (now.isBefore(arr)) {
-            return buildPrediction(data.getArrivalStationName(), (arr.minuteOfDay().get() - now.minuteOfDay().get()));
-        } else if (now.isAfter(arr)) {
-            return "Treno arrivato a " + data.getArrivalStationName();
+        if (!data.getJourneyDepartureStationVisited()) {
+            station = data.getJourneyDepartureStationName();
+        } else if (!data.getJourneyArrivalStationVisited()) {
+            station = data.getJourneyArrivalStationName();
+        } else {
+            return "Treno arrivato a " + data.getJourneyArrivalStationName();
         }
-        return "";
-    }
 
-    private static String buildPrediction(String station, long minutes) {
-        String minutesString = "Arrivo a " + station;
-        if (minutes == 0) {
-            return minutesString + " adesso ";
-        } else if (minutes == 1) {
-            return minutesString + (" tra " + minutes + " minuto");
-        } else if (minutes > 1) {
-            if (minutes < 60) {
-                return minutesString + (" tra " + minutes + " minuti");
-            } else if (minutes / 60 < 2) {
-                return minutesString + (" tra più di " + 1 + " ora");
+        prediction += station;
+
+        int eta = data.getETAToNextJourneyStation();
+        if (eta == 0) {
+            prediction += " adesso ";
+        } else if (eta == 1) {
+            prediction += (" tra " + eta + " minuto");
+        } else if (eta > 1) {
+            if (eta < 60) {
+                prediction += (" tra " + eta + " minuti");
+            } else if (eta / 60 < 2) {
+                prediction += (" tra più di " + 1 + " ora");
             } else {
-                int hours = (int) (minutes / 60);
-                return minutesString + (" tra più di " + hours + " ore");
+                int hours = eta / 60;
+                prediction += (" tra più di " + hours + " ore");
             }
         }
-        return "";
+
+        return prediction;
     }
 
 
