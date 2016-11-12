@@ -50,7 +50,6 @@
 
     </LinearLayout>
 
-
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_favourite_journeys"
         android:layout_width="match_parent"
@@ -58,6 +57,39 @@
         android:visibility="gone"
         >
     </android.support.v7.widget.RecyclerView>
+
+    <RelativeLayout
+            android:id="@+id/rl_dashboard"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_margin="@dimen/margin_default"
+            android:layout_gravity="bottom"
+            >
+
+        <TextView
+                android:id="@+id/tv_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/margin_default"
+                android:textStyle="bold"
+                android:text=""
+                android:textAlignment="center"
+                android:textColor="@color/txt_grey"
+                android:textSize="@dimen/text_size_default_plus"
+                />
+
+        <TextView
+                android:id="@+id/tv_body"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tv_title"
+                android:layout_marginTop="0dp"
+                android:textAlignment="center"
+                android:text=""
+                android:textStyle="italic"
+                android:textColor="@color/txt_grey"
+                />
+    </RelativeLayout>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab_search_journey"

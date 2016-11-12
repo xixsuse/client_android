@@ -1,5 +1,7 @@
 package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeyFavourites;
 
+import com.google.gson.Gson;
+
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,9 +11,11 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
-import com.google.gson.Gson;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.R;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.Message;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.PreferredJourney;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeyResults.JourneyResultsActivity;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeySearch.JourneySearchActivity;
@@ -34,6 +38,12 @@ public class FavouriteJourneysActivity extends AppCompatActivity implements Favo
     @BindView(R.id.ll_add_favourite)
     LinearLayout llAddFavourite;
     FavouriteJourneysAdapter adapter;
+    @BindView(R.id.rl_dashboard)
+    RelativeLayout rlDashboard;
+    @BindView(R.id.tv_title)
+    TextView tvTitle;
+    @BindView(R.id.tv_body)
+    TextView tvBody;
     @BindView(R.id.fab_search_journey)
     FloatingActionButton fabSearchJourney;
 
@@ -102,6 +112,12 @@ public class FavouriteJourneysActivity extends AppCompatActivity implements Favo
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+//        presenter.stopTimer();
+    }
+
+    @Override
     protected void onDestroy() {
         presenter.unsubscribe();
         super.onDestroy();
@@ -110,6 +126,12 @@ public class FavouriteJourneysActivity extends AppCompatActivity implements Favo
     @Override
     public Context getViewContext() {
         return this;
+    }
+
+    @Override
+    public void updateDashboard(Message message) {
+        this.tvTitle.setText(message.getTitle());
+        this.tvBody.setText(message.getBody());
     }
 
     @Override
@@ -138,4 +160,6 @@ public class FavouriteJourneysActivity extends AppCompatActivity implements Favo
         Log.d("Sending", bundle);
         return bundle;
     }
+
+
 }

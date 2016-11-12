@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.BasePresenter;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.BaseView;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.Message;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.PreferredJourney;
 
 import java.util.List;
@@ -26,12 +27,16 @@ interface FavouritesContract {
         Context getViewContext();
         // TODO put it in BaseView
 
+        void updateDashboard(Message message);
+
         void displayFavouriteJourneys();
 
         void displayEntryButton();
     }
 
     interface Presenter extends BasePresenter {
+
+        void updateAllMessages();
 
         /**
          * Getter for the preferred journeys list object
@@ -40,6 +45,8 @@ interface FavouritesContract {
         List<PreferredJourney> getPreferredJourneys();
 
         void updateRequested();
+
+//        void stopTimer();
     }
 
 }
