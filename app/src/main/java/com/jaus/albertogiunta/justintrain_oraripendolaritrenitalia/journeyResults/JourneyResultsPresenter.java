@@ -1,11 +1,12 @@
 package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeyResults;
 
+import com.google.gson.Gson;
+
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 
-import com.google.gson.Gson;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.BaseView;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.Journey;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.PreferredJourney;
@@ -172,22 +173,32 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
                 journeySolutions.get(elementIndex));
     }
 
+    private String sanitizeStationName(String dirtyName) {
+        return dirtyName.replaceAll("Bologna Centrale", "Bologna C.LE")
+                .replaceAll("TO Lingotto", "Torino Lingotto")
+                .replaceAll("Torino P. Susa", "Torino Porta Susa");
+    }
 
     @Override
     public void onJourneyRefreshRequested(int elementIndex) {
         RealmResults<Station4Database> stationList = Realm.getDefaultInstance().where(Station4Database.class).findAll();
         if (journeySolutions.get(elementIndex).isHasChanges()) {
             for (int changeIndex = 0; changeIndex < journeySolutions.get(elementIndex).getChangesList().size(); changeIndex++) {
-                Station4Database tempDepartureStation = stationList.where().equalTo("name",
-                        journeySolutions.get(elementIndex).getChangesList().get(changeIndex).getDepartureStationName(),
-                        Case.INSENSITIVE).findAll().get(0);
-                Station4Database tempArrivalStation = stationList.where().equalTo("name",
-                        journeySolutions.get(elementIndex).getChangesList().get(changeIndex).getArrivalStationName(),
-                        Case.INSENSITIVE).findAll().get(0);
-                refreshChange(elementIndex, changeIndex,
-                        tempDepartureStation.getStationShortId(),
-                        tempArrivalStation.getStationShortId(),
-                        journeySolutions.get(elementIndex).getChangesList().get(changeIndex).getTrainId());
+                String departureStationName = sanitizeStationName(journeySolutions.get(elementIndex).getChangesList().get(changeIndex).getDepartureStationName());
+                String arrivalStationName = sanitizeStationName(journeySolutions.get(elementIndex).getChangesList().get(changeIndex).getArrivalStationName());
+                // TODO: 12/11/2016 get 0 fa crashare se non trova niente, fai che se non è parseint ok allora non richiedere
+                try {
+                    Station4Database tempDepartureStation = stationList.where().equalTo("name", departureStationName, Case.INSENSITIVE)
+                            .findAll().get(0);
+                    Station4Database tempArrivalStation = stationList.where().equalTo("name", arrivalStationName, Case.INSENSITIVE)
+                            .findAll().get(0);
+                    refreshChange(elementIndex, changeIndex,
+                            tempDepartureStation.getStationShortId(),
+                            tempArrivalStation.getStationShortId(),
+                            journeySolutions.get(elementIndex).getChangesList().get(changeIndex).getTrainId());
+                } catch (Exception e) {
+                    Log.e("onJourneyRefreshRequested: ", "Non è stata trovata nessuna corrispondenza per le stazioni: ", departureStationName, arrivalStationName);
+                }
             }
         } else {
             refreshChange(elementIndex, -1,
@@ -195,11 +206,21 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
                     arrivalStation.getStationShortId(),
                     journeySolutions.get(elementIndex).getTrainId());
         }
-        Log.d("onJourneyRefreshRequested:");
     }
 
     private void refreshChange(int solutionIndex, int changeIndex, String departureStationId, String arrivalStationId, String trainId) {
         Log.d("refreshChange:", solutionIndex, changeIndex, trainId);
+        try {
+            Integer.parseInt(departureStationId);
+            Integer.parseInt(arrivalStationId);
+            Integer.parseInt(trainId);
+        } catch (NumberFormatException e) {
+            Log.e("refreshChange: ", "There are problems with these parameters:", departureStationId, arrivalStationId, trainId);
+            view.updateSolution(solutionIndex);
+            view.updateSolution(solutionIndex);
+            return;
+        }
+
         ServiceFactory.createRetrofitService(JourneyService.class, JourneyService.SERVICE_ENDPOINT)
                 .getDelay(departureStationId,
                         arrivalStationId,
@@ -261,26 +282,31 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
 
     @Override
     public void onServerError(Throwable exception) {
+        Log.d(exception.getMessage());
         if (view != null) {
-            view.showSnackbar("Si è verificato un problema!");
-            if (exception instanceof HttpException) {
-                Log.d(((HttpException) exception).response().errorBody(), ((HttpException) exception).response().code());
-                if (((HttpException) exception).response().code() == 500) {
-                    view.showErrorMessage("Il server sta avendo dei problemi", "Segnala il problema", INTENT_C.ERROR_BTN.SEND_REPORT);
-                }
-                // TODO controlla 500, 404 e non so che altro
-            } else if (exception instanceof ConnectException) {
-                Log.d(exception.getMessage());
-                if (isNetworkAvailable()) {
-                    view.showErrorMessage("Il server sta avendo dei problemi", "Segnala il problema", INTENT_C.ERROR_BTN.SEND_REPORT);
-                } else {
-                    view.showErrorMessage("Assicurati di essere connesso a Internet", "Attiva connessione", INTENT_C.ERROR_BTN.CONN_SETTINGS);
-                }
+            if (exception.getMessage().equals("HTTP 404 ")) {
+                onJourneyNotFound();
             } else {
-                Log.d(exception.toString());
+                view.showSnackbar("Si è verificato un problema!");
+                if (exception instanceof HttpException) {
+                    Log.d(((HttpException) exception).response().errorBody(), ((HttpException) exception).response().code());
+                    if (((HttpException) exception).response().code() == 500) {
+                        view.showErrorMessage("Il server sta avendo dei problemi", "Segnala il problema", INTENT_C.ERROR_BTN.SEND_REPORT);
+                    }
+                    // TODO controlla 500, 404 e non so che altro
+                } else if (exception instanceof ConnectException) {
+                    if (isNetworkAvailable()) {
+                        view.showErrorMessage("Il server sta avendo dei problemi", "Segnala il problema", INTENT_C.ERROR_BTN.SEND_REPORT);
+                    } else {
+                        view.showErrorMessage("Assicurati di essere connesso a Internet", "Attiva connessione", INTENT_C.ERROR_BTN.CONN_SETTINGS);
+                    }
+                } else {
+                    Log.d(exception.toString());
+                }
             }
         }
     }
+
 
     @Override
     public void onSuccess() {

@@ -1,6 +1,8 @@
 package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeySearch;
 
 import android.app.Activity;
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.graphics.Paint;
 import android.os.Bundle;
@@ -70,9 +72,11 @@ public class JourneySearchActivity extends AppCompatActivity implements JourneyS
         btnSwapStationNames.setOnClickListener(v -> presenter.onSwapButtonClick(tvDeparture.getText().toString(), tvArrival.getText().toString()));
 
         // TIME PANEL
+        tvTime.setOnClickListener(v -> onTimeClick());
         tvMinusOneHour.setOnClickListener(v -> presenter.onTimeChanged(-1));
         tvPlusOneHour.setOnClickListener(v -> presenter.onTimeChanged(1));
         presenter.onTimeChanged(0);
+        tvDate.setOnClickListener(v -> onDateClick());
         tvMinusOneDay.setOnClickListener(v -> presenter.onDateChanged(-1));
         tvPlusOneDay.setOnClickListener(v -> presenter.onDateChanged(1));
         presenter.onDateChanged(0);
@@ -144,6 +148,27 @@ public class JourneySearchActivity extends AppCompatActivity implements JourneyS
     @Override
     public void onInvalidSearchParameters() {
         Log.d("Parameters: NOT VALID");
+    }
+
+
+    private void onTimeClick() {
+        TimePickerDialog mTimePicker;
+        //noinspection CodeBlock2Expr
+        mTimePicker = new TimePickerDialog(this, (timePicker, selectedHour, selectedMinute) -> {
+            presenter.onTimeChanged(selectedHour, selectedMinute);
+        }, presenter.getSearchDateTime().getHourOfDay(), presenter.getSearchDateTime().getMinuteOfHour(), true);
+        mTimePicker.setTitle("Selezionare orario di partenza");
+        mTimePicker.show();
+    }
+
+    private void onDateClick() {
+        DatePickerDialog mTimePicker;
+        //noinspection CodeBlock2Expr
+        mTimePicker = new DatePickerDialog(this, (timePicker, selectedYear, selectedMonth, selectedDayOfMonth) -> {
+            presenter.onDateChanged(selectedYear, selectedMonth + 1, selectedDayOfMonth);
+        }, presenter.getSearchDateTime().getYear(), presenter.getSearchDateTime().getMonthOfYear() - 1, presenter.getSearchDateTime().getDayOfMonth());
+        mTimePicker.setTitle("Selezionare data di partenza");
+        mTimePicker.show();
     }
 
     private void onStationNameTextViewClick(View tv, int code) {

@@ -1,10 +1,11 @@
 package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeySearch;
 
+import com.google.gson.Gson;
+
 import android.os.Bundle;
 
 import com.annimon.stream.Collectors;
 import com.annimon.stream.Stream;
-import com.google.gson.Gson;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.BaseView;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.PreferredJourney;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.PreferredStation;
@@ -14,6 +15,7 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 
 import java.util.List;
+import java.util.Locale;
 
 import io.realm.Case;
 import io.realm.Realm;
@@ -74,13 +76,31 @@ class JourneySearchPresenter implements JourneySearchContract.Presenter {
     public void onTimeChanged(int delta) {
         dateTime = dateTime.plusHours(delta);
         view.setTime(dateTime.toString(DateTimeFormat.forPattern("HH:mm")));
-        view.setDate(dateTime.toString(DateTimeFormat.forPattern("d MMMM")));
+        view.setDate(dateTime.toString(DateTimeFormat.forPattern("d MMMM").withLocale(Locale.ITALY)));
+    }
+
+    @Override
+    public void onTimeChanged(int newHour, int newMinute) {
+        dateTime = dateTime.withHourOfDay(newHour).withMinuteOfHour(newMinute);
+        view.setTime(dateTime.toString(DateTimeFormat.forPattern("HH:mm")));
+        view.setDate(dateTime.toString(DateTimeFormat.forPattern("d MMMM").withLocale(Locale.ITALY)));
     }
 
     @Override
     public void onDateChanged(int delta) {
         dateTime = dateTime.plusDays(delta);
-        view.setDate(dateTime.toString(DateTimeFormat.forPattern("d MMMM")));
+        view.setDate(dateTime.toString(DateTimeFormat.forPattern("d MMMM").withLocale(Locale.ITALY)));
+    }
+
+    @Override
+    public void onDateChanged(int newYear, int newMonth, int newDay) {
+        dateTime = dateTime.withYear(newYear).withMonthOfYear(newMonth).withDayOfMonth(newDay);
+        view.setDate(dateTime.toString(DateTimeFormat.forPattern("d MMMM").withLocale(Locale.ITALY)));
+    }
+
+    @Override
+    public DateTime getSearchDateTime() {
+        return this.dateTime;
     }
 
     @Override

@@ -1,5 +1,8 @@
 package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.notification;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import android.annotation.TargetApi;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -10,8 +13,6 @@ import android.content.res.Resources;
 import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.R;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.TrainHeader;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.networking.DateTimeAdapter;
@@ -76,11 +77,11 @@ class TrainNotification {
                 .addAction(
                         R.drawable.ic_refresh,
                         res.getString(R.string.action_refresh),
-                        PendingIntent.getService(context, 0, iUpdate, PendingIntent.FLAG_UPDATE_CURRENT))
+                        PendingIntent.getService(context, 1000, iUpdate, PendingIntent.FLAG_UPDATE_CURRENT))
                 .addAction(
                         R.drawable.ic_clear,
                         res.getString(R.string.action_end),
-                        PendingIntent.getService(context, 1, iStop, PendingIntent.FLAG_UPDATE_CURRENT))
+                        PendingIntent.getService(context, 1001, iStop, PendingIntent.FLAG_UPDATE_CURRENT))
                 // Automatically dismiss the notification when it is touched.
                 .setAutoCancel(false)
                 .setOngoing(true);
@@ -168,13 +169,14 @@ class TrainNotification {
     }
 
     private static String buildProgressString(int progress) {
+        String progr = "Andamento ";
         switch (progress) {
             case 0:
-                return "Costante";
+                return progr + "Costante";
             case 1:
-                return "Recuperando";
+                return progr + "Recuperando";
             case 2:
-                return "Rallentando";
+                return progr + "Rallentando";
             default:
                 return "";
         }

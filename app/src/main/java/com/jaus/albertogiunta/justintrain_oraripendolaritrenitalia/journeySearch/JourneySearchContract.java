@@ -5,6 +5,8 @@ import android.os.Bundle;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.BasePresenter;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.BaseView;
 
+import org.joda.time.DateTime;
+
 import java.util.List;
 
 interface JourneySearchContract {
@@ -32,7 +34,13 @@ interface JourneySearchContract {
          */
         void onTimeChanged(int delta);
 
+        void onTimeChanged(int newHour, int newMinute);
+
         void onDateChanged(int delta);
+
+        void onDateChanged(int newYear, int newMonth, int newDay);
+
+        DateTime getSearchDateTime();
 
         /**
          * Called every time there's a change in the Autocomplete Text Views.
