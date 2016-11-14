@@ -46,6 +46,15 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
+//    debugCompile 'com.exyui.android:debug-bottle-runtime:1.0.0EAP-SNAPSHOT'
+    // Use this in your Java project
+//    releaseCompile 'com.exyui.android:debug-bottle-noop-java:1.0.0EAP-SNAPSHOT'
+//    testCompile 'com.exyui.android:debug-bottle-noop-java:1.0.0EAP-SNAPSHOT'
+
+    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5'
+    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
+    testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
+
     compile 'com.android.support:multidex:1.0.0'
     compile group: 'com.google.code.gson', name: 'gson', version: '1.7.2'
     // needed for Android Studio

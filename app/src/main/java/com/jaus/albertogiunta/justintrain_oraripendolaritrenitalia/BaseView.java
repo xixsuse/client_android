@@ -1,8 +1,9 @@
 package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia;
 
-/**
- * Created by albertogiunta on 24/05/16.
- */
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_C;
+
 public interface BaseView {
+
+    void showSnackbar(String message, String action, INTENT_C.SNACKBAR_ACTIONS intent);
 
 }

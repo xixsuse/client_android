@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
@@ -16,6 +18,7 @@ import android.widget.TextView;
 
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.R;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeyResults.JourneyResultsActivity;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_C;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -176,5 +179,24 @@ public class JourneySearchActivity extends AppCompatActivity implements JourneyS
             Intent myIntent = new Intent(JourneySearchActivity.this, StationSearchActivity.class);
             JourneySearchActivity.this.startActivityForResult(myIntent, code);
         });
+    }
+
+    @Override
+    public void showSnackbar(String message, String action, INTENT_C.SNACKBAR_ACTIONS intent) {
+        Log.w(android.R.id.message);
+        Snackbar snackbar = Snackbar
+                .make(this.rlDeparture, message, Snackbar.LENGTH_LONG);
+        ((TextView) snackbar.getView().findViewById(android.support.design.R.id.snackbar_text)).setTextColor(ContextCompat.getColor(this, R.color.txt_white));
+        switch (intent) {
+            case NONE:
+                break;
+            case SELECT_DEPARTURE:
+                onStationNameTextViewClick(this.rlDeparture, I_CODE_DEPARTURE);
+                break;
+            case SELECT_ARRIVAL:
+                onStationNameTextViewClick(this.rlArrival, I_CODE_ARRIVAL);
+                break;
+        }
+        snackbar.show();
     }
 }

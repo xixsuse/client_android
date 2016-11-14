@@ -5,6 +5,7 @@ import android.content.Context;
 import android.support.multidex.MultiDex;
 
 import com.facebook.stetho.Stetho;
+import com.squareup.leakcanary.LeakCanary;
 
 import net.danlew.android.joda.JodaTimeAndroid;
 
@@ -27,6 +28,14 @@ public class MyApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+//        DTInstaller.install(this)
+//                .enable()
+//                .run();
+        if (LeakCanary.isInAnalyzerProcess(this)) {
+            return;
+        }
+        LeakCanary.install(this);
+
         context = this;
         JodaTimeAndroid.init(this);
         Stetho.initializeWithDefaults(this);

@@ -208,17 +208,6 @@ public class JourneyResultsActivity extends AppCompatActivity implements Journey
         mJourneyResultsAdapter.notifyItemChanged(elementIndex + 1);
     }
 
-
-    @Override
-    public void showSnackbar(String message) {
-        Log.d(message);
-        Snackbar snackbar = Snackbar
-                .make(rvJourneySolutions, message, Snackbar.LENGTH_LONG);
-        ((TextView) snackbar.getView().findViewById(android.support.design.R.id.snackbar_text)).setTextColor(ContextCompat.getColor(this, R.color.txt_white));
-        snackbar.setAction(R.string.action_refresh, view -> presenter.searchFromSearch(true)).setActionTextColor(ContextCompat.getColor(this, R.color.btn_cyan));
-        snackbar.show();
-    }
-
     @Override
     public void setFavouriteButtonStatus(boolean isPreferred) {
         if (isPreferred) {
@@ -232,5 +221,21 @@ public class JourneyResultsActivity extends AppCompatActivity implements Journey
     public void setStationNames(String departure, String arrival) {
         this.tvHeaderDepartureStation.setText(departure);
         this.tvHeaderArrivalStation.setText(arrival);
+    }
+
+    @Override
+    public void showSnackbar(String message, String action, INTENT_C.SNACKBAR_ACTIONS intent) {
+        Log.w(android.R.id.message);
+        Snackbar snackbar = Snackbar
+                .make(rvJourneySolutions, message, Snackbar.LENGTH_LONG);
+        ((TextView) snackbar.getView().findViewById(android.support.design.R.id.snackbar_text)).setTextColor(ContextCompat.getColor(this, R.color.txt_white));
+        switch (intent) {
+            case NONE:
+                break;
+            case REFRESH:
+                snackbar.setAction(action, view -> presenter.searchFromSearch(true)).setActionTextColor(ContextCompat.getColor(this, R.color.btn_cyan));
+                break;
+        }
+        snackbar.show();
     }
 }

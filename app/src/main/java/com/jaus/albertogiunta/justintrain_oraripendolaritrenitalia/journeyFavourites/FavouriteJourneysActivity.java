@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -19,6 +21,7 @@ import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.Message;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.PreferredJourney;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeyResults.JourneyResultsActivity;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeySearch.JourneySearchActivity;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_C;
 
 import java.util.List;
 
@@ -114,7 +117,6 @@ public class FavouriteJourneysActivity extends AppCompatActivity implements Favo
     @Override
     protected void onPause() {
         super.onPause();
-//        presenter.stopTimer();
     }
 
     @Override
@@ -162,4 +164,16 @@ public class FavouriteJourneysActivity extends AppCompatActivity implements Favo
     }
 
 
+    @Override
+    public void showSnackbar(String message, String action, INTENT_C.SNACKBAR_ACTIONS intent) {
+        Log.w(android.R.id.message);
+        Snackbar snackbar = Snackbar
+                .make(this.rvFavouriteJourneys, message, Snackbar.LENGTH_LONG);
+        ((TextView) snackbar.getView().findViewById(android.support.design.R.id.snackbar_text)).setTextColor(ContextCompat.getColor(this, R.color.txt_white));
+        switch (intent) {
+            case NONE:
+                break;
+        }
+        snackbar.show();
+    }
 }

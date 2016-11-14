@@ -13,4 +13,8 @@ public class INTENT_C {
     public enum ERROR_BTN {
         CONN_SETTINGS, SEND_REPORT, NO_SOLUTIONS
     }
+
+    public enum SNACKBAR_ACTIONS {
+        NONE, REFRESH, SELECT_DEPARTURE, SELECT_ARRIVAL;
+    }
 }

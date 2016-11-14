@@ -12,8 +12,6 @@ import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.Preferr
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Random;
-import java.util.Timer;
 
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
@@ -24,18 +22,6 @@ class FavouritesPresenter implements FavouritesContract.Presenter {
     private FavouritesContract.View view;
     private List<PreferredJourney> preferredJourneys;
     private List<Message> messages;
-    private Timer timer;
-    private Random random = new Random(42);
-//    private Handler mHandler = new Handler() {
-//        @Override
-//        public void handleMessage(android.os.Message msg) {
-//            if (messages != null) {
-//                Message m = messages.get(random.nextInt(messages.size()));
-//                Log.d("handleMessage: ", m.toString());
-//                view.updateDashboard(m);
-//            }
-//        }
-//    };
 
     FavouritesPresenter(FavouritesContract.View view) {
         this.view = view;
@@ -56,7 +42,6 @@ class FavouritesPresenter implements FavouritesContract.Presenter {
 
     @Override
     public void onResuming(Bundle bundle) {
-//        startTimer();
         updateRequested();
     }
 
@@ -90,27 +75,11 @@ class FavouritesPresenter implements FavouritesContract.Presenter {
                     public void onNext(List<Message> msg) {
                         messages = msg;
                         Log.d("onNext: ", msg.toString());
-                        Message m = messages.get(random.nextInt(messages.size()));
+                        Message m = messages.get(0);
                         view.updateDashboard(m);
-//                        startTimer();
                     }
                 });
     }
-
-    //    private void startTimer() {
-//        timer = new Timer();
-//        timer.scheduleAtFixedRate(new TimerTask() {
-//    public void run() {
-//                mHandler.obtainMessage(1).sendToTarget();
-//            }
-//        }, 0, 10000);
-//    }
-
-
-//        @Override
-//        public void stopTimer () {
-//            timer.cancel();
-//        }
 
     @Override
     public void updateRequested() {

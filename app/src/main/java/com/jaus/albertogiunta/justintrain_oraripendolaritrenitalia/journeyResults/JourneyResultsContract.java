@@ -114,12 +114,6 @@ interface JourneyResultsContract {
 
         void setStationNames(String departure, String arrival);
 
-        /**
-         * Shows an error
-         * @param message to be send to the user
-         */
-        void showSnackbar(String message);
-
         interface JourneySearchStrategy {
 
             interface OnJourneySearchFinishedListener {
@@ -133,6 +127,10 @@ interface JourneyResultsContract {
                  * No solution found for the requested journey
                  */
                 void onJourneyNotFound();
+
+                void onJourneyBeforeNotFound();
+
+                void onJourneyAfterNotFound();
 
                 /**
                  * The server is unreachable or network not available?

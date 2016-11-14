@@ -75,7 +75,7 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
                 this.departureStation = journey.getStation1();
                 this.arrivalStation = journey.getStation2();
                 this.dateTime = new DateTime(bundle.getLong(I_TIME, DateTime.now().getMillis()));
-                Log.d(dateTime);
+                Log.d("Current bundled DateTime is: ", dateTime);
                 view.setStationNames(departureStation.getName(), arrivalStation.getName());
                 setFavouriteButtonStatus();
             }
@@ -109,7 +109,7 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
 
     @Override
     public void searchInstantaneously() {
-        Log.d("instant");
+        Log.d("searchInstantaneously: ");
         view.showProgress();
         new SearchInstantlyStrategy().searchJourney(true, departureStation.getStationShortId(),
                 arrivalStation.getStationShortId(),
@@ -127,12 +127,10 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
                     null, true, true, this);
         } else {
             Log.d("NON Instant Search", dateTime);
-            // aggiungo due ore ma non so bene perchè
             new SearchAfterTimeStrategy().searchJourney(isNewSearch, departureStation.getStationShortId(),
                     arrivalStation.getStationShortId(),
                     dateTime, true, true, this);
         }
-//        view.setStationNames(departureStation.getName(), arrivalStation.getName());
     }
 
     @Override
@@ -142,10 +140,12 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
                     departureStation,
                     arrivalStation);
             setFavouriteButtonStatus();
+            view.showSnackbar("Tratta rimossa dai Preferiti", "", INTENT_C.SNACKBAR_ACTIONS.NONE);
         } else {
             PreferredStationsHelper.setPreferredJourney(view.getViewContext(),
                     new PreferredJourney(departureStation, arrivalStation));
             setFavouriteButtonStatus();
+            view.showSnackbar("Tratta aggiunta ai Preferiti", "", INTENT_C.SNACKBAR_ACTIONS.NONE);
         }
     }
 
@@ -174,9 +174,11 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
     }
 
     private String sanitizeStationName(String dirtyName) {
-        return dirtyName.replaceAll("Bologna Centrale", "Bologna C.LE")
+        return dirtyName
+                .replaceAll("Bologna Centrale", "Bologna C.LE")
                 .replaceAll("TO Lingotto", "Torino Lingotto")
-                .replaceAll("Torino P. Susa", "Torino Porta Susa");
+                .replaceAll("Torino P. Susa", "Torino Porta Susa")
+                .replaceAll("Verona P.Nuova", "Verona Porta Nuova");
     }
 
     @Override
@@ -186,7 +188,6 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
             for (int changeIndex = 0; changeIndex < journeySolutions.get(elementIndex).getChangesList().size(); changeIndex++) {
                 String departureStationName = sanitizeStationName(journeySolutions.get(elementIndex).getChangesList().get(changeIndex).getDepartureStationName());
                 String arrivalStationName = sanitizeStationName(journeySolutions.get(elementIndex).getChangesList().get(changeIndex).getArrivalStationName());
-                // TODO: 12/11/2016 get 0 fa crashare se non trova niente, fai che se non è parseint ok allora non richiedere
                 try {
                     Station4Database tempDepartureStation = stationList.where().equalTo("name", departureStationName, Case.INSENSITIVE)
                             .findAll().get(0);
@@ -197,6 +198,7 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
                             tempArrivalStation.getStationShortId(),
                             journeySolutions.get(elementIndex).getChangesList().get(changeIndex).getTrainId());
                 } catch (Exception e) {
+                    view.showSnackbar("Non riesco ad aggiornare questa soluzione", "", INTENT_C.SNACKBAR_ACTIONS.NONE);
                     Log.e("onJourneyRefreshRequested: ", "Non è stata trovata nessuna corrispondenza per le stazioni: ", departureStationName, arrivalStationName);
                 }
             }
@@ -215,6 +217,7 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
             Integer.parseInt(arrivalStationId);
             Integer.parseInt(trainId);
         } catch (NumberFormatException e) {
+            view.showSnackbar("Premere di nuovo il pulsante aggiorna", "", INTENT_C.SNACKBAR_ACTIONS.NONE);
             Log.e("refreshChange: ", "There are problems with these parameters:", departureStationId, arrivalStationId, trainId);
             view.updateSolution(solutionIndex);
             view.updateSolution(solutionIndex);
@@ -266,7 +269,7 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
 
     @Override
     public void onStationNotFound() {
-        view.showSnackbar("Si è verificato un problema!");
+        view.showSnackbar("La stazione non è stata trovata!", "AGGIORNA", INTENT_C.SNACKBAR_ACTIONS.NONE);
     }
 
     private boolean isInstant(DateTime selectedHour) {
@@ -276,8 +279,18 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
 
     @Override
     public void onJourneyNotFound() {
-        view.showSnackbar("Si è verificato un problema!");
         view.showErrorMessage("La tratta inserita non ha viaggi disponibili", "Cambia stazioni", INTENT_C.ERROR_BTN.NO_SOLUTIONS);
+        view.showSnackbar("Non ci sono altre soluzioni per questa tratta!", "AGGIORNA", INTENT_C.SNACKBAR_ACTIONS.REFRESH);
+    }
+
+    @Override
+    public void onJourneyBeforeNotFound() {
+        view.showSnackbar("Sembra non ci siano altre soluzioni in giornata", "", INTENT_C.SNACKBAR_ACTIONS.NONE);
+    }
+
+    @Override
+    public void onJourneyAfterNotFound() {
+        view.showSnackbar("Sembra non ci siano altre soluzioni in giornata", "", INTENT_C.SNACKBAR_ACTIONS.NONE);
     }
 
     @Override
@@ -287,7 +300,6 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
             if (exception.getMessage().equals("HTTP 404 ")) {
                 onJourneyNotFound();
             } else {
-                view.showSnackbar("Si è verificato un problema!");
                 if (exception instanceof HttpException) {
                     Log.d(((HttpException) exception).response().errorBody(), ((HttpException) exception).response().code());
                     if (((HttpException) exception).response().code() == 500) {
@@ -303,6 +315,7 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
                 } else {
                     Log.d(exception.toString());
                 }
+                view.showSnackbar("Si è verificato un problema!", "AGGIORNA", INTENT_C.SNACKBAR_ACTIONS.REFRESH);
             }
         }
     }
@@ -379,7 +392,7 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
                             if (journeySolutions.size() > 0) {
                                 listener.onSuccess();
                             } else {
-                                listener.onJourneyNotFound();
+                                listener.onJourneyAfterNotFound();
                             }
                         }
                     });
@@ -403,14 +416,19 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
 
                         @Override
                         public void onError(Throwable e) {
+                            listener.onServerError(e);
                             Log.d(e.getMessage());
                         }
 
                         @Override
                         public void onNext(Journey solutionList) {
                             Log.d(solutionList.getSolutions().size(), "new solutions found");
-                            journeySolutions.addAll(0, solutionList.getSolutions());
-                            listener.onSuccess();
+                            if (solutionList.getSolutions().size() > 0) {
+                                journeySolutions.addAll(0, solutionList.getSolutions());
+                                listener.onSuccess();
+                            } else {
+                                listener.onJourneyBeforeNotFound();
+                            }
                         }
                     });
         }

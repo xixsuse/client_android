@@ -11,7 +11,7 @@ public interface MessageService {
 
     String SERVICE_ENDPOINT = "https://gist.githubusercontent.com";
 
-    @GET("/albertogiunta/c40a1471d3cc141c9185393945a83912/raw/ddd2e7e452b408c8c796ad3222b183d77b59e78f/messages.json")
+    @GET("/albertogiunta/c40a1471d3cc141c9185393945a83912/raw/")
     Observable<List<Message>> getAllMessages();
 
 }

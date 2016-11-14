@@ -10,6 +10,7 @@ import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.BaseView;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.PreferredJourney;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.PreferredStation;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.Station4Database;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_C;
 
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -140,6 +141,7 @@ class JourneySearchPresenter implements JourneySearchContract.Presenter {
             departureStation = new PreferredStation(getStation4DatabaseObject(departureStationName, stationList));
             departureFound = true;
         } else {
+            view.showSnackbar("Stazione di arrivo mancante!", "", INTENT_C.SNACKBAR_ACTIONS.SELECT_ARRIVAL);
             Log.d(arrivalStationName + " not found!");
         }
 
@@ -147,6 +149,7 @@ class JourneySearchPresenter implements JourneySearchContract.Presenter {
             arrivalStation = new PreferredStation(getStation4DatabaseObject(arrivalStationName, stationList));
             arrivalFound = true;
         } else {
+            view.showSnackbar("Stazione di partenza mancante!", "", INTENT_C.SNACKBAR_ACTIONS.SELECT_DEPARTURE);
             Log.d(departureStationName + " not found!");
         }
 
