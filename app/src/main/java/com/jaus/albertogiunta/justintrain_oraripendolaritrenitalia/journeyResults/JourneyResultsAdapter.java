@@ -15,12 +15,15 @@ import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.R;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.Journey;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.ViewsUtils;
 
+import org.joda.time.DateTime;
+
 import java.util.LinkedList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.BindViews;
 import butterknife.ButterKnife;
+import trikita.log.Log;
 
 public class JourneyResultsAdapter extends RecyclerView.Adapter {
 
@@ -160,6 +163,8 @@ public class JourneyResultsAdapter extends RecyclerView.Adapter {
             tvLastingTime.setText(solution.getDuration());
             llNotification.setOnClickListener(v -> presenter.onNotificationRequested(getAdapterPosition() - 1));
 
+            // se non è una soluzione di oggi non è possibile richiedere l'orario (controlla meglio la condizione)
+
             if (solution.getTimeDifference() != null) {
                 ButterKnife.apply(solutionWithoutDelay, ViewsUtils.GONE);
                 ButterKnife.apply(solutionWithDelay, ViewsUtils.VISIBLE);
@@ -180,6 +185,22 @@ public class JourneyResultsAdapter extends RecyclerView.Adapter {
                 ButterKnife.apply(solutionWithDelay, ViewsUtils.GONE);
                 ButterKnife.apply(solutionWithoutDelay, ViewsUtils.VISIBLE);
                 btnRefreshJourney.setOnClickListener(view -> presenter.onJourneyRefreshRequested(getAdapterPosition() - 1));
+            }
+
+            Log.d("\ndep", solution.getDepartureTime().toString(), "\narr", solution.getArrivalTime().toString(), "\nnow", DateTime.now().toString(), "\n\n");
+            Log.d("");
+            Log.d("3", DateTime.now().withHourOfDay(3).withMinuteOfHour(0).toString());
+            Log.d("22", DateTime.now().withHourOfDay(22).withMinuteOfHour(0));
+            Log.d("");
+
+
+            if ((solution.getDepartureTime().isAfter(DateTime.now().withHourOfDay(23).withMinuteOfHour(59)) ||
+                    solution.getArrivalTime().isBefore(DateTime.now().withHourOfDay(0).withMinuteOfHour(0)))) {
+                if (solution.getDepartureTime().getHourOfDay() > 3 ||
+                        DateTime.now().getHourOfDay() < 22) {
+                    ButterKnife.apply(solutionWithDelay, ViewsUtils.GONE);
+                    ButterKnife.apply(solutionWithoutDelay, ViewsUtils.GONE);
+                }
             }
 
             if (!solution.isHasChanges()) {
@@ -203,8 +224,6 @@ public class JourneyResultsAdapter extends RecyclerView.Adapter {
             } else {
                 ButterKnife.apply(rlPlatform, ViewsUtils.GONE);
             }
-
-            //TODO controlla se primo treno, in caso mostra bolt
         }
 
         private String setChangesString(Journey.Solution solution) {

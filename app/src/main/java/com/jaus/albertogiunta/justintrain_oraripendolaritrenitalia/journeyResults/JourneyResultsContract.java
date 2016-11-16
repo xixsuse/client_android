@@ -90,7 +90,7 @@ interface JourneyResultsContract {
          */
         void hideProgress();
 
-        void showErrorMessage(String tvMessage, String btnMessage, INTENT_C.ERROR_BTN intent);
+        void showErrorMessage(String tvMessage, String btnMessage, INTENT_C.ERROR_BTN intent, String extra);
 
 //        void scrollToFirstFeasibleSolution(int position);
 

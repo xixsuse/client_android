@@ -67,6 +67,7 @@ class JourneySearchPresenter implements JourneySearchContract.Presenter {
             this.departureStation = journey.getStation1();
             this.arrivalStation = journey.getStation2();
             view.setStationNames(departureStation.getName(), arrivalStation.getName());
+            Log.d("onResuming: resuming bundle", journey.toString());
         } else {
             Log.d("no bundle found");
             // Probably initialize members with default values for a new instance
@@ -134,28 +135,28 @@ class JourneySearchPresenter implements JourneySearchContract.Presenter {
 
     @Override
     public void onSearchButtonClick(String departureStationName, String arrivalStationName) {
-        boolean departureFound = false;
-        boolean arrivalFound = false;
+//        boolean departureFound = false;
+//        boolean arrivalFound = false;
 
         if (isStationNameValid(departureStationName, stationList)) {
             departureStation = new PreferredStation(getStation4DatabaseObject(departureStationName, stationList));
-            departureFound = true;
+//            departureFound = true;
         } else {
-            view.showSnackbar("Stazione di arrivo mancante!", "", INTENT_C.SNACKBAR_ACTIONS.SELECT_ARRIVAL);
-            Log.d(arrivalStationName + " not found!");
+            view.showSnackbar("Stazione di partenza mancante!", "SELEZIONA", INTENT_C.SNACKBAR_ACTIONS.SELECT_DEPARTURE);
+            Log.d(departureStationName + " not found!");
+            return;
         }
 
         if (isStationNameValid(arrivalStationName, stationList)) {
             arrivalStation = new PreferredStation(getStation4DatabaseObject(arrivalStationName, stationList));
-            arrivalFound = true;
+//            arrivalFound = true;
         } else {
-            view.showSnackbar("Stazione di partenza mancante!", "", INTENT_C.SNACKBAR_ACTIONS.SELECT_DEPARTURE);
-            Log.d(departureStationName + " not found!");
+            view.showSnackbar("Stazione di arrivo mancante!", "SELEZIONA", INTENT_C.SNACKBAR_ACTIONS.SELECT_ARRIVAL);
+            Log.d(arrivalStationName + " not found!");
+            return;
         }
 
-        if (departureFound && arrivalFound) {
-            view.onValidSearchParameters();
-            Log.d("Searching for: " + departureStation.toString(), arrivalStation.toString());
-        }
+        view.onValidSearchParameters();
+        Log.d("Searching for: " + departureStation.toString(), arrivalStation.toString());
     }
 }

@@ -142,10 +142,14 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
             setFavouriteButtonStatus();
             view.showSnackbar("Tratta rimossa dai Preferiti", "", INTENT_C.SNACKBAR_ACTIONS.NONE);
         } else {
-            PreferredStationsHelper.setPreferredJourney(view.getViewContext(),
-                    new PreferredJourney(departureStation, arrivalStation));
-            setFavouriteButtonStatus();
-            view.showSnackbar("Tratta aggiunta ai Preferiti", "", INTENT_C.SNACKBAR_ACTIONS.NONE);
+            if (journeySolutions.size() > 0) {
+                PreferredStationsHelper.setPreferredJourney(view.getViewContext(),
+                        new PreferredJourney(departureStation, arrivalStation));
+                setFavouriteButtonStatus();
+                view.showSnackbar("Tratta aggiunta ai Preferiti", "", INTENT_C.SNACKBAR_ACTIONS.NONE);
+            } else {
+                view.showSnackbar("Impossibile aggiungere ai preferiti una tratta senza soluzioni", "", INTENT_C.SNACKBAR_ACTIONS.NONE);
+            }
         }
     }
 
@@ -243,15 +247,22 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
                     @Override
                     public void onNext(TrainHeader trainHeader) {
                         Log.d("onNext:", trainHeader.toString());
+                        if (!trainHeader.isDeparted()) {
+                            view.showSnackbar("Il treno non è ancora partito", "", INTENT_C.SNACKBAR_ACTIONS.NONE);
+                        }
                         if (journeySolutions.get(solutionIndex).isHasChanges()) {
                             journeySolutions.get(solutionIndex).getChangesList().get(changeIndex).setDeparturePlatform(trainHeader.getDeparturePlatform());
-                            journeySolutions.get(solutionIndex).getChangesList().get(changeIndex).setTimeDifference(trainHeader.getTimeDifference());
-                            journeySolutions.get(solutionIndex).getChangesList().get(changeIndex).setProgress(trainHeader.getProgress());
-                            journeySolutions.get(solutionIndex).getChangesList().get(changeIndex).postProcess();
+                            if (trainHeader.isDeparted()) {
+                                journeySolutions.get(solutionIndex).getChangesList().get(changeIndex).setTimeDifference(trainHeader.getTimeDifference());
+                                journeySolutions.get(solutionIndex).getChangesList().get(changeIndex).setProgress(trainHeader.getProgress());
+                                journeySolutions.get(solutionIndex).getChangesList().get(changeIndex).postProcess();
+                            }
                         } else {
                             journeySolutions.get(solutionIndex).setDeparturePlatform(trainHeader.getDeparturePlatform());
-                            journeySolutions.get(solutionIndex).setTimeDifference(trainHeader.getTimeDifference());
-                            journeySolutions.get(solutionIndex).setProgress(trainHeader.getProgress());
+                            if (trainHeader.isDeparted()) {
+                                journeySolutions.get(solutionIndex).setTimeDifference(trainHeader.getTimeDifference());
+                                journeySolutions.get(solutionIndex).setProgress(trainHeader.getProgress());
+                            }
                         }
                         journeySolutions.get(solutionIndex).refreshData();
 
@@ -269,7 +280,7 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
 
     @Override
     public void onStationNotFound() {
-        view.showSnackbar("La stazione non è stata trovata!", "AGGIORNA", INTENT_C.SNACKBAR_ACTIONS.NONE);
+        view.showSnackbar("La stazione non è stata trovata!", "", INTENT_C.SNACKBAR_ACTIONS.NONE);
     }
 
     private boolean isInstant(DateTime selectedHour) {
@@ -279,8 +290,8 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
 
     @Override
     public void onJourneyNotFound() {
-        view.showErrorMessage("La tratta inserita non ha viaggi disponibili", "Cambia stazioni", INTENT_C.ERROR_BTN.NO_SOLUTIONS);
-        view.showSnackbar("Non ci sono altre soluzioni per questa tratta!", "AGGIORNA", INTENT_C.SNACKBAR_ACTIONS.REFRESH);
+        view.showErrorMessage("La tratta inserita non ha viaggi disponibili", "Cambia stazioni", INTENT_C.ERROR_BTN.NO_SOLUTIONS, new Gson().toJson(new PreferredJourney(departureStation, arrivalStation)));
+//        view.showSnackbar("Non ci sono altre soluzioni per questa tratta!", "AGGIORNA", INTENT_C.SNACKBAR_ACTIONS.REFRESH);
     }
 
     @Override
@@ -303,14 +314,14 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
                 if (exception instanceof HttpException) {
                     Log.d(((HttpException) exception).response().errorBody(), ((HttpException) exception).response().code());
                     if (((HttpException) exception).response().code() == 500) {
-                        view.showErrorMessage("Il server sta avendo dei problemi", "Segnala il problema", INTENT_C.ERROR_BTN.SEND_REPORT);
+                        view.showErrorMessage("Il server sta avendo dei problemi", "Segnala il problema", INTENT_C.ERROR_BTN.SEND_REPORT, null);
                     }
                     // TODO controlla 500, 404 e non so che altro
                 } else if (exception instanceof ConnectException) {
                     if (isNetworkAvailable()) {
-                        view.showErrorMessage("Il server sta avendo dei problemi", "Segnala il problema", INTENT_C.ERROR_BTN.SEND_REPORT);
+                        view.showErrorMessage("Il server sta avendo dei problemi", "Segnala il problema", INTENT_C.ERROR_BTN.SEND_REPORT, null);
                     } else {
-                        view.showErrorMessage("Assicurati di essere connesso a Internet", "Attiva connessione", INTENT_C.ERROR_BTN.CONN_SETTINGS);
+                        view.showErrorMessage("Assicurati di essere connesso a Internet", "Attiva connessione", INTENT_C.ERROR_BTN.CONN_SETTINGS, null);
                     }
                 } else {
                     Log.d(exception.toString());

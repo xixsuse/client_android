@@ -10,7 +10,6 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
@@ -69,8 +68,8 @@ public class JourneySearchActivity extends AppCompatActivity implements JourneyS
         this.tvTime.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG);
         this.tvDate.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG);
 
-        onStationNameTextViewClick(this.rlDeparture, I_CODE_DEPARTURE);
-        onStationNameTextViewClick(this.rlArrival, I_CODE_ARRIVAL);
+        this.rlDeparture.setOnClickListener(v -> onStationNameTextViewClick(I_CODE_DEPARTURE));
+        this.rlArrival.setOnClickListener(v -> onStationNameTextViewClick(I_CODE_ARRIVAL));
 
         btnSwapStationNames.setOnClickListener(v -> presenter.onSwapButtonClick(tvDeparture.getText().toString(), tvArrival.getText().toString()));
 
@@ -145,7 +144,7 @@ public class JourneySearchActivity extends AppCompatActivity implements JourneyS
         Log.d("Parameters: VALID");
         Intent myIntent = new Intent(JourneySearchActivity.this, JourneyResultsActivity.class);
         myIntent.putExtras(presenter.getBundle());
-        JourneySearchActivity.this.startActivity(myIntent);
+        startActivity(myIntent);
     }
 
     @Override
@@ -174,11 +173,9 @@ public class JourneySearchActivity extends AppCompatActivity implements JourneyS
         mTimePicker.show();
     }
 
-    private void onStationNameTextViewClick(View tv, int code) {
-        tv.setOnClickListener(view -> {
-            Intent myIntent = new Intent(JourneySearchActivity.this, StationSearchActivity.class);
-            JourneySearchActivity.this.startActivityForResult(myIntent, code);
-        });
+    private void onStationNameTextViewClick(int code) {
+        Intent myIntent = new Intent(JourneySearchActivity.this, StationSearchActivity.class);
+        startActivityForResult(myIntent, code);
     }
 
     @Override
@@ -191,10 +188,12 @@ public class JourneySearchActivity extends AppCompatActivity implements JourneyS
             case NONE:
                 break;
             case SELECT_DEPARTURE:
-                onStationNameTextViewClick(this.rlDeparture, I_CODE_DEPARTURE);
+                snackbar.setAction(action, view -> onStationNameTextViewClick(I_CODE_DEPARTURE))
+                        .setActionTextColor(ContextCompat.getColor(this, R.color.btn_cyan));
                 break;
             case SELECT_ARRIVAL:
-                onStationNameTextViewClick(this.rlArrival, I_CODE_ARRIVAL);
+                snackbar.setAction(action, view -> onStationNameTextViewClick(I_CODE_ARRIVAL))
+                        .setActionTextColor(ContextCompat.getColor(this, R.color.btn_cyan));
                 break;
         }
         snackbar.show();

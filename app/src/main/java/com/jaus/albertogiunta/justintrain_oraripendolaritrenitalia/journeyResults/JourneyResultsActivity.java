@@ -3,6 +3,7 @@ package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeyResul
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -165,18 +166,18 @@ public class JourneyResultsActivity extends AppCompatActivity implements Journey
     }
 
     @Override
-    public void showErrorMessage(String tvMessage, String btnMessage, INTENT_C.ERROR_BTN intent) {
+    public void showErrorMessage(String tvMessage, String btnMessage, INTENT_C.ERROR_BTN intent, String extra) {
         progressBar.setVisibility(View.GONE);
         rvJourneySolutions.setVisibility(View.GONE);
         rlEmptyJourneyBox.setVisibility(View.VISIBLE);
         btnErrorMessage.setText(btnMessage);
         tvErrorMessage.setText(tvMessage);
         btnErrorMessage.setOnClickListener(v -> {
+            Intent i;
             switch (intent) {
                 case CONN_SETTINGS:
                     Log.d("intent a settings");
-                    Intent i = new Intent(Intent.ACTION_MAIN);
-                    i.setClassName("com.android.phone", "com.android.phone.NetworkSetting");
+                    i = new Intent(Settings.ACTION_WIRELESS_SETTINGS);
                     startActivity(i);
                     break;
                 case SEND_REPORT:
@@ -184,6 +185,7 @@ public class JourneyResultsActivity extends AppCompatActivity implements Journey
                     break;
                 case NO_SOLUTIONS:
                     Log.d("intent a ricerca");
+                    finish();
                     break;
             }
         });

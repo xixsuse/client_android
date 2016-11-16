@@ -55,4 +55,14 @@ public class PreferredJourney {
     public void setPriority(int priority) {
         this.priority = priority;
     }
+
+    @Override
+    public String toString() {
+        return "PreferredJourney{" +
+                "station1=" + station1 +
+                ", station2=" + station2 +
+                ", timestamp=" + timestamp +
+                ", priority=" + priority +
+                '}';
+    }
 }
