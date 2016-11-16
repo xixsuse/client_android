@@ -7,6 +7,8 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
     <uses-permission android:name="android.permission.VIBRATE"/>
 
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+
     <application
         android:name=".MyApplication"
         android:allowBackup="true"
@@ -24,7 +26,7 @@
         <activity
             android:name=".journeyResults.JourneyResultsActivity"
             android:label="Soluzioni"
-            android:theme="@style/AppTheme.NoActionBar"
+                android:theme="@style/AppThemeNoShadowActionbar"
             >
         </activity>
         <activity

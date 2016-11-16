@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <item name="colorPrimary">@color/bg_dark</item>
@@ -7,12 +7,11 @@
         <item name="android:textColor">@color/txt_dark</item>
     </style>
 
-    <style name="AppThemeNoShadowActionbar" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppThemeNoShadowActionbar" parent="Theme.AppCompat.Light">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowDrawsSystemBarBackgrounds" tools:targetApi="lollipop">true</item>
         <item name="colorPrimary">@color/bg_dark</item>
-        <item name="colorPrimaryDark">@color/bg_darker</item>
-        <item name="colorAccent">@color/btn_dark_cyan</item>
-        <item name="android:textColor">@color/txt_dark</item>
-        <item name="actionBarStyle">@style/Theme.MyApp.ActionBar</item>
     </style>
 
     <!--<style name="AppTheme.NoActionBar" parent="Theme.AppCompat.Light.DarkActionBar">-->

@@ -247,21 +247,23 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
                     @Override
                     public void onNext(TrainHeader trainHeader) {
                         Log.d("onNext:", trainHeader.toString());
-                        if (!trainHeader.isDeparted()) {
-                            view.showSnackbar("Il treno non è ancora partito", "", INTENT_C.SNACKBAR_ACTIONS.NONE);
-                        }
+
                         if (journeySolutions.get(solutionIndex).isHasChanges()) {
                             journeySolutions.get(solutionIndex).getChangesList().get(changeIndex).setDeparturePlatform(trainHeader.getDeparturePlatform());
                             if (trainHeader.isDeparted()) {
                                 journeySolutions.get(solutionIndex).getChangesList().get(changeIndex).setTimeDifference(trainHeader.getTimeDifference());
                                 journeySolutions.get(solutionIndex).getChangesList().get(changeIndex).setProgress(trainHeader.getProgress());
                                 journeySolutions.get(solutionIndex).getChangesList().get(changeIndex).postProcess();
+                            } else if (journeySolutions.get(solutionIndex).getTimeDifference() == null) {
+                                view.showSnackbar("Il treno non è ancora partito", "", INTENT_C.SNACKBAR_ACTIONS.NONE);
                             }
                         } else {
                             journeySolutions.get(solutionIndex).setDeparturePlatform(trainHeader.getDeparturePlatform());
                             if (trainHeader.isDeparted()) {
                                 journeySolutions.get(solutionIndex).setTimeDifference(trainHeader.getTimeDifference());
                                 journeySolutions.get(solutionIndex).setProgress(trainHeader.getProgress());
+                            } else {
+                                view.showSnackbar("Il treno non è ancora partito", "", INTENT_C.SNACKBAR_ACTIONS.NONE);
                             }
                         }
                         journeySolutions.get(solutionIndex).refreshData();

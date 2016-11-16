@@ -1,5 +1,7 @@
 package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeyFavourites;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.crash.FirebaseCrash;
 import com.google.gson.Gson;
 
 import android.content.Context;
@@ -35,6 +37,8 @@ import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.
 
 public class FavouriteJourneysActivity extends AppCompatActivity implements FavouritesContract.View {
 
+    private FirebaseAnalytics mFirebaseAnalytics;
+
     FavouritesContract.Presenter presenter;
     @BindView(R.id.rv_favourite_journeys)
     RecyclerView rvFavouriteJourneys;
@@ -55,6 +59,8 @@ public class FavouriteJourneysActivity extends AppCompatActivity implements Favo
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_favourite_journeys);
         ButterKnife.bind(this);
+
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
         presenter = new FavouritesPresenter(this);
         adapter = new FavouriteJourneysAdapter(presenter.getPreferredJourneys());
@@ -92,6 +98,12 @@ public class FavouriteJourneysActivity extends AppCompatActivity implements Favo
 
     @OnClick({R.id.fab_search_journey, R.id.ll_add_favourite})
     public void search() {
+        FirebaseCrash.log("Clicked on FAB");
+        Bundle bundle = new Bundle();
+        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "01");
+        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, "favourite");
+        bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "fab");
+        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
         Intent myIntent = new Intent(FavouriteJourneysActivity.this, JourneySearchActivity.class);
         FavouriteJourneysActivity.this.startActivity(myIntent);
     }

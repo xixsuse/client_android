@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "981165485354",
+    "firebase_url": "https://justintrain-28a13.firebaseio.com",
+    "project_id": "justintrain-28a13",
+    "storage_bucket": "justintrain-28a13.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:981165485354:android:b1faf15cdeee20d5",
+        "android_client_info": {
+          "package_name": "com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "981165485354-65jkqcc75oboc5jb9oplh2siif6qsnub.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia",
+            "certificate_hash": "B01DC9265E372F77A996E7818D6437452E0787CB"
+          }
+        },
+        {
+          "client_id": "981165485354-20ln22i76nl0u6o4kc417n0g06t4k0je.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBORY14_JTtv1dYbS4UR7Z9pUt8p7Io5xg"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "981165485354-20ln22i76nl0u6o4kc417n0g06t4k0je.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

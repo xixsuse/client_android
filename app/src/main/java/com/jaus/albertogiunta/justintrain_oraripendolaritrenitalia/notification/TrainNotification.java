@@ -62,7 +62,7 @@ class TrainNotification {
         final NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
                 .setDefaults(Notification.DEFAULT_SOUND)
                 // Set required fields, including the small icon, the notification title, and text.
-                .setSmallIcon(R.drawable.ic_pin)
+                .setSmallIcon(R.drawable.ic_notification2)
                 .setContentTitle(title)
                 .setContentText(text)
                 // Use a default priority (recognized on devices running Android 4.1 or later)
@@ -75,11 +75,11 @@ class TrainNotification {
                         .setBigContentTitle(title)
                         .setSummaryText(smallText))
                 .addAction(
-                        R.drawable.ic_refresh,
+                        R.drawable.ic_refresh2,
                         res.getString(R.string.action_refresh),
                         PendingIntent.getService(context, 1000, iUpdate, PendingIntent.FLAG_UPDATE_CURRENT))
                 .addAction(
-                        R.drawable.ic_clear,
+                        R.drawable.ic_close2,
                         res.getString(R.string.action_end),
                         PendingIntent.getService(context, 1001, iStop, PendingIntent.FLAG_UPDATE_CURRENT))
                 // Automatically dismiss the notification when it is touched.

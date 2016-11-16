@@ -228,13 +228,16 @@ public class Journey implements PostProcessingEnabler.PostProcessable {
 
         public void refreshData() {
             if (hasChanges) {
+                boolean foundAny = false;
                 timeDifference = 0;
                 Log.d("refreshData:", changesList.toString());
                 for (int i = 0; i < changesList.size(); i++) {
                     if (changesList.get(i).getTimeDifference() != null) {
                         timeDifference += changesList.get(i).getTimeDifference();
+                        foundAny = true;
                     }
                 }
+                if (!foundAny) timeDifference = null;
             }
             postProcess();
         }

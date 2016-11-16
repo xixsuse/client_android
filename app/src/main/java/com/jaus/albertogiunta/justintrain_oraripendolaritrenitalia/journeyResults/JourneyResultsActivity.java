@@ -75,6 +75,7 @@ public class JourneyResultsActivity extends AppCompatActivity implements Journey
         presenter = new JourneyResultsPresenter(this);
 
         setSupportActionBar(toolbar);
+        getSupportActionBar();
 //        toolbar.setTitle("Soluzioni");
 //        getSupportActionBar().setElevation(0);
 
