@@ -4,9 +4,6 @@ import com.google.gson.Gson;
 
 import android.os.Bundle;
 
-import com.annimon.stream.Collectors;
-import com.annimon.stream.Stream;
-import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.BaseView;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.PreferredJourney;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.PreferredStation;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.Station4Database;
@@ -15,10 +12,8 @@ import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 
-import java.util.List;
 import java.util.Locale;
 
-import io.realm.Case;
 import io.realm.Realm;
 import io.realm.RealmResults;
 import trikita.log.Log;
@@ -30,22 +25,16 @@ import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.
 
 class JourneySearchPresenter implements JourneySearchContract.Presenter {
 
-    private JourneySearchContract.View view;
+    private JourneySearchActivity view;
     private RealmResults<Station4Database> stationList;
     private PreferredStation departureStation;
     private PreferredStation arrivalStation;
     private DateTime dateTime;
 
-    JourneySearchPresenter(JourneySearchContract.View view) {
+    JourneySearchPresenter(JourneySearchActivity view) {
         this.view = view;
         this.stationList = Realm.getDefaultInstance().where(Station4Database.class).findAll();
         dateTime = DateTime.now().withMinuteOfHour(0);
-        Log.d(dateTime);
-    }
-
-    @Override
-    public void subscribe(BaseView baseView) {
-        view = (JourneySearchContract.View) baseView;
     }
 
     @Override
@@ -54,13 +43,7 @@ class JourneySearchPresenter implements JourneySearchContract.Presenter {
     }
 
     @Override
-    public void onLeaving(Bundle bundle) {
-        // Save value of member in saved state
-        bundle.putString(I_STATIONS, new Gson().toJson(new PreferredJourney(departureStation, arrivalStation)));
-    }
-
-    @Override
-    public void onResuming(Bundle bundle) {
+    public void setState(Bundle bundle) {
         if (bundle != null) {
             // Restore value of members from saved state
             PreferredJourney journey = new Gson().fromJson(bundle.getString(I_STATIONS), PreferredJourney.class);
@@ -70,34 +53,45 @@ class JourneySearchPresenter implements JourneySearchContract.Presenter {
             Log.d("onResuming: resuming bundle", journey.toString());
         } else {
             Log.d("no bundle found");
-            // Probably initialize members with default values for a new instance
         }
+    }
+
+    @Override
+    public Bundle getState(Bundle bundle) {
+        Gson gson = new Gson();
+        if (bundle == null) bundle = new Bundle();
+        bundle.putString(I_STATIONS, gson.toJson(new PreferredJourney(departureStation, arrivalStation)));
+        if (departureStation != null)
+            Log.d("Current bundled departure stations is: ", this.departureStation);
+        if (arrivalStation != null)
+            Log.d("Current bundled departure stations is: ", this.arrivalStation);
+        bundle.putLong(I_TIME, dateTime.getMillis());
+        Log.d("Current bundled DateTime is: ", dateTime);
+        return bundle;
     }
 
     @Override
     public void onTimeChanged(int delta) {
         dateTime = dateTime.plusHours(delta);
-        view.setTime(dateTime.toString(DateTimeFormat.forPattern("HH:mm")));
-        view.setDate(dateTime.toString(DateTimeFormat.forPattern("d MMMM").withLocale(Locale.ITALY)));
+        setDateTime();
     }
 
     @Override
     public void onTimeChanged(int newHour, int newMinute) {
         dateTime = dateTime.withHourOfDay(newHour).withMinuteOfHour(newMinute);
-        view.setTime(dateTime.toString(DateTimeFormat.forPattern("HH:mm")));
-        view.setDate(dateTime.toString(DateTimeFormat.forPattern("d MMMM").withLocale(Locale.ITALY)));
+        setDateTime();
     }
 
     @Override
     public void onDateChanged(int delta) {
         dateTime = dateTime.plusDays(delta);
-        view.setDate(dateTime.toString(DateTimeFormat.forPattern("d MMMM").withLocale(Locale.ITALY)));
+        setDateTime();
     }
 
     @Override
     public void onDateChanged(int newYear, int newMonth, int newDay) {
         dateTime = dateTime.withYear(newYear).withMonthOfYear(newMonth).withDayOfMonth(newDay);
-        view.setDate(dateTime.toString(DateTimeFormat.forPattern("d MMMM").withLocale(Locale.ITALY)));
+        setDateTime();
     }
 
     @Override
@@ -105,12 +99,12 @@ class JourneySearchPresenter implements JourneySearchContract.Presenter {
         return this.dateTime;
     }
 
-    @Override
-    public List<String> searchStationName(String stationName) {
-        return Stream
-                .of(stationList.where().beginsWith("name", stationName, Case.INSENSITIVE).findAll())
-                .map(Station4Database::getName).collect(Collectors.toList());
-    }
+//    @Override
+//    public List<String> searchStationName(String stationName) {
+//        return Stream
+//                .of(stationList.where().beginsWith("name", stationName, Case.INSENSITIVE).findAll())
+//                .map(Station4Database::getName).collect(Collectors.toList());
+//    }
 
     @Override
     public void onSwapButtonClick(String departure, String arrival) {
@@ -123,40 +117,29 @@ class JourneySearchPresenter implements JourneySearchContract.Presenter {
     }
 
     @Override
-    public Bundle getBundle() {
-        Gson gson = new Gson();
-        Bundle bundle = new Bundle();
-        bundle.putString(I_STATIONS, gson.toJson(new PreferredJourney(departureStation, arrivalStation)));
-        Log.d(bundle.getString(I_STATIONS));
-        bundle.putLong(I_TIME, dateTime.getMillis());
-        Log.d(dateTime.toString());
-        return bundle;
-    }
-
-    @Override
     public void onSearchButtonClick(String departureStationName, String arrivalStationName) {
-//        boolean departureFound = false;
-//        boolean arrivalFound = false;
-
         if (isStationNameValid(departureStationName, stationList)) {
             departureStation = new PreferredStation(getStation4DatabaseObject(departureStationName, stationList));
-//            departureFound = true;
         } else {
-            view.showSnackbar("Stazione di partenza mancante!", "SELEZIONA", INTENT_C.SNACKBAR_ACTIONS.SELECT_DEPARTURE);
+            view.showSnackbar("Stazione di partenza mancante!", INTENT_C.SNACKBAR_ACTIONS.SELECT_DEPARTURE);
             Log.d(departureStationName + " not found!");
             return;
         }
 
         if (isStationNameValid(arrivalStationName, stationList)) {
             arrivalStation = new PreferredStation(getStation4DatabaseObject(arrivalStationName, stationList));
-//            arrivalFound = true;
         } else {
-            view.showSnackbar("Stazione di arrivo mancante!", "SELEZIONA", INTENT_C.SNACKBAR_ACTIONS.SELECT_ARRIVAL);
+            view.showSnackbar("Stazione di arrivo mancante!", INTENT_C.SNACKBAR_ACTIONS.SELECT_ARRIVAL);
             Log.d(arrivalStationName + " not found!");
             return;
         }
 
         view.onValidSearchParameters();
         Log.d("Searching for: " + departureStation.toString(), arrivalStation.toString());
+    }
+
+    private void setDateTime() {
+        view.setTime(dateTime.toString(DateTimeFormat.forPattern("HH:mm")));
+        view.setDate(dateTime.toString(DateTimeFormat.forPattern("EE d MMMM").withLocale(Locale.ITALY)));
     }
 }

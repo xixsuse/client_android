@@ -2,34 +2,27 @@ package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia;
 
 import android.os.Bundle;
 
-/**
- * Created by albertogiunta on 24/05/16.
- */
 public interface BasePresenter {
 
     /**
-     * Sets the view.
-     * @param baseView
-     */
-    void subscribe(BaseView baseView);
-
-    /**
-     * Should be called in the onDestroy method of the view
-     * Sets the view as null
+     * Should be called in the onDestroy method.
+     * Sets the view to null
      */
     void unsubscribe();
 
     /**
-     * Should be called in the onResume and onRestoreInstanceState method of the view
-     * Reinstatiates stuff
+     * Should be called in the onrResume method.
+     * It receives a bundle and sets the state of the presenter to it if any interesting value is present.
      * @param bundle
      */
-    void onResuming(Bundle bundle);
+    void setState(Bundle bundle);
 
     /**
-     * Should be called in the onSaveInstanceState of the view
+     * Should be called in the onRestoreInstanceState method.
+     * Creates a bundle if true and fills it with the presenter state if present
      * @param bundle
+     * @return the previous bundle with overridden values (if present)
      */
-    void onLeaving(Bundle bundle);
+    Bundle getState(Bundle bundle);
 
 }

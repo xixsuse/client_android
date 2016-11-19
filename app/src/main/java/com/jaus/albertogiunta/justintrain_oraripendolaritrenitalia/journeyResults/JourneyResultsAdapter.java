@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -23,9 +24,8 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.BindViews;
 import butterknife.ButterKnife;
-import trikita.log.Log;
 
-public class JourneyResultsAdapter extends RecyclerView.Adapter {
+class JourneyResultsAdapter extends RecyclerView.Adapter {
 
     private Context context;
     private List<Journey.Solution> solutionList;
@@ -111,8 +111,8 @@ public class JourneyResultsAdapter extends RecyclerView.Adapter {
         RelativeLayout rlTimeDifference;
         @BindView(R.id.tv_time_difference)
         TextView tvTimeDifference;
-        @BindView(R.id.tv_time_difference_text)
-        TextView tvTimeDifferenceText;
+//        @BindView(R.id.tv_time_difference_text)
+//        TextView tvTimeDifferenceText;
 
         @BindView(R.id.btn_refresh_journey)
         ImageButton btnRefreshJourney;
@@ -130,8 +130,8 @@ public class JourneyResultsAdapter extends RecyclerView.Adapter {
         @BindView(R.id.tv_change)
         TextView tvChange;
 
-//        @BindView(R.id.ic_bolt)
-//        ImageView icBolt;
+        @BindView(R.id.ic_bolt)
+        ImageView icBolt;
 
         @BindView(R.id.ll_notification)
         LinearLayout llNotification;
@@ -169,7 +169,7 @@ public class JourneyResultsAdapter extends RecyclerView.Adapter {
                 ButterKnife.apply(solutionWithoutDelay, ViewsUtils.GONE);
                 ButterKnife.apply(solutionWithDelay, ViewsUtils.VISIBLE);
                 tvTimeDifference.setText(Integer.toString(solution.getTimeDifference()) + "'");
-                tvTimeDifferenceText.setText(setProgress(solution.getProgress()));
+//                tvTimeDifferenceText.setText(setProgress(solution.getProgress()));
                 if (solution.getTimeDifference() != 0) {
                     tvDepartureTimeWithDelay.setText(solution.getDepartureTimeWithDelayReadable());
                     tvArrivalTimeWithDelay.setText(solution.getArrivalTimeWithDelayReadable());
@@ -187,13 +187,11 @@ public class JourneyResultsAdapter extends RecyclerView.Adapter {
                 btnRefreshJourney.setOnClickListener(view -> presenter.onJourneyRefreshRequested(getAdapterPosition() - 1));
             }
 
-            Log.d("\ndep", solution.getDepartureTime().toString(), "\narr", solution.getArrivalTime().toString(), "\nnow", DateTime.now().toString(), "\n\n");
-            Log.d("");
-            Log.d("3", DateTime.now().withHourOfDay(3).withMinuteOfHour(0).toString());
-            Log.d("22", DateTime.now().withHourOfDay(22).withMinuteOfHour(0));
-            Log.d("");
-
-
+//            Log.d("\ndep", solution.getDepartureTime().toString(), "\narr", solution.getArrivalTime().toString(), "\nnow", DateTime.now().toString(), "\n\n");
+//            Log.d("");
+//            Log.d("3", DateTime.now().withHourOfDay(3).withMinuteOfHour(0).toString());
+//            Log.d("22", DateTime.now().withHourOfDay(22).withMinuteOfHour(0));
+//            Log.d("");
             if ((solution.getDepartureTime().isAfter(DateTime.now().withHourOfDay(23).withMinuteOfHour(59)) ||
                     solution.getArrivalTime().isBefore(DateTime.now().withHourOfDay(0).withMinuteOfHour(0)))) {
                 if (solution.getDepartureTime().getHourOfDay() > 3 ||
@@ -224,10 +222,17 @@ public class JourneyResultsAdapter extends RecyclerView.Adapter {
             } else {
                 ButterKnife.apply(rlPlatform, ViewsUtils.GONE);
             }
+
+            if (solution.isArrivesFirst()) {
+                ButterKnife.apply(icBolt, ViewsUtils.VISIBLE);
+            } else {
+                ButterKnife.apply(icBolt, ViewsUtils.GONE);
+            }
         }
 
         private String setChangesString(Journey.Solution solution) {
             List<String> changesStrings = new LinkedList<>();
+            //noinspection Convert2streamapi
             for (Journey.Solution.Change c : solution.getChangesList()) {
                 changesStrings.add(c.getTrainCategory() + " " + c.getTrainId());
             }
@@ -256,21 +261,21 @@ public class JourneyResultsAdapter extends RecyclerView.Adapter {
             tvArrivalTimeWithDelay.setTextColor(color);
         }
 
-        private String setProgress(Integer progress) {
-            if (progress != null) {
-                switch (progress) {
-                    case 0:
-                        return "Costante";
-                    case 1:
-                        return "Recuperando";
-                    case 2:
-                        return "Rallentando";
-                    default:
-                        return "";
-                }
-            }
-            return "";
-        }
+//        private String setProgress(Integer progress) {
+//            if (progress != null) {
+//                switch (progress) {
+//                    case 0:
+//                        return "Costante";
+//                    case 1:
+//                        return "Recuperando";
+//                    case 2:
+//                        return "Rallentando";
+//                    default:
+//                        return "";
+//                }
+//            }
+//            return "";
+//        }
     }
 
     @SuppressWarnings("WeakerAccess")

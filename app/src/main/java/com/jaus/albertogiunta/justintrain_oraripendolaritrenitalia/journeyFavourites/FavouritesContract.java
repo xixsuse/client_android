@@ -1,7 +1,5 @@
 package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeyFavourites;
 
-import android.content.Context;
-
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.BasePresenter;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.BaseView;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.Message;
@@ -15,38 +13,32 @@ interface FavouritesContract {
 
         /**
          * It will notify the adapter after the favourite journeys list object has been updated
-         * @param preferredJourneys actually not needed. Take it out?
          */
-        void updateFavouritesList(List<PreferredJourney> preferredJourneys);
-        // TODO parameters actually not needed, take it out?
+        void updateFavouritesList();
 
         /**
-         * Gets the context of the view (this)
-         * @return this view context
+         * Update the message board with the selected message (downloaded from the internet)
+         * @param message to display
          */
-        Context getViewContext();
-        // TODO put it in BaseView
-
         void updateDashboard(Message message);
 
+        /**
+         * Should be called after the preferred journey list has been updated
+         */
         void displayFavouriteJourneys();
 
+        /**
+         * Should be called when no preferred journey is present, it displays an additional button
+         */
         void displayEntryButton();
     }
 
     interface Presenter extends BasePresenter {
-
-        void updateAllMessages();
 
         /**
          * Getter for the preferred journeys list object
          * @return the preferred journeys list object
          */
         List<PreferredJourney> getPreferredJourneys();
-
-        void updateRequested();
-
-//        void stopTimer();
     }
-
 }

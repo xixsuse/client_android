@@ -3,6 +3,7 @@ package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeySearc
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Paint;
 import android.os.Bundle;
@@ -28,8 +29,8 @@ import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.
 
 public class JourneySearchActivity extends AppCompatActivity implements JourneySearchContract.View {
 
-    //  SEARCH
     private JourneySearchContract.Presenter presenter;
+
     @BindView(R.id.rl_departure)
     RelativeLayout rlDeparture;
     @BindView(R.id.tv_departure)
@@ -61,7 +62,6 @@ public class JourneySearchActivity extends AppCompatActivity implements JourneyS
         setContentView(R.layout.activity_journey_search);
         ButterKnife.bind(this);
         presenter = new JourneySearchPresenter(this);
-//        this.btnSwapStations = (ImageButton) findViewById(R.id.btn_swap_station_names);
 
         this.tvDeparture.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG);
         this.tvArrival.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG);
@@ -88,26 +88,46 @@ public class JourneySearchActivity extends AppCompatActivity implements JourneyS
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        presenter.onLeaving(outState);
-        super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        presenter.onResuming(savedInstanceState);
+        super.onSaveInstanceState(presenter.getState(outState));
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        presenter.onResuming(getIntent().getExtras());
+        presenter.setState(getIntent().getExtras());
     }
 
     @Override
     protected void onDestroy() {
         presenter.unsubscribe();
         super.onDestroy();
+    }
+
+    @Override
+    public void showSnackbar(String message, INTENT_C.SNACKBAR_ACTIONS intent) {
+        Log.w(android.R.id.message);
+        Snackbar snackbar = Snackbar
+                .make(this.rlDeparture, message, Snackbar.LENGTH_LONG);
+        ((TextView) snackbar.getView().findViewById(android.support.design.R.id.snackbar_text)).setTextColor(ContextCompat.getColor(this, R.color.txt_white));
+        switch (intent) {
+            case NONE:
+                break;
+            case SELECT_DEPARTURE:
+                snackbar.setAction("Seleziona", view -> onStationNameTextViewClick(I_CODE_DEPARTURE))
+                        .setActionTextColor(ContextCompat.getColor(this, R.color.btn_cyan));
+                break;
+            case SELECT_ARRIVAL:
+                snackbar.setAction("Seleziona", view -> onStationNameTextViewClick(I_CODE_ARRIVAL))
+
+                        .setActionTextColor(ContextCompat.getColor(this, R.color.btn_cyan));
+                break;
+        }
+        snackbar.show();
+    }
+
+    @Override
+    public Context getViewContext() {
+        return this;
     }
 
     @Override
@@ -139,19 +159,16 @@ public class JourneySearchActivity extends AppCompatActivity implements JourneyS
         tvDate.setText(date);
     }
 
+
     @Override
     public void onValidSearchParameters() {
-        Log.d("Parameters: VALID");
         Intent myIntent = new Intent(JourneySearchActivity.this, JourneyResultsActivity.class);
-        myIntent.putExtras(presenter.getBundle());
+        myIntent.putExtras(presenter.getState(getIntent().getExtras()));
         startActivity(myIntent);
     }
-
     @Override
     public void onInvalidSearchParameters() {
-        Log.d("Parameters: NOT VALID");
     }
-
 
     private void onTimeClick() {
         TimePickerDialog mTimePicker;
@@ -159,7 +176,6 @@ public class JourneySearchActivity extends AppCompatActivity implements JourneyS
         mTimePicker = new TimePickerDialog(this, (timePicker, selectedHour, selectedMinute) -> {
             presenter.onTimeChanged(selectedHour, selectedMinute);
         }, presenter.getSearchDateTime().getHourOfDay(), presenter.getSearchDateTime().getMinuteOfHour(), true);
-        mTimePicker.setTitle("Selezionare orario di partenza");
         mTimePicker.show();
     }
 
@@ -169,33 +185,11 @@ public class JourneySearchActivity extends AppCompatActivity implements JourneyS
         mTimePicker = new DatePickerDialog(this, (timePicker, selectedYear, selectedMonth, selectedDayOfMonth) -> {
             presenter.onDateChanged(selectedYear, selectedMonth + 1, selectedDayOfMonth);
         }, presenter.getSearchDateTime().getYear(), presenter.getSearchDateTime().getMonthOfYear() - 1, presenter.getSearchDateTime().getDayOfMonth());
-        mTimePicker.setTitle("Selezionare data di partenza");
         mTimePicker.show();
     }
 
     private void onStationNameTextViewClick(int code) {
         Intent myIntent = new Intent(JourneySearchActivity.this, StationSearchActivity.class);
         startActivityForResult(myIntent, code);
-    }
-
-    @Override
-    public void showSnackbar(String message, String action, INTENT_C.SNACKBAR_ACTIONS intent) {
-        Log.w(android.R.id.message);
-        Snackbar snackbar = Snackbar
-                .make(this.rlDeparture, message, Snackbar.LENGTH_LONG);
-        ((TextView) snackbar.getView().findViewById(android.support.design.R.id.snackbar_text)).setTextColor(ContextCompat.getColor(this, R.color.txt_white));
-        switch (intent) {
-            case NONE:
-                break;
-            case SELECT_DEPARTURE:
-                snackbar.setAction(action, view -> onStationNameTextViewClick(I_CODE_DEPARTURE))
-                        .setActionTextColor(ContextCompat.getColor(this, R.color.btn_cyan));
-                break;
-            case SELECT_ARRIVAL:
-                snackbar.setAction(action, view -> onStationNameTextViewClick(I_CODE_ARRIVAL))
-                        .setActionTextColor(ContextCompat.getColor(this, R.color.btn_cyan));
-                break;
-        }
-        snackbar.show();
     }
 }

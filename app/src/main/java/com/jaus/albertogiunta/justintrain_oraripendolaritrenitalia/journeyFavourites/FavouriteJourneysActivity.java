@@ -1,7 +1,6 @@
 package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeyFavourites;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
-import com.google.firebase.crash.FirebaseCrash;
 import com.google.gson.Gson;
 
 import android.content.Context;
@@ -25,8 +24,6 @@ import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeyResult
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeySearch.JourneySearchActivity;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_C;
 
-import java.util.List;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -37,9 +34,9 @@ import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.
 
 public class FavouriteJourneysActivity extends AppCompatActivity implements FavouritesContract.View {
 
-    private FirebaseAnalytics mFirebaseAnalytics;
-
+    FirebaseAnalytics firebaseAnalytics;
     FavouritesContract.Presenter presenter;
+
     @BindView(R.id.rv_favourite_journeys)
     RecyclerView rvFavouriteJourneys;
     @BindView(R.id.ll_add_favourite)
@@ -55,13 +52,11 @@ public class FavouriteJourneysActivity extends AppCompatActivity implements Favo
     FloatingActionButton fabSearchJourney;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_favourite_journeys);
         ButterKnife.bind(this);
-
-        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
-
+        firebaseAnalytics = FirebaseAnalytics.getInstance(this);
         presenter = new FavouritesPresenter(this);
         adapter = new FavouriteJourneysAdapter(presenter.getPreferredJourneys());
         rvFavouriteJourneys.setAdapter(adapter);
@@ -69,70 +64,41 @@ public class FavouriteJourneysActivity extends AppCompatActivity implements Favo
 
         new SwipeToAction(rvFavouriteJourneys, new SwipeToAction.SwipeListener<PreferredJourney>() {
             @Override
-            public boolean swipeLeft(PreferredJourney itemData) {
+            public boolean swipeLeft(PreferredJourney preferredJourney) {
                 Intent myIntent = new Intent(FavouriteJourneysActivity.this, JourneyResultsActivity.class);
-                myIntent.putExtras(getBundle(itemData.swapStations()));
+                myIntent.putExtras(bundleJourney(preferredJourney.withStationsSwapped()));
                 FavouriteJourneysActivity.this.startActivity(myIntent);
                 return true;
             }
 
             @Override
-            public boolean swipeRight(PreferredJourney itemData) {
+            public boolean swipeRight(PreferredJourney preferredJourney) {
                 Intent myIntent = new Intent(FavouriteJourneysActivity.this, JourneyResultsActivity.class);
-                myIntent.putExtras(getBundle(itemData));
+                myIntent.putExtras(bundleJourney(preferredJourney));
                 FavouriteJourneysActivity.this.startActivity(myIntent);
                 return true;
             }
 
             @Override
-            public void onClick(PreferredJourney itemData) {
+            public void onClick(PreferredJourney preferredJourney) {
                 Log.d("clicked");
             }
 
             @Override
-            public void onLongClick(PreferredJourney itemData) {
+            public void onLongClick(PreferredJourney preferredJourney) {
                 Log.d("long clicked");
             }
         });
     }
 
-    @OnClick({R.id.fab_search_journey, R.id.ll_add_favourite})
-    public void search() {
-        FirebaseCrash.log("Clicked on FAB");
-        Bundle bundle = new Bundle();
-        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "01");
-        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, "favourite");
-        bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "fab");
-        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
-        Intent myIntent = new Intent(FavouriteJourneysActivity.this, JourneySearchActivity.class);
-        FavouriteJourneysActivity.this.startActivity(myIntent);
-    }
-
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        presenter.onLeaving(outState);
-        super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        presenter.onResuming(savedInstanceState);
-    }
-
-    @Override
-    protected void onResume() {
+    public void onResume() {
         super.onResume();
-        presenter.onResuming(getIntent().getExtras());
+        presenter.setState(getIntent().getExtras());
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-    }
-
-    @Override
-    protected void onDestroy() {
+    public void onDestroy() {
         presenter.unsubscribe();
         super.onDestroy();
     }
@@ -143,41 +109,7 @@ public class FavouriteJourneysActivity extends AppCompatActivity implements Favo
     }
 
     @Override
-    public void updateDashboard(Message message) {
-        this.tvTitle.setText(message.getTitle());
-        this.tvBody.setText(message.getBody());
-    }
-
-    @Override
-    public void displayFavouriteJourneys() {
-        Log.d("displayFavouriteJourneys:");
-        rvFavouriteJourneys.setVisibility(View.VISIBLE);
-        llAddFavourite.setVisibility(View.GONE);
-    }
-
-    @Override
-    public void displayEntryButton() {
-        Log.d("displayEntryButton:");
-        rvFavouriteJourneys.setVisibility(View.GONE);
-        llAddFavourite.setVisibility(View.VISIBLE);
-    }
-
-    @Override
-    public void updateFavouritesList(List<PreferredJourney> preferredJourneys) {
-        Log.d("Favourite journeys list UPDATED", preferredJourneys.size());
-        adapter.notifyDataSetChanged();
-    }
-
-    private Bundle getBundle(PreferredJourney journey) {
-        Bundle bundle = new Bundle();
-        bundle.putString(I_STATIONS, new Gson().toJson(journey));
-        Log.d("Sending", bundle);
-        return bundle;
-    }
-
-
-    @Override
-    public void showSnackbar(String message, String action, INTENT_C.SNACKBAR_ACTIONS intent) {
+    public void showSnackbar(String message, INTENT_C.SNACKBAR_ACTIONS intent) {
         Log.w(android.R.id.message);
         Snackbar snackbar = Snackbar
                 .make(this.rvFavouriteJourneys, message, Snackbar.LENGTH_LONG);
@@ -187,5 +119,40 @@ public class FavouriteJourneysActivity extends AppCompatActivity implements Favo
                 break;
         }
         snackbar.show();
+    }
+
+    @OnClick({R.id.fab_search_journey, R.id.ll_add_favourite})
+    public void search() {
+        Intent myIntent = new Intent(FavouriteJourneysActivity.this, JourneySearchActivity.class);
+        FavouriteJourneysActivity.this.startActivity(myIntent);
+    }
+
+    @Override
+    public void updateFavouritesList() {
+        adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void updateDashboard(Message message) {
+        this.tvTitle.setText(message.getTitle());
+        this.tvBody.setText(message.getBody());
+    }
+
+    @Override
+    public void displayFavouriteJourneys() {
+        rvFavouriteJourneys.setVisibility(View.VISIBLE);
+        llAddFavourite.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void displayEntryButton() {
+        rvFavouriteJourneys.setVisibility(View.GONE);
+        llAddFavourite.setVisibility(View.VISIBLE);
+    }
+
+    private Bundle bundleJourney(PreferredJourney journey) {
+        Bundle bundle = new Bundle();
+        bundle.putString(I_STATIONS, new Gson().toJson(journey));
+        return bundle;
     }
 }

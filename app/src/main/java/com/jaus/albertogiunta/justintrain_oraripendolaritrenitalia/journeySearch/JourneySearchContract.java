@@ -1,20 +1,13 @@
 package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeySearch;
 
-import android.os.Bundle;
-
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.BasePresenter;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.BaseView;
 
 import org.joda.time.DateTime;
 
-import java.util.List;
-
 interface JourneySearchContract {
 
     interface Presenter extends BasePresenter {
-
-        // SEARCH
-        // TODO put the HOUR constant here?
 
         /**
          * It triggers an action when the user clicks on the "search" button.
@@ -24,7 +17,6 @@ interface JourneySearchContract {
          * @param arrivalStationName name for the arrival station
          */
         void onSearchButtonClick(String departureStationName, String arrivalStationName);
-        // TODO check if names are the same what to do
 
         /**
          * Acts as a listener for time changes. It's triggered by the user clicks on the time buttons
@@ -34,12 +26,34 @@ interface JourneySearchContract {
          */
         void onTimeChanged(int delta);
 
+        /**
+         * Should be called when the user inputs a custom datetime via the Time picker
+         *
+         * @param newHour representing an hour of day
+         * @param newMinute representing a minute of hour
+         */
         void onTimeChanged(int newHour, int newMinute);
 
+        /**
+         * Acts as a listener for time changes. It's triggered by the user clicks on the date buttons
+         * and it will set the date in the view depending on the button that has been pressed.
+         * @param delta the number of days to increment or decrement from the previous value
+         *              (The starting value is the current day)
+         */
         void onDateChanged(int delta);
 
+        /**
+         * Should be called when the user inputs a custom datetime via the Date picker
+         * @param newYear representing an year
+         * @param newMonth representing a month of year
+         * @param newDay representing a day of month
+         */
         void onDateChanged(int newYear, int newMonth, int newDay);
 
+        /**
+         * Getter for the DateTime. Should be used as default value in pickers and buttons
+         * @return current or custom datetime
+         */
         DateTime getSearchDateTime();
 
         /**
@@ -47,8 +61,7 @@ interface JourneySearchContract {
          * @param stationName name (can be also partial) to be searched (case-insensitive)
          * @return a list of matching station names
          */
-        List<String> searchStationName(String stationName);
-
+//        List<String> searchStationName(String stationName);
 
         /**
          * Swaps the Preferred Station objects inside of the presenter. Called on the swap button
@@ -58,22 +71,30 @@ interface JourneySearchContract {
          * @param arrival string from the textview
          */
         void onSwapButtonClick(String departure, String arrival);
-
-        Bundle getBundle();
     }
 
     interface View extends BaseView {
-        // SEARCH
+
+        /**
+         * Should be used when restoring the state of the activity or launching the search from
+         * an activity where this values are already set (see Journey Results)
+         * @param departureStationName departureStationName
+         * @param arrivalStationName arrivalStationName
+         */
         void setStationNames(String departureStationName, String arrivalStationName);
 
         /**
-         * Callend whenever there's the need to set the time (on start up of the activity or after
+         * Called whenever there's the need to set the time (on start up of the activity or after
          * a change done by the user)
-         *
          * @param time the already formatted string (hh:mm) to be set
          */
         void setTime(String time);
 
+        /**
+         * Called whenever there's the need to set the date (on start up of the activity or after
+         * a change done by the user)
+         * @param date the already formatted string (hh:mm) to be set
+         */
         void setDate(String date);
 
         /**

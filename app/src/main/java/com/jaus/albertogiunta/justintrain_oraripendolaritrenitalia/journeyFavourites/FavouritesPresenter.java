@@ -3,7 +3,6 @@ package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeyFavou
 import android.os.Bundle;
 import android.util.Log;
 
-import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.BaseView;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.Message;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.PreferredJourney;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.networking.MessageService;
@@ -31,22 +30,24 @@ class FavouritesPresenter implements FavouritesContract.Presenter {
     }
 
     @Override
-    public void subscribe(BaseView baseView) {
-        view = (FavouritesContract.View) baseView;
-    }
-
-    @Override
     public void unsubscribe() {
         view = null;
     }
 
     @Override
-    public void onResuming(Bundle bundle) {
-        updateRequested();
+    public void setState(Bundle bundle) {
+        updatePreferredJourneys();
+        if (this.preferredJourneys != null && this.preferredJourneys.size() > 0) {
+            view.displayFavouriteJourneys();
+            view.updateFavouritesList();
+        } else {
+            view.displayEntryButton();
+        }
     }
 
     @Override
-    public void onLeaving(Bundle bundle) {
+    public Bundle getState(Bundle bundle) {
+        return bundle;
     }
 
     @Override
@@ -54,8 +55,7 @@ class FavouritesPresenter implements FavouritesContract.Presenter {
         return this.preferredJourneys;
     }
 
-    @Override
-    public void updateAllMessages() {
+    private void updateAllMessages() {
         Service2Factory.createRetrofitService(MessageService.class, MessageService.SERVICE_ENDPOINT)
                 .getAllMessages()
                 .subscribeOn(Schedulers.io())
@@ -63,12 +63,10 @@ class FavouritesPresenter implements FavouritesContract.Presenter {
                 .subscribe(new Subscriber<List<Message>>() {
                     @Override
                     public void onCompleted() {
-
                     }
 
                     @Override
                     public void onError(Throwable e) {
-
                     }
 
                     @Override
@@ -79,17 +77,6 @@ class FavouritesPresenter implements FavouritesContract.Presenter {
                         view.updateDashboard(m);
                     }
                 });
-    }
-
-    @Override
-    public void updateRequested() {
-        updatePreferredJourneys();
-        if (this.preferredJourneys != null && this.preferredJourneys.size() > 0) {
-            view.displayFavouriteJourneys();
-            view.updateFavouritesList(this.preferredJourneys);
-        } else {
-            view.displayEntryButton();
-        }
     }
 
     private void updatePreferredJourneys() {

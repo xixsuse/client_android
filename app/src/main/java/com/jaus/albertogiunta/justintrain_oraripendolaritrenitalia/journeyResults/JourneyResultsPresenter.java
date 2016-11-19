@@ -7,7 +7,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 
-import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.BaseView;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.Journey;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.PreferredJourney;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.PreferredStation;
@@ -41,7 +40,7 @@ import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.
 
 class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJourneySearchFinishedListener {
 
-    private JourneyResultsContract.View view;
+    private JourneyResultsActivity view;
 
     private static List<Journey.Solution> journeySolutions;
 
@@ -49,16 +48,10 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
     private PreferredStation arrivalStation;
     private DateTime dateTime;
 
-
-    JourneyResultsPresenter(JourneyResultsContract.View view) {
+    JourneyResultsPresenter(JourneyResultsActivity view) {
         this.view = view;
         journeySolutions = new LinkedList<>();
         this.dateTime = DateTime.now().plusHours(2);
-    }
-
-    @Override
-    public void subscribe(BaseView baseView) {
-        view = (JourneyResultsContract.View) baseView;
     }
 
     @Override
@@ -67,28 +60,30 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
     }
 
     @Override
-    public void onResuming(Bundle bundle) {
+    public void setState(Bundle bundle) {
         if (bundle != null) {
             // Restore value of members from saved state
             if (bundle.getString(I_STATIONS) != null) {
                 PreferredJourney journey = new Gson().fromJson(bundle.getString(I_STATIONS), PreferredJourney.class);
                 this.departureStation = journey.getStation1();
                 this.arrivalStation = journey.getStation2();
-                this.dateTime = new DateTime(bundle.getLong(I_TIME, DateTime.now().getMillis()));
-                Log.d("Current bundled DateTime is: ", dateTime);
+                Log.d("Current bundled stations are: ", this.departureStation.toString(), this.arrivalStation.toString());
                 view.setStationNames(departureStation.getName(), arrivalStation.getName());
                 setFavouriteButtonStatus();
             }
+            this.dateTime = new DateTime(bundle.getLong(I_TIME, DateTime.now().getMillis()));
+            Log.d("Current bundled DateTime is: ", dateTime);
         } else {
             Log.d("no bundle found");
-            // Probably initialize members with default values for a new instance
         }
     }
 
     @Override
-    public void onLeaving(Bundle bundle) {
+    public Bundle getState(Bundle bundle) {
+        if (bundle == null) bundle = new Bundle();
         bundle.putString(I_STATIONS, new Gson().toJson(new PreferredJourney(departureStation, arrivalStation)));
         bundle.putLong(I_TIME, dateTime.getMillis());
+        return bundle;
     }
 
     @Override
@@ -107,14 +102,14 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
                 journeySolutions.get(0).getDepartureTime().minusSeconds(1), false, false, this);
     }
 
-    @Override
-    public void searchInstantaneously() {
-        Log.d("searchInstantaneously: ");
-        view.showProgress();
-        new SearchInstantlyStrategy().searchJourney(true, departureStation.getStationShortId(),
-                arrivalStation.getStationShortId(),
-                null, true, true, this);
-    }
+//    @Override
+//    public void searchInstantaneously() {
+//        Log.d("searchInstantaneously: ");
+//        view.showProgress();
+//        new SearchInstantlyStrategy().searchJourney(true, departureStation.getStationShortId(),
+//                arrivalStation.getStationShortId(),
+//                null, true, true, this);
+//    }
 
     @Override
     public void searchFromSearch(boolean isNewSearch) {
@@ -129,7 +124,7 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
             Log.d("NON Instant Search", dateTime);
             new SearchAfterTimeStrategy().searchJourney(isNewSearch, departureStation.getStationShortId(),
                     arrivalStation.getStationShortId(),
-                    dateTime, true, true, this);
+                    dateTime, false, true, this);
         }
     }
 
@@ -140,15 +135,15 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
                     departureStation,
                     arrivalStation);
             setFavouriteButtonStatus();
-            view.showSnackbar("Tratta rimossa dai Preferiti", "", INTENT_C.SNACKBAR_ACTIONS.NONE);
+            view.showSnackbar("Tratta rimossa dai Preferiti", INTENT_C.SNACKBAR_ACTIONS.NONE);
         } else {
             if (journeySolutions.size() > 0) {
                 PreferredStationsHelper.setPreferredJourney(view.getViewContext(),
                         new PreferredJourney(departureStation, arrivalStation));
                 setFavouriteButtonStatus();
-                view.showSnackbar("Tratta aggiunta ai Preferiti", "", INTENT_C.SNACKBAR_ACTIONS.NONE);
+                view.showSnackbar("Tratta aggiunta ai Preferiti", INTENT_C.SNACKBAR_ACTIONS.NONE);
             } else {
-                view.showSnackbar("Impossibile aggiungere ai preferiti una tratta senza soluzioni", "", INTENT_C.SNACKBAR_ACTIONS.NONE);
+                view.showSnackbar("Impossibile aggiungere ai preferiti una tratta senza soluzioni", INTENT_C.SNACKBAR_ACTIONS.NONE);
             }
         }
     }
@@ -177,14 +172,6 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
                 journeySolutions.get(elementIndex));
     }
 
-    private String sanitizeStationName(String dirtyName) {
-        return dirtyName
-                .replaceAll("Bologna Centrale", "Bologna C.LE")
-                .replaceAll("TO Lingotto", "Torino Lingotto")
-                .replaceAll("Torino P. Susa", "Torino Porta Susa")
-                .replaceAll("Verona P.Nuova", "Verona Porta Nuova");
-    }
-
     @Override
     public void onJourneyRefreshRequested(int elementIndex) {
         RealmResults<Station4Database> stationList = Realm.getDefaultInstance().where(Station4Database.class).findAll();
@@ -202,7 +189,7 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
                             tempArrivalStation.getStationShortId(),
                             journeySolutions.get(elementIndex).getChangesList().get(changeIndex).getTrainId());
                 } catch (Exception e) {
-                    view.showSnackbar("Non riesco ad aggiornare questa soluzione", "", INTENT_C.SNACKBAR_ACTIONS.NONE);
+                    view.showSnackbar("Non riesco ad aggiornare questa soluzione", INTENT_C.SNACKBAR_ACTIONS.NONE);
                     Log.e("onJourneyRefreshRequested: ", "Non è stata trovata nessuna corrispondenza per le stazioni: ", departureStationName, arrivalStationName);
                 }
             }
@@ -214,6 +201,60 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
         }
     }
 
+    @Override
+    public List<Journey.Solution> getSolutionList() {
+        return journeySolutions;
+    }
+
+    @Override
+    public void onJourneyNotFound() {
+        view.showErrorMessage("La tratta inserita non ha viaggi disponibili", "Cambia stazioni", INTENT_C.ERROR_BTN.NO_SOLUTIONS);
+    }
+
+    @Override
+    public void onJourneyBeforeNotFound() {
+        view.showSnackbar("Sembra non ci siano altre soluzioni in giornata", INTENT_C.SNACKBAR_ACTIONS.NONE);
+    }
+
+    @Override
+    public void onJourneyAfterNotFound() {
+        view.showSnackbar("Sembra non ci siano altre soluzioni in giornata", INTENT_C.SNACKBAR_ACTIONS.NONE);
+    }
+
+    @Override
+    public void onServerError(Throwable exception) {
+        Log.d(exception.getMessage());
+        if (view != null) {
+            if (exception.getMessage().equals("HTTP 404 ")) {
+                onJourneyNotFound();
+            } else {
+                if (exception instanceof HttpException) {
+                    Log.d(((HttpException) exception).response().errorBody(), ((HttpException) exception).response().code());
+                    if (((HttpException) exception).response().code() == 500) {
+                        view.showErrorMessage("Il server sta avendo dei problemi", "Segnala il problema", INTENT_C.ERROR_BTN.SEND_REPORT);
+                    }
+                    // TODO controlla 500, 404 e non so che altro
+                } else if (exception instanceof ConnectException) {
+                    if (isNetworkAvailable()) {
+                        view.showErrorMessage("Il server sta avendo dei problemi", "Segnala il problema", INTENT_C.ERROR_BTN.SEND_REPORT);
+                    } else {
+                        view.showErrorMessage("Assicurati di essere connesso a Internet", "Attiva connessione", INTENT_C.ERROR_BTN.CONN_SETTINGS);
+                    }
+                } else {
+                    Log.d(exception.toString());
+                }
+                view.showSnackbar("Si è verificato un problema!", INTENT_C.SNACKBAR_ACTIONS.REFRESH);
+            }
+        }
+    }
+
+    @Override
+    public void onSuccess() {
+        view.hideProgress();
+        view.updateSolutionsList(journeySolutions);
+    }
+
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     private void refreshChange(int solutionIndex, int changeIndex, String departureStationId, String arrivalStationId, String trainId) {
         Log.d("refreshChange:", solutionIndex, changeIndex, trainId);
         try {
@@ -221,7 +262,7 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
             Integer.parseInt(arrivalStationId);
             Integer.parseInt(trainId);
         } catch (NumberFormatException e) {
-            view.showSnackbar("Premere di nuovo il pulsante aggiorna", "", INTENT_C.SNACKBAR_ACTIONS.NONE);
+            view.showSnackbar("Premere di nuovo il pulsante aggiorna", INTENT_C.SNACKBAR_ACTIONS.NONE);
             Log.e("refreshChange: ", "There are problems with these parameters:", departureStationId, arrivalStationId, trainId);
             view.updateSolution(solutionIndex);
             view.updateSolution(solutionIndex);
@@ -255,7 +296,7 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
                                 journeySolutions.get(solutionIndex).getChangesList().get(changeIndex).setProgress(trainHeader.getProgress());
                                 journeySolutions.get(solutionIndex).getChangesList().get(changeIndex).postProcess();
                             } else if (journeySolutions.get(solutionIndex).getTimeDifference() == null) {
-                                view.showSnackbar("Il treno non è ancora partito", "", INTENT_C.SNACKBAR_ACTIONS.NONE);
+                                view.showSnackbar("Il treno non è ancora partito", INTENT_C.SNACKBAR_ACTIONS.NONE);
                             }
                         } else {
                             journeySolutions.get(solutionIndex).setDeparturePlatform(trainHeader.getDeparturePlatform());
@@ -263,7 +304,7 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
                                 journeySolutions.get(solutionIndex).setTimeDifference(trainHeader.getTimeDifference());
                                 journeySolutions.get(solutionIndex).setProgress(trainHeader.getProgress());
                             } else {
-                                view.showSnackbar("Il treno non è ancora partito", "", INTENT_C.SNACKBAR_ACTIONS.NONE);
+                                view.showSnackbar("Il treno non è ancora partito", INTENT_C.SNACKBAR_ACTIONS.NONE);
                             }
                         }
                         journeySolutions.get(solutionIndex).refreshData();
@@ -275,69 +316,17 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
                 });
     }
 
-    @Override
-    public List<Journey.Solution> getSolutionList() {
-        return journeySolutions;
-    }
-
-    @Override
-    public void onStationNotFound() {
-        view.showSnackbar("La stazione non è stata trovata!", "", INTENT_C.SNACKBAR_ACTIONS.NONE);
-    }
-
     private boolean isInstant(DateTime selectedHour) {
         return selectedHour.getHourOfDay() == DateTime.now().getHourOfDay() &&
                 selectedHour.getMinuteOfHour() == DateTime.now().getMinuteOfHour();
     }
 
-    @Override
-    public void onJourneyNotFound() {
-        view.showErrorMessage("La tratta inserita non ha viaggi disponibili", "Cambia stazioni", INTENT_C.ERROR_BTN.NO_SOLUTIONS, new Gson().toJson(new PreferredJourney(departureStation, arrivalStation)));
-//        view.showSnackbar("Non ci sono altre soluzioni per questa tratta!", "AGGIORNA", INTENT_C.SNACKBAR_ACTIONS.REFRESH);
-    }
-
-    @Override
-    public void onJourneyBeforeNotFound() {
-        view.showSnackbar("Sembra non ci siano altre soluzioni in giornata", "", INTENT_C.SNACKBAR_ACTIONS.NONE);
-    }
-
-    @Override
-    public void onJourneyAfterNotFound() {
-        view.showSnackbar("Sembra non ci siano altre soluzioni in giornata", "", INTENT_C.SNACKBAR_ACTIONS.NONE);
-    }
-
-    @Override
-    public void onServerError(Throwable exception) {
-        Log.d(exception.getMessage());
-        if (view != null) {
-            if (exception.getMessage().equals("HTTP 404 ")) {
-                onJourneyNotFound();
-            } else {
-                if (exception instanceof HttpException) {
-                    Log.d(((HttpException) exception).response().errorBody(), ((HttpException) exception).response().code());
-                    if (((HttpException) exception).response().code() == 500) {
-                        view.showErrorMessage("Il server sta avendo dei problemi", "Segnala il problema", INTENT_C.ERROR_BTN.SEND_REPORT, null);
-                    }
-                    // TODO controlla 500, 404 e non so che altro
-                } else if (exception instanceof ConnectException) {
-                    if (isNetworkAvailable()) {
-                        view.showErrorMessage("Il server sta avendo dei problemi", "Segnala il problema", INTENT_C.ERROR_BTN.SEND_REPORT, null);
-                    } else {
-                        view.showErrorMessage("Assicurati di essere connesso a Internet", "Attiva connessione", INTENT_C.ERROR_BTN.CONN_SETTINGS, null);
-                    }
-                } else {
-                    Log.d(exception.toString());
-                }
-                view.showSnackbar("Si è verificato un problema!", "AGGIORNA", INTENT_C.SNACKBAR_ACTIONS.REFRESH);
-            }
-        }
-    }
-
-
-    @Override
-    public void onSuccess() {
-        view.hideProgress();
-        view.updateSolutionsList(journeySolutions);
+    private String sanitizeStationName(String dirtyName) {
+        return dirtyName
+                .replaceAll("Bologna Centrale", "Bologna C.LE")
+                .replaceAll("TO Lingotto", "Torino Lingotto")
+                .replaceAll("Torino P. Susa", "Torino Porta Susa")
+                .replaceAll("Verona P.Nuova", "Verona Porta Nuova");
     }
 
     private boolean isNetworkAvailable() {

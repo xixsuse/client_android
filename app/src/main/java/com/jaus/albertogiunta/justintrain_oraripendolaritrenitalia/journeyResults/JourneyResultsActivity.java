@@ -56,8 +56,6 @@ public class JourneyResultsActivity extends AppCompatActivity implements Journey
     Button btnErrorMessage;
 
     //  RESULTS
-//    @BindView(R.id.rl_journey_solutions)
-//    RelativeLayout rlJourneySolutions;
     @BindView(R.id.rv_journey_solutions)
     RecyclerView rvJourneySolutions;
     @BindView(R.id.btn_refresh)
@@ -65,7 +63,6 @@ public class JourneyResultsActivity extends AppCompatActivity implements Journey
 
     JourneyResultsAdapter mJourneyResultsAdapter;
     JourneyResultsPresenter presenter;
-//    Bundle state;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,10 +73,7 @@ public class JourneyResultsActivity extends AppCompatActivity implements Journey
 
         setSupportActionBar(toolbar);
         getSupportActionBar();
-//        toolbar.setTitle("Soluzioni");
-//        getSupportActionBar().setElevation(0);
 
-//        rlHeader2.setOnClickListener(v -> presenter.getFirstFeasableSolution());
         btnHeaderSwapStationNames.setOnClickListener(v-> presenter.onSwapButtonClick());
         btnHeaderToggleFavorite.setOnClickListener(v -> presenter.onFavouriteButtonClick());
 
@@ -89,68 +83,46 @@ public class JourneyResultsActivity extends AppCompatActivity implements Journey
         rvJourneySolutions.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
 
         btnRefresh.setOnClickListener(v -> presenter.searchFromSearch(true));
-        presenter.onResuming(getIntent().getExtras());
+        presenter.setState(getIntent().getExtras());
         presenter.searchFromSearch(true);
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        Log.d("ONSAVEINSTANCESTATE");
-//        presenter.onLeaving(outState);
-        super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        // non viene mai chiamato praticamente
-        Log.d("ONRESTOREINSTANCESTATE");
-//        super.onRestoreInstanceState(savedInstanceState);
-        presenter.onResuming(savedInstanceState);
+        super.onSaveInstanceState(presenter.getState(outState));
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        Log.d("ONRESUME");
-        // restore RecyclerView state
-//        if (state != null) {
-//            Parcelable listState = state.getParcelable(S_STATION_LIST);
-//            rvJourneySolutions.getLayoutManager().onRestoreInstanceState(listState);
-//        }
-    }
-
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-        Log.d("ONRESTART");
-    }
-
-    @Override
-    protected void onPause() {
-        Log.d("ONPAUSE");
-        // save RecyclerView state
-//        state = new Bundle();
-//        Parcelable rvState = rvJourneySolutions.getLayoutManager().onSaveInstanceState();
-//        state.putParcelable(S_STATION_LIST, rvState);
-        super.onPause();
-    }
-
-    @Override
-    protected void onStop() {
-        Log.d("ONSTOP");
-        super.onPause();
+        presenter.setState(getIntent().getExtras());
     }
 
     @Override
     protected void onDestroy() {
-        Log.d("ONDESTROY");
         presenter.unsubscribe();
         super.onDestroy();
     }
 
     @Override
     public Context getViewContext() {
-        return getApplicationContext();
+        return this;
+    }
+
+    @Override
+    public void showSnackbar(String message, INTENT_C.SNACKBAR_ACTIONS intent) {
+        Log.w(android.R.id.message);
+        Snackbar snackbar = Snackbar
+                .make(rvJourneySolutions, message, Snackbar.LENGTH_LONG);
+        ((TextView) snackbar.getView().findViewById(android.support.design.R.id.snackbar_text)).setTextColor(ContextCompat.getColor(this, R.color.txt_white));
+        switch (intent) {
+            case NONE:
+                break;
+            case REFRESH:
+                snackbar.setAction("Aggiorna", view -> presenter.searchFromSearch(true)).setActionTextColor(ContextCompat.getColor(this, R.color.btn_cyan));
+                break;
+        }
+        snackbar.show();
     }
 
     @Override
@@ -167,7 +139,7 @@ public class JourneyResultsActivity extends AppCompatActivity implements Journey
     }
 
     @Override
-    public void showErrorMessage(String tvMessage, String btnMessage, INTENT_C.ERROR_BTN intent, String extra) {
+    public void showErrorMessage(String tvMessage, String btnMessage, INTENT_C.ERROR_BTN intent) {
         progressBar.setVisibility(View.GONE);
         rvJourneySolutions.setVisibility(View.GONE);
         rlEmptyJourneyBox.setVisibility(View.VISIBLE);
@@ -200,14 +172,12 @@ public class JourneyResultsActivity extends AppCompatActivity implements Journey
 
     @Override
     public void updateSolutionsList(List<Journey.Solution> solutionList) {
-        Log.d("Successfully updated list");
         rvJourneySolutions.getRecycledViewPool().clear();
         mJourneyResultsAdapter.notifyDataSetChanged();
     }
 
     @Override
     public void updateSolution(int elementIndex) {
-        Log.d("Successfully updated item");
         mJourneyResultsAdapter.notifyItemChanged(elementIndex + 1);
     }
 
@@ -224,21 +194,5 @@ public class JourneyResultsActivity extends AppCompatActivity implements Journey
     public void setStationNames(String departure, String arrival) {
         this.tvHeaderDepartureStation.setText(departure);
         this.tvHeaderArrivalStation.setText(arrival);
-    }
-
-    @Override
-    public void showSnackbar(String message, String action, INTENT_C.SNACKBAR_ACTIONS intent) {
-        Log.w(android.R.id.message);
-        Snackbar snackbar = Snackbar
-                .make(rvJourneySolutions, message, Snackbar.LENGTH_LONG);
-        ((TextView) snackbar.getView().findViewById(android.support.design.R.id.snackbar_text)).setTextColor(ContextCompat.getColor(this, R.color.txt_white));
-        switch (intent) {
-            case NONE:
-                break;
-            case REFRESH:
-                snackbar.setAction(action, view -> presenter.searchFromSearch(true)).setActionTextColor(ContextCompat.getColor(this, R.color.btn_cyan));
-                break;
-        }
-        snackbar.show();
     }
 }

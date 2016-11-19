@@ -17,7 +17,7 @@ public class PreferredJourney {
         priority = -1;
     }
 
-    public PreferredJourney swapStations() {
+    public PreferredJourney withStationsSwapped() {
         PreferredStation temp = station1;
         station1 = station2;
         station2 = temp;

@@ -1,7 +1,5 @@
 package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeyResults;
 
-import android.content.Context;
-
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.BasePresenter;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.BaseView;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.Journey;
@@ -14,8 +12,6 @@ import java.util.List;
 interface JourneyResultsContract {
 
     interface Presenter extends BasePresenter {
-
-//        void getFirstFeasableSolution();
 
         void onSwapButtonClick();
 
@@ -45,7 +41,7 @@ interface JourneyResultsContract {
          * intent with the swiped data.
          * It's an INSTANT kind of search.
          */
-        void searchInstantaneously();
+//        void searchInstantaneously();
 
         /**
          * Called when the search input data is VALID, after the user clicked on the search button.
@@ -60,8 +56,17 @@ interface JourneyResultsContract {
          */
         void onLoadMoreItemsAfter();
 
+        /**
+         * Sets up the notification with the selected solution
+         *
+         * @param elementIndex index of the solution inside of the journeyList
+         */
         void onNotificationRequested(int elementIndex);
 
+        /**
+         * Refreshes the state of the selected solution
+         * @param elementIndex index of the solution inside of the journeyList
+         */
         void onJourneyRefreshRequested(int elementIndex);
 
         /**
@@ -72,13 +77,6 @@ interface JourneyResultsContract {
     }
 
     interface View extends BaseView {
-        /**
-         * Getter for the View Context (needed by the presenter in order to do stuff with
-         * Shared Preferences)
-         *
-         * @return the current view's context (getApplicationContext())
-         */
-        Context getViewContext();
 
         /**
          * Hides everything and shows a loader
@@ -90,9 +88,14 @@ interface JourneyResultsContract {
          */
         void hideProgress();
 
-        void showErrorMessage(String tvMessage, String btnMessage, INTENT_C.ERROR_BTN intent, String extra);
-
-//        void scrollToFirstFeasibleSolution(int position);
+        /**
+         * Hides everything and shows an error message with an action button
+         *
+         * @param tvMessage message to be shown
+         * @param btnMessage text for the button
+         * @param intent action to execute on button press
+         */
+        void showErrorMessage(String tvMessage, String btnMessage, INTENT_C.ERROR_BTN intent);
 
         /**
          * Called when a new set of solutions is ready. It will then notify the adapter
@@ -100,18 +103,24 @@ interface JourneyResultsContract {
          */
         void updateSolutionsList(List<Journey.Solution> solutionList);
 
+        /**
+         * Called when only one solution has been updated
+         * @param elementIndex index of the element that has been updated
+         */
         void updateSolution(int elementIndex);
-
-//        void showOfflineWithMessage(String message);
 
         /**
          * Sets the status of the favourite button depending on if the current journey is favourite
          * or not
-         *
          * @param isPreferred the status to be set
          */
         void setFavouriteButtonStatus(boolean isPreferred);
 
+        /**
+         * It Separate control over the station names.
+         * @param departure departure station name
+         * @param arrival arrival station name
+         */
         void setStationNames(String departure, String arrival);
 
         interface JourneySearchStrategy {
@@ -119,22 +128,23 @@ interface JourneyResultsContract {
             interface OnJourneySearchFinishedListener {
 
                 /**
-                 * Problems happened with the stations (probably ids).
-                 */
-                void onStationNotFound();
-
-                /**
                  * No solution found for the requested journey
                  */
                 void onJourneyNotFound();
 
+                /**
+                 * No solution found before the ones already gotten
+                 */
                 void onJourneyBeforeNotFound();
 
+                /**
+                 * No solution found after the ones already gotten
+                 */
                 void onJourneyAfterNotFound();
 
                 /**
                  * The server is unreachable or network not available?
-                 * @param exception
+                 * @param exception describing the problem (could be 404, 500 or else)
                  */
                 void onServerError(Throwable exception);
 

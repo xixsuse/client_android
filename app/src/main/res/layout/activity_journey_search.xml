@@ -1,347 +1,350 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:app="http://schemas.android.com/apk/res-auto"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:baselineAligned="false"
-              android:orientation="vertical"
-              android:weightSum="4"
-    >
-
-    <LinearLayout
-        android:id="@+id/ll_stations"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="2"
-        android:background="@color/bg_dark"
-        android:elevation="@dimen/elevation_big"
-        android:orientation="horizontal"
-        android:weightSum="2"
+        android:layout_height="match_parent"
+        android:baselineAligned="false"
+        android:orientation="vertical"
+        android:weightSum="4"
         >
 
-        <RelativeLayout
-            android:id="@+id/rl_departure"
+    <LinearLayout
+            android:id="@+id/ll_stations"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="?android:attr/selectableItemBackground"
-            android:clickable="true"
+            android:layout_height="0dp"
+            android:layout_weight="2"
+            android:background="@color/bg_dark"
+            android:elevation="@dimen/elevation_big"
+            android:orientation="horizontal"
+            android:weightSum="2"
             >
 
-            <TextView
-                android:id="@+id/tv_departure"
+        <RelativeLayout
+                android:id="@+id/rl_departure"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:paddingEnd="@dimen/margin_default"
-                android:paddingStart="@dimen/margin_default"
-                android:text="@string/hint_select"
-                android:textAlignment="center"
-                android:textAllCaps="true"
-                android:textColor="@color/txt_white"
-                android:textSize="@dimen/text_size_default_plus"
-                android:textStyle="bold"
-                />
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true"
+                >
 
             <TextView
-                android:id="@+id/lbl_departure"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_above="@id/tv_departure"
-                android:layout_centerHorizontal="true"
-                android:layout_marginBottom="@dimen/margin_very_big"
-                android:text="@string/hint_departure"
-                android:textAllCaps="true"
-                android:textColor="@color/txt_grey_lighter"
-                android:textStyle="bold"
-                />
+                    android:id="@+id/tv_departure"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:paddingEnd="@dimen/margin_default"
+                    android:paddingStart="@dimen/margin_default"
+                    android:text="@string/hint_select"
+                    android:textAlignment="center"
+                    android:textAllCaps="true"
+                    android:textColor="@color/txt_white"
+                    android:textSize="@dimen/text_size_default_plus"
+                    android:textStyle="bold"
+                    />
+
+            <TextView
+                    android:id="@+id/lbl_departure"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_above="@id/tv_departure"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginBottom="@dimen/margin_very_big"
+                    android:text="@string/hint_departure"
+                    android:textAllCaps="true"
+                    android:textColor="@color/txt_grey_lighter"
+                    android:textStyle="bold"
+                    />
         </RelativeLayout>
 
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:baselineAligned="false"
-            android:orientation="vertical"
-            android:weightSum="11">
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:baselineAligned="false"
+                android:orientation="vertical"
+                android:weightSum="11.5"
+                >
 
             <View
-                android:layout_width="@dimen/divider"
-                android:layout_height="0dp"
-                android:layout_gravity="center"
-                android:layout_weight=".5"
-                />
+                    android:layout_width="@dimen/divider"
+                    android:layout_height="0dp"
+                    android:layout_gravity="center"
+                    android:layout_weight=".5"
+                    />
 
             <View
-                android:layout_width="@dimen/divider"
-                android:layout_height="0dp"
-                android:layout_gravity="center"
-                android:layout_weight="4"
-                android:background="@color/bg_grey"
-                />
+                    android:layout_width="@dimen/divider"
+                    android:layout_height="0dp"
+                    android:layout_gravity="center"
+                    android:layout_weight="4"
+                    android:background="@color/bg_grey"
+                    />
 
             <View
-                android:layout_width="@dimen/divider"
-                android:layout_height="0dp"
-                android:layout_gravity="center"
-                android:layout_weight=".5"
-                />
+                    android:layout_width="@dimen/divider"
+                    android:layout_height="0dp"
+                    android:layout_gravity="center"
+                    android:layout_weight=".5"
+                    />
 
             <ImageButton
-                android:id="@+id/btn_swap_station_names"
-                android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:layout_gravity="center"
-                android:layout_weight="1"
-                android:background="@android:color/transparent"
-                android:clickable="true"
-                android:tint="@color/btn_cyan"
-                app:srcCompat="@drawable/ic_swap_horiz"
-                />
+                    android:id="@+id/btn_swap_station_names"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_gravity="center"
+                    android:layout_weight="1.5"
+                    android:background="@android:color/transparent"
+                    android:clickable="true"
+                    android:tint="@color/btn_cyan"
+                    app:srcCompat="@drawable/ic_swap_horiz"
+                    />
 
             <View
-                android:layout_width="@dimen/divider"
-                android:layout_height="0dp"
-                android:layout_gravity="center"
-                android:layout_weight=".5"
-                />
+                    android:layout_width="@dimen/divider"
+                    android:layout_height="0dp"
+                    android:layout_gravity="center"
+                    android:layout_weight=".5"
+                    />
 
             <View
-                android:layout_width="@dimen/divider"
-                android:layout_height="0dp"
-                android:layout_gravity="center"
-                android:layout_weight="4"
-                android:background="@color/bg_grey"
-                />
+                    android:layout_width="@dimen/divider"
+                    android:layout_height="0dp"
+                    android:layout_gravity="center"
+                    android:layout_weight="4"
+                    android:background="@color/bg_grey"
+                    />
 
             <View
-                android:layout_width="@dimen/divider"
-                android:layout_height="0dp"
-                android:layout_gravity="center"
-                android:layout_weight=".5"
-                />
+                    android:layout_width="@dimen/divider"
+                    android:layout_height="0dp"
+                    android:layout_gravity="center"
+                    android:layout_weight=".5"
+                    />
 
 
         </LinearLayout>
 
 
         <RelativeLayout
-            android:id="@+id/rl_arrival"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="?android:attr/selectableItemBackground"
-            android:clickable="true"
-            >
-
-            <TextView
-                android:id="@+id/tv_arrival"
+                android:id="@+id/rl_arrival"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:paddingEnd="@dimen/margin_default"
-                android:paddingStart="@dimen/margin_default"
-                android:text="@string/hint_select"
-                android:textAlignment="center"
-                android:textAllCaps="true"
-                android:textColor="@color/txt_white"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                />
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true"
+                >
 
             <TextView
-                android:id="@+id/lbl_arrival"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_above="@id/tv_arrival"
-                android:layout_centerHorizontal="true"
-                android:layout_marginBottom="40dp"
-                android:text="@string/hint_arrival"
-                android:textAppearance="@style/TextAppearance.AppCompat.Button"
-                android:textColor="@color/txt_grey_lighter"
-                />
+                    android:id="@+id/tv_arrival"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:paddingEnd="@dimen/margin_default"
+                    android:paddingStart="@dimen/margin_default"
+                    android:text="@string/hint_select"
+                    android:textAlignment="center"
+                    android:textAllCaps="true"
+                    android:textColor="@color/txt_white"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    />
+
+            <TextView
+                    android:id="@+id/lbl_arrival"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_above="@id/tv_arrival"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginBottom="40dp"
+                    android:text="@string/hint_arrival"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Button"
+                    android:textColor="@color/txt_grey_lighter"
+                    />
         </RelativeLayout>
     </LinearLayout>
     <!--</android.support.v7.widget.CardView>-->
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1.5"
-        android:orientation="horizontal"
-        android:weightSum="2"
-        >
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1.5"
+            android:orientation="horizontal"
+            android:weightSum="2"
+            >
 
         <RelativeLayout
-            android:id="@+id/rl_time"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1">
-
-            <TextView
-                android:id="@+id/tv_time"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:text="06:00"
-                android:textAppearance="@style/TextAppearance.AppCompat.Button"
-                android:textSize="@dimen/text_size_default_plus"
-                />
-
-            <TextView
-                android:id="@+id/lbl_time"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_above="@id/tv_time"
-                android:layout_centerHorizontal="true"
-                android:layout_marginBottom="@dimen/margin_default_plus"
-                android:text="@string/hint_time"
-                android:textAllCaps="true"
-                android:textColor="@color/txt_grey"
-                android:textStyle="bold"
-                />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/item_height_very_small"
-                android:layout_below="@id/tv_time"
-                android:layout_centerHorizontal="true"
-                android:layout_marginEnd="@dimen/margin_very_big"
-                android:layout_marginStart="@dimen/margin_very_big"
-                android:layout_marginTop="@dimen/margin_default_plus"
-                android:background="@drawable/border_radius"
-                android:elevation="@dimen/elevation_default"
-                android:orientation="horizontal"
-                android:weightSum="4"
+                android:id="@+id/rl_time"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
                 >
 
-                <TextView
-                    android:id="@+id/tv_minus_one_hour"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="2"
-                    android:background="?android:attr/selectableItemBackground"
-                    android:clickable="true"
-                    android:gravity="center"
-                    android:text="@string/minus_hour"
-                    android:textColor="@color/txt_white"
+            <TextView
+                    android:id="@+id/tv_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:text="06:00"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Button"
+                    android:textSize="@dimen/text_size_default_plus"
+                    />
+
+            <TextView
+                    android:id="@+id/lbl_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_above="@id/tv_time"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginBottom="@dimen/margin_default_plus"
+                    android:text="@string/hint_time"
+                    android:textAllCaps="true"
+                    android:textColor="@color/txt_grey"
                     android:textStyle="bold"
                     />
+
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/item_height_very_small"
+                    android:layout_below="@id/tv_time"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginEnd="@dimen/margin_very_big"
+                    android:layout_marginStart="@dimen/margin_very_big"
+                    android:layout_marginTop="@dimen/margin_default_plus"
+                    android:background="@drawable/border_radius"
+                    android:elevation="@dimen/elevation_default"
+                    android:orientation="horizontal"
+                    android:weightSum="4"
+                    >
+
+                <TextView
+                        android:id="@+id/tv_minus_one_hour"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="2"
+                        android:background="?android:attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:gravity="center"
+                        android:text="@string/minus_hour"
+                        android:textColor="@color/txt_white"
+                        android:textStyle="bold"
+                        />
 
                 <View
-                    android:layout_width="@dimen/divider"
-                    android:layout_height="16dp"
-                    android:layout_gravity="center"
-                    android:background="@color/bg_grey"
-                    />
+                        android:layout_width="@dimen/divider"
+                        android:layout_height="16dp"
+                        android:layout_gravity="center"
+                        android:background="@color/bg_grey"
+                        />
 
                 <TextView
-                    android:id="@+id/tv_plus_one_hour"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="2"
-                    android:background="?android:attr/selectableItemBackground"
-                    android:clickable="true"
-                    android:gravity="center"
-                    android:text="@string/plus_hour"
-                    android:textColor="@color/txt_white"
-                    android:textStyle="bold"
-                    />
+                        android:id="@+id/tv_plus_one_hour"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="2"
+                        android:background="?android:attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:gravity="center"
+                        android:text="@string/plus_hour"
+                        android:textColor="@color/txt_white"
+                        android:textStyle="bold"
+                        />
             </LinearLayout>
 
         </RelativeLayout>
 
         <RelativeLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1">
-
-            <TextView
-                android:id="@+id/tv_date"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:text="1 Ottobre"
-                android:textAllCaps="true"
-                android:textSize="@dimen/text_size_default_plus"
-                android:textStyle="bold"
-                />
-
-            <TextView
-                android:id="@+id/lbl_date"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_above="@id/tv_date"
-                android:layout_centerHorizontal="true"
-                android:layout_marginBottom="@dimen/margin_default_plus"
-                android:text="@string/hint_date"
-                android:textAllCaps="true"
-                android:textColor="@color/txt_grey"
-                android:textStyle="bold"
-                />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/item_height_very_small"
-                android:layout_below="@id/tv_date"
-                android:layout_centerHorizontal="true"
-                android:layout_marginEnd="@dimen/item_height_very_small"
-                android:layout_marginStart="@dimen/item_height_very_small"
-                android:layout_marginTop="@dimen/margin_default_plus"
-                android:background="@drawable/border_radius"
-                android:elevation="@dimen/elevation_default"
-                android:orientation="horizontal"
-                android:weightSum="4"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
                 >
 
-                <TextView
-                    android:id="@+id/tv_minus_one_day"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="2"
-                    android:background="?android:attr/selectableItemBackground"
-                    android:clickable="true"
-                    android:gravity="center"
-                    android:text="@string/minus_day"
-                    android:textColor="@color/txt_white"
+            <TextView
+                    android:id="@+id/tv_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:text="1 Ottobre"
+                    android:textAllCaps="true"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Button"
+                    android:textSize="@dimen/text_size_default_plus"
+                    />
+
+            <TextView
+                    android:id="@+id/lbl_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_above="@id/tv_date"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginBottom="@dimen/margin_default_plus"
+                    android:text="@string/hint_date"
+                    android:textAllCaps="true"
+                    android:textColor="@color/txt_grey"
                     android:textStyle="bold"
                     />
+
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/item_height_very_small"
+                    android:layout_below="@id/tv_date"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginEnd="@dimen/item_height_very_small"
+                    android:layout_marginStart="@dimen/item_height_very_small"
+                    android:layout_marginTop="@dimen/margin_default_plus"
+                    android:background="@drawable/border_radius"
+                    android:elevation="@dimen/elevation_default"
+                    android:orientation="horizontal"
+                    android:weightSum="4"
+                    >
+
+                <TextView
+                        android:id="@+id/tv_minus_one_day"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="2"
+                        android:background="?android:attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:gravity="center"
+                        android:text="@string/minus_day"
+                        android:textColor="@color/txt_white"
+                        android:textStyle="bold"
+                        />
 
                 <View
-                    android:layout_width="@dimen/divider"
-                    android:layout_height="16dp"
-                    android:layout_gravity="center"
-                    android:background="@color/bg_grey"
-                    />
+                        android:layout_width="@dimen/divider"
+                        android:layout_height="16dp"
+                        android:layout_gravity="center"
+                        android:background="@color/bg_grey"
+                        />
 
                 <TextView
-                    android:id="@+id/tv_plus_one_day"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="2"
-                    android:background="?android:attr/selectableItemBackground"
-                    android:clickable="true"
-                    android:gravity="center"
-                    android:text="@string/plus_day"
-                    android:textColor="@color/txt_white"
-                    android:textStyle="bold"
-                    />
+                        android:id="@+id/tv_plus_one_day"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="2"
+                        android:background="?android:attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:gravity="center"
+                        android:text="@string/plus_day"
+                        android:textColor="@color/txt_white"
+                        android:textStyle="bold"
+                        />
             </LinearLayout>
         </RelativeLayout>
     </LinearLayout>
 
     <Button
-        android:id="@+id/btn_search"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_gravity="bottom"
-        android:layout_marginEnd="@dimen/margin_default"
-        android:layout_marginStart="@dimen/margin_default"
-        android:layout_weight=".4"
-        android:background="@drawable/border_radius"
-        android:elevation="@dimen/elevation_default"
-        android:text="@string/search"
-        android:textColor="@color/txt_white"
-        android:textSize="@dimen/text_size_default_plus"
-        />
+            android:id="@+id/btn_search"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_gravity="bottom"
+            android:layout_marginEnd="@dimen/margin_default"
+            android:layout_marginStart="@dimen/margin_default"
+            android:layout_weight=".4"
+            android:background="@drawable/border_radius"
+            android:elevation="@dimen/elevation_default"
+            android:text="@string/search"
+            android:textColor="@color/txt_white"
+            android:textSize="@dimen/text_size_default_plus"
+            />
 </LinearLayout>
 
