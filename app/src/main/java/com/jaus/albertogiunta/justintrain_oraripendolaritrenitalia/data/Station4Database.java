@@ -3,9 +3,6 @@ package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data;
 import io.realm.RealmObject;
 import io.realm.annotations.Required;
 
-/**
- * Created by albertogiunta on 31/07/16.
- */
 public class Station4Database extends RealmObject {
 
     @Required
@@ -13,7 +10,9 @@ public class Station4Database extends RealmObject {
     @Required
     private String stationLongId;
     @Required
-    private String name;
+    private String nameLong;
+    @Required
+    private String nameShort;
 
 
     public String getStationShortId() {
@@ -32,12 +31,20 @@ public class Station4Database extends RealmObject {
         this.stationLongId = stationLongId;
     }
 
-    public String getName() {
-        return name;
+    public String getNameShort() {
+        return nameShort;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setNameShort(String nameShort) {
+        this.nameShort = nameShort;
+    }
+
+    public String getNameLong() {
+        return nameLong;
+    }
+
+    public void setNameLong(String nameLong) {
+        this.nameLong = nameLong;
     }
 
     @Override
@@ -45,7 +52,8 @@ public class Station4Database extends RealmObject {
         return "Station4Database{" +
                 "stationShortId='" + stationShortId + '\'' +
                 ", stationLongId='" + stationLongId + '\'' +
-                ", name='" + name + '\'' +
+                ", nameLong='" + nameLong + '\'' +
+                ", nameShort='" + nameShort + '\'' +
                 '}';
     }
 }

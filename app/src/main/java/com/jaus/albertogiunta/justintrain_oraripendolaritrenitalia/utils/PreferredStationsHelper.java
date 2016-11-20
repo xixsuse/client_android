@@ -15,7 +15,7 @@ public class PreferredStationsHelper {
 
     public static boolean isJourneyAlreadyPreferred(Context context, String id1, String id2) {
         boolean b = SharedPrefsHelper.getSharedPreferenceObject(context, buildPrefId(id1, id2)) != null;
-        Log.d("isalreadypreferred", b, id1, id2);
+        Log.d("Journey is already preferred", b, id1, id2);
         return b;
     }
 

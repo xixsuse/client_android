@@ -18,10 +18,16 @@ public class StationRealmUtils {
 
     private static RealmResults<Station4Database> stationList = Realm.getDefaultInstance().where(Station4Database.class).findAll();
 
-    public static List<String> getElement(String stationName) {
+    public static List<String> getElementByNameLong(String stationName) {
         return Stream
-                .of(stationList.where().beginsWith("name", stationName, Case.INSENSITIVE).findAll())
-                .map(Station4Database::getName).collect(Collectors.toList());
+                .of(stationList.where().beginsWith("nameLong", stationName, Case.INSENSITIVE).findAll())
+                .map(Station4Database::getNameLong).collect(Collectors.toList());
+    }
+
+    public static List<String> getElementByNameShort(String stationName) {
+        return Stream
+                .of(stationList.where().beginsWith("nameShort", stationName, Case.INSENSITIVE).findAll())
+                .map(Station4Database::getNameLong).collect(Collectors.toList());
     }
 
     public static boolean isThisJourneyPreferred(PreferredStation departureStation, PreferredStation arrivalStation, Context context) {
@@ -34,11 +40,18 @@ public class StationRealmUtils {
     }
 
     public static boolean isStationNameValid(String stationName, RealmResults<Station4Database> stationList) {
-        RealmResults<Station4Database> matchingStations = stationList.where().equalTo("name", stationName, Case.INSENSITIVE).findAll();
+        RealmResults<Station4Database> matchingStations = stationList.where().equalTo("nameLong", stationName, Case.INSENSITIVE).findAll();
+        matchingStations = matchingStations.size() == 0 ? stationList.where().equalTo("nameShort", stationName, Case.INSENSITIVE).findAll() : matchingStations;
         return matchingStations.size() == 1 && !stationName.isEmpty();
     }
 
     public static Station4Database getStation4DatabaseObject(String stationName, RealmResults<Station4Database> stationList) {
-        return stationList.where().equalTo("name", stationName, Case.INSENSITIVE).findAll().get(0);
+        Station4Database temp;
+        try {
+            temp = stationList.where().equalTo("nameShort", stationName, Case.INSENSITIVE).findAll().get(0);
+        } catch (Exception e) {
+            temp = stationList.where().equalTo("nameLong", stationName, Case.INSENSITIVE).findAll().get(0);
+        }
+        return temp;
     }
 }

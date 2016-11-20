@@ -27,7 +27,7 @@ public class StationSearchActivity extends AppCompatActivity implements Searched
 
     @BindView(R.id.rv_searched_stations) RecyclerView rvSearchedStations;
     SearchedStationsAdapter adapter;
-    List<String> stationNames = new LinkedList<>(StationRealmUtils.getElement(""));
+    List<String> stationNames = new LinkedList<>(StationRealmUtils.getElementByNameLong(""));
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +63,7 @@ public class StationSearchActivity extends AppCompatActivity implements Searched
             public boolean onQueryTextChange(String newText) {
                 Log.d("ONCHANGE", newText);
                 stationNames.clear();
-                stationNames.addAll(StationRealmUtils.getElement(newText));
+                stationNames.addAll(StationRealmUtils.getElementByNameLong(newText));
                 adapter.notifyDataSetChanged();
                 return false;
             }

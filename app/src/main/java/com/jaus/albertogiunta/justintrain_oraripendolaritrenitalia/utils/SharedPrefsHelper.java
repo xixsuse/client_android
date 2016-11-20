@@ -1,12 +1,14 @@
 package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils;
 
+import com.google.gson.Gson;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import com.google.gson.Gson;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.PreferredJourney;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -136,6 +138,15 @@ public class SharedPrefsHelper {
         for (String el : (Collection<String>)getAll(context).values()) {
             list.add(gson.fromJson(el, PreferredJourney.class));
         }
+        Collections.sort(list, (o1, o2) -> {
+            if (o1.getTimestamp() < o2.getTimestamp()) {
+                return -1;
+            } else if (o1.getTimestamp() > o2.getTimestamp()) {
+                return 1;
+            } else {
+                return 0;
+            }
+        });
         return list;
     }
 

@@ -5,7 +5,8 @@ public class PreferredStation {
 
     private String stationShortId;
     private String stationLongId;
-    private String name;
+    private String nameShort;
+    private String nameLong;
 
     public PreferredStation() {
     }
@@ -13,13 +14,15 @@ public class PreferredStation {
     public PreferredStation(Station4Database station) {
         this.stationShortId = station.getStationShortId();
         this.stationLongId = station.getStationLongId();
-        this.name = station.getName();
+        this.nameShort = station.getNameShort();
+        this.nameLong = station.getNameLong();
     }
 
-    public PreferredStation(String stationShortId, String stationLongId, String name) {
+    public PreferredStation(String stationShortId, String stationLongId, String nameShort, String nameLong) {
         this.stationShortId = stationShortId;
         this.stationLongId = stationLongId;
-        this.name = name;
+        this.nameShort = nameShort;
+        this.nameLong = nameLong;
     }
 
     public String getStationShortId() {
@@ -38,20 +41,29 @@ public class PreferredStation {
         this.stationLongId = stationLongId;
     }
 
-    public String getName() {
-        return name;
+    public String getNameShort() {
+        return nameShort;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setNameShort(String nameShort) {
+        this.nameShort = nameShort;
+    }
+
+    public String getNameLong() {
+        return nameLong;
+    }
+
+    public void setNameLong(String nameLong) {
+        this.nameLong = nameLong;
     }
 
     @Override
     public String toString() {
         return "PreferredStation{" +
-                "name='" + name + '\'' +
+                "stationShortId='" + stationShortId + '\'' +
                 ", stationLongId='" + stationLongId + '\'' +
-                ", stationShortId='" + stationShortId + '\'' +
+                ", nameShort='" + nameShort + '\'' +
+                ", nameLong='" + nameLong + '\'' +
                 '}';
     }
 }

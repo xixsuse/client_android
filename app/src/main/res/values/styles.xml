@@ -5,6 +5,8 @@
         <item name="colorPrimaryDark">@color/bg_darker</item>
         <item name="colorAccent">@color/btn_dark_cyan</item>
         <item name="android:textColor">@color/txt_dark</item>
+        <item name="android:datePickerDialogTheme">@style/MyDatePickerDialogTheme</item>
+        <item name="android:timePickerDialogTheme">@style/MyDatePickerDialogTheme</item>
     </style>
 
     <style name="AppThemeNoShadowActionbar" parent="Theme.AppCompat.Light">
@@ -14,15 +16,7 @@
         <item name="colorPrimary">@color/bg_dark</item>
     </style>
 
-    <!--<style name="AppTheme.NoActionBar" parent="Theme.AppCompat.Light.DarkActionBar">-->
-    <!--<item name="windowActionBar">false</item>-->
-    <!--<item name="windowNoTitle">true</item>-->
-    <!--</style>-->
-
     <style name="Theme.MyApp.ActionBar" parent="style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">
-        <!-- remove shadow below action bar -->
-        <!-- <item name="android:elevation">0dp</item> -->
-        <!-- Support library compatibility -->
         <item name="elevation">0dp</item>
     </style>
 
@@ -30,9 +24,12 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
 
-    <style name="Dialog.FullScreen" parent="Theme.AppCompat.Light.Dialog">
-        <item name="android:padding">0dp</item>
-        <item name="android:windowBackground">@android:color/white</item>
-    </style>
+    <!--<style name="MyDatePickerDialogTheme" parent="android:Theme.Material.Light.Dialog">-->
+    <!--<item name="android:datePickerStyle">@style/MyDatePickerStyle</item>-->
+    <!--</style>-->
+
+    <!--<style name="MyDatePickerStyle" parent="@android:style/Widget.Material.Light.DatePicker">-->
+    <!--<item name="android:headerBackground">@color/btn_cyan</item>-->
+    <!--</style>-->
 
 </resources>

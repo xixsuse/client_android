@@ -61,7 +61,7 @@ public class JourneyResultsActivity extends AppCompatActivity implements Journey
     @BindView(R.id.btn_refresh)
     ImageButton btnRefresh;
 
-    JourneyResultsAdapter mJourneyResultsAdapter;
+    JourneyResultsAdapter journeyResultsAdapter;
     JourneyResultsPresenter presenter;
 
     @Override
@@ -74,11 +74,11 @@ public class JourneyResultsActivity extends AppCompatActivity implements Journey
         setSupportActionBar(toolbar);
         getSupportActionBar();
 
-        btnHeaderSwapStationNames.setOnClickListener(v-> presenter.onSwapButtonClick());
+        btnHeaderSwapStationNames.setOnClickListener(v -> presenter.onSwapButtonClick());
         btnHeaderToggleFavorite.setOnClickListener(v -> presenter.onFavouriteButtonClick());
 
-        mJourneyResultsAdapter = new JourneyResultsAdapter(this, presenter);
-        rvJourneySolutions.setAdapter(mJourneyResultsAdapter);
+        journeyResultsAdapter = new JourneyResultsAdapter(this, presenter);
+        rvJourneySolutions.setAdapter(journeyResultsAdapter);
         rvJourneySolutions.setHasFixedSize(true);
         rvJourneySolutions.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
 
@@ -173,12 +173,13 @@ public class JourneyResultsActivity extends AppCompatActivity implements Journey
     @Override
     public void updateSolutionsList(List<Journey.Solution> solutionList) {
         rvJourneySolutions.getRecycledViewPool().clear();
-        mJourneyResultsAdapter.notifyDataSetChanged();
+        journeyResultsAdapter.notifyDataSetChanged();
+//        normalButton();
     }
 
     @Override
     public void updateSolution(int elementIndex) {
-        mJourneyResultsAdapter.notifyItemChanged(elementIndex + 1);
+        journeyResultsAdapter.notifyItemChanged(elementIndex + 1);
     }
 
     @Override
@@ -194,5 +195,25 @@ public class JourneyResultsActivity extends AppCompatActivity implements Journey
     public void setStationNames(String departure, String arrival) {
         this.tvHeaderDepartureStation.setText(departure);
         this.tvHeaderArrivalStation.setText(arrival);
+    }
+
+    private void normalButton() {
+        try {
+            rvJourneySolutions.postDelayed(() -> {
+                if (rvJourneySolutions.findViewHolderForAdapterPosition(0) != null) {
+                    ((JourneyResultsAdapter.LoadMoreBeforeHolder) rvJourneySolutions.findViewHolderForAdapterPosition(0)).readyButton();
+                }
+                if (rvJourneySolutions.findViewHolderForAdapterPosition(presenter.getSolutionList().size() + 1) != null) {
+                    ((JourneyResultsAdapter.LoadMoreAfterHolder) rvJourneySolutions.findViewHolderForAdapterPosition(presenter.getSolutionList().size() + 1)).readyButton();
+                }
+            }, 100);
+            rvJourneySolutions.postDelayed(() -> {
+                if (rvJourneySolutions.findViewHolderForAdapterPosition(presenter.getSolutionList().size() + 1) != null) {
+                    ((JourneyResultsAdapter.LoadMoreAfterHolder) rvJourneySolutions.findViewHolderForAdapterPosition(presenter.getSolutionList().size() + 1)).readyButton();
+                }
+            }, 1000);
+        } catch (ClassCastException e) {
+            e.printStackTrace();
+        }
     }
 }

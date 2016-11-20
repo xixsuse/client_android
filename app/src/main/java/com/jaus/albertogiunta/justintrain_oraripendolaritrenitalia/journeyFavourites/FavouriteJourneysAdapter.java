@@ -103,8 +103,8 @@ class FavouriteJourneysAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         }
 
         void bind(PreferredJourney preferredJourney) {
-            tvPreferredStation1.setText(preferredJourney.getStation1().getName());
-            tvPreferredStation2.setText(preferredJourney.getStation2().getName());
+            tvPreferredStation1.setText(preferredJourney.getStation1().getNameLong());
+            tvPreferredStation2.setText(preferredJourney.getStation2().getNameLong());
             data = preferredJourney;
         }
     }

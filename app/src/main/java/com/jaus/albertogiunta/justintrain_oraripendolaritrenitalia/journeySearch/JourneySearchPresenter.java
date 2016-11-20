@@ -34,7 +34,7 @@ class JourneySearchPresenter implements JourneySearchContract.Presenter {
     JourneySearchPresenter(JourneySearchActivity view) {
         this.view = view;
         this.stationList = Realm.getDefaultInstance().where(Station4Database.class).findAll();
-        dateTime = DateTime.now().withMinuteOfHour(0);
+        dateTime = DateTime.now().minusMinutes(10);
     }
 
     @Override
@@ -49,7 +49,7 @@ class JourneySearchPresenter implements JourneySearchContract.Presenter {
             PreferredJourney journey = new Gson().fromJson(bundle.getString(I_STATIONS), PreferredJourney.class);
             this.departureStation = journey.getStation1();
             this.arrivalStation = journey.getStation2();
-            view.setStationNames(departureStation.getName(), arrivalStation.getName());
+            view.setStationNames(departureStation.getNameLong(), arrivalStation.getNameLong());
             Log.d("onResuming: resuming bundle", journey.toString());
         } else {
             Log.d("no bundle found");
@@ -103,7 +103,7 @@ class JourneySearchPresenter implements JourneySearchContract.Presenter {
 //    public List<String> searchStationName(String stationName) {
 //        return Stream
 //                .of(stationList.where().beginsWith("name", stationName, Case.INSENSITIVE).findAll())
-//                .map(Station4Database::getName).collect(Collectors.toList());
+//                .map(Station4Database::getNameLong).collect(Collectors.toList());
 //    }
 
     @Override

@@ -37,7 +37,6 @@ class JourneyResultsAdapter extends RecyclerView.Adapter {
         this.solutionList = presenter.getSolutionList();
     }
 
-
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
@@ -57,6 +56,12 @@ class JourneyResultsAdapter extends RecyclerView.Adapter {
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof JourneyHolder && solutionList.size() > 0) {
             ((JourneyHolder) holder).bind(solutionList.get(position - 1));
+        }
+        if (holder instanceof LoadMoreAfterHolder && solutionList.size() > 0) {
+            ((LoadMoreAfterHolder) holder).readyButton();
+        }
+        if (holder instanceof LoadMoreBeforeHolder && solutionList.size() > 0) {
+            ((LoadMoreBeforeHolder) holder).readyButton();
         }
     }
 
@@ -83,7 +88,6 @@ class JourneyResultsAdapter extends RecyclerView.Adapter {
         static final int Normal = 2;
         static final int Footer = 3;
     }
-
 
     class JourneyHolder extends RecyclerView.ViewHolder {
 
@@ -260,44 +264,58 @@ class JourneyResultsAdapter extends RecyclerView.Adapter {
             tvDepartureTimeWithDelay.setTextColor(color);
             tvArrivalTimeWithDelay.setTextColor(color);
         }
-
-//        private String setProgress(Integer progress) {
-//            if (progress != null) {
-//                switch (progress) {
-//                    case 0:
-//                        return "Costante";
-//                    case 1:
-//                        return "Recuperando";
-//                    case 2:
-//                        return "Rallentando";
-//                    default:
-//                        return "";
-//                }
-//            }
-//            return "";
-//        }
     }
 
     @SuppressWarnings("WeakerAccess")
     class LoadMoreBeforeHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.search_before_btn)
         ImageButton btn;
+        @BindView(R.id.rl_search_before_loading_spinner)
+        RelativeLayout relativeLayout;
 
         LoadMoreBeforeHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
-            btn.setOnClickListener(view -> presenter.onLoadMoreItemsBefore());
+            btn.setOnClickListener(view -> {
+                presenter.onLoadMoreItemsBefore();
+                busyButton();
+            });
+        }
+
+        void busyButton() {
+            ButterKnife.apply(relativeLayout, ViewsUtils.VISIBLE);
+            ButterKnife.apply(btn, ViewsUtils.GONE);
+        }
+
+        void readyButton() {
+            ButterKnife.apply(relativeLayout, ViewsUtils.GONE);
+            ButterKnife.apply(btn, ViewsUtils.VISIBLE);
         }
     }
 
     class LoadMoreAfterHolder extends RecyclerView.ViewHolder {
-        @BindView(R.id.search_after_btn)
+        @BindView(R.id.btn_search_after)
         ImageButton btn;
+        @BindView(R.id.rl_search_after_loading_spinner)
+        RelativeLayout relativeLayout;
 
         LoadMoreAfterHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
-            btn.setOnClickListener(view -> presenter.onLoadMoreItemsAfter());
+            btn.setOnClickListener(view -> {
+                presenter.onLoadMoreItemsAfter();
+                busyButton();
+            });
+        }
+
+        void busyButton() {
+            ButterKnife.apply(relativeLayout, ViewsUtils.VISIBLE);
+            ButterKnife.apply(btn, ViewsUtils.GONE);
+        }
+
+        void readyButton() {
+            ButterKnife.apply(relativeLayout, ViewsUtils.GONE);
+            ButterKnife.apply(btn, ViewsUtils.VISIBLE);
         }
     }
 }

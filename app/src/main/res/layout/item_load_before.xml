@@ -1,18 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/item_load_more_height">
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/item_load_more_height"
+        >
 
     <ImageButton
-        android:id="@+id/search_before_btn"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_centerHorizontal="true"
-        android:layout_centerInParent="true"
-        android:background="?attr/selectableItemBackground"
-        android:clickable="true"
-        app:srcCompat="@drawable/ic_chevron_up"
-        />
+            android:id="@+id/search_before_btn"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerHorizontal="true"
+            android:layout_centerInParent="true"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            app:srcCompat="@drawable/ic_chevron_up"
+            android:visibility="visible"
+            />
+
+    <RelativeLayout
+            android:id="@+id/rl_search_before_loading_spinner"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/bg_grey_lighter"
+            android:visibility="gone"
+            >
+        <ProgressBar
+                android:id="@+id/search_before_loading_spinner"
+                android:layout_width="24dp"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:indeterminateTint="@color/btn_dark_cyan"
+                android:indeterminateTintMode="src_atop"
+                android:layout_gravity="center_horizontal"
+                />
+    </RelativeLayout>
 
 </RelativeLayout>

@@ -18,6 +18,7 @@ import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.networking.Se
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.notification.NotificationService;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_C;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.PreferredStationsHelper;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.StationRealmUtils;
 
 import org.joda.time.DateTime;
 
@@ -25,7 +26,6 @@ import java.net.ConnectException;
 import java.util.LinkedList;
 import java.util.List;
 
-import io.realm.Case;
 import io.realm.Realm;
 import io.realm.RealmResults;
 import retrofit2.adapter.rxjava.HttpException;
@@ -68,7 +68,7 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
                 this.departureStation = journey.getStation1();
                 this.arrivalStation = journey.getStation2();
                 Log.d("Current bundled stations are: ", this.departureStation.toString(), this.arrivalStation.toString());
-                view.setStationNames(departureStation.getName(), arrivalStation.getName());
+                view.setStationNames(departureStation.getNameLong(), arrivalStation.getNameLong());
                 setFavouriteButtonStatus();
             }
             this.dateTime = new DateTime(bundle.getLong(I_TIME, DateTime.now().getMillis()));
@@ -154,7 +154,7 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
         departureStation = arrivalStation;
         arrivalStation = temp;
         searchFromSearch(true);
-        view.setStationNames(departureStation.getName(), arrivalStation.getName());
+        view.setStationNames(departureStation.getNameLong(), arrivalStation.getNameLong());
     }
 
     @Override
@@ -177,13 +177,11 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
         RealmResults<Station4Database> stationList = Realm.getDefaultInstance().where(Station4Database.class).findAll();
         if (journeySolutions.get(elementIndex).isHasChanges()) {
             for (int changeIndex = 0; changeIndex < journeySolutions.get(elementIndex).getChangesList().size(); changeIndex++) {
-                String departureStationName = sanitizeStationName(journeySolutions.get(elementIndex).getChangesList().get(changeIndex).getDepartureStationName());
-                String arrivalStationName = sanitizeStationName(journeySolutions.get(elementIndex).getChangesList().get(changeIndex).getArrivalStationName());
+                String departureStationName = journeySolutions.get(elementIndex).getChangesList().get(changeIndex).getDepartureStationName();
+                String arrivalStationName = journeySolutions.get(elementIndex).getChangesList().get(changeIndex).getArrivalStationName();
                 try {
-                    Station4Database tempDepartureStation = stationList.where().equalTo("name", departureStationName, Case.INSENSITIVE)
-                            .findAll().get(0);
-                    Station4Database tempArrivalStation = stationList.where().equalTo("name", arrivalStationName, Case.INSENSITIVE)
-                            .findAll().get(0);
+                    Station4Database tempDepartureStation = StationRealmUtils.getStation4DatabaseObject(departureStationName, stationList);
+                    Station4Database tempArrivalStation = StationRealmUtils.getStation4DatabaseObject(arrivalStationName, stationList);
                     refreshChange(elementIndex, changeIndex,
                             tempDepartureStation.getStationShortId(),
                             tempArrivalStation.getStationShortId(),
@@ -243,7 +241,7 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
                 } else {
                     Log.d(exception.toString());
                 }
-                view.showSnackbar("Si è verificato un problema!", INTENT_C.SNACKBAR_ACTIONS.REFRESH);
+//                view.showSnackbar("Si è verificato un problema!", INTENT_C.SNACKBAR_ACTIONS.REFRESH);
             }
         }
     }
@@ -296,7 +294,11 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
                                 journeySolutions.get(solutionIndex).getChangesList().get(changeIndex).setProgress(trainHeader.getProgress());
                                 journeySolutions.get(solutionIndex).getChangesList().get(changeIndex).postProcess();
                             } else if (journeySolutions.get(solutionIndex).getTimeDifference() == null) {
-                                view.showSnackbar("Il treno non è ancora partito", INTENT_C.SNACKBAR_ACTIONS.NONE);
+                                view.showSnackbar("Il treno "
+                                        + trainHeader.getTrainCategory()
+                                        + " "
+                                        + trainHeader.getTrainId()
+                                        + " non è ancora partito", INTENT_C.SNACKBAR_ACTIONS.NONE);
                             }
                         } else {
                             journeySolutions.get(solutionIndex).setDeparturePlatform(trainHeader.getDeparturePlatform());
@@ -321,13 +323,13 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
                 selectedHour.getMinuteOfHour() == DateTime.now().getMinuteOfHour();
     }
 
-    private String sanitizeStationName(String dirtyName) {
-        return dirtyName
-                .replaceAll("Bologna Centrale", "Bologna C.LE")
-                .replaceAll("TO Lingotto", "Torino Lingotto")
-                .replaceAll("Torino P. Susa", "Torino Porta Susa")
-                .replaceAll("Verona P.Nuova", "Verona Porta Nuova");
-    }
+//    private String sanitizeStationName(String dirtyName) {
+//        return dirtyName
+//                .replaceAll("Bologna Centrale", "Bologna C.LE")
+//                .replaceAll("TO Lingotto", "Torino Lingotto")
+//                .replaceAll("Torino P. Susa", "Torino Porta Susa")
+//                .replaceAll("Verona P.Nuova", "Verona Porta Nuova");
+//    }
 
     private boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager = (ConnectivityManager) view.getViewContext().getSystemService(Context.CONNECTIVITY_SERVICE);
