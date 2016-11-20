@@ -16,6 +16,13 @@
         <item name="colorPrimary">@color/bg_dark</item>
     </style>
 
+    <style name="IntroTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/btn_dark_cyan</item>
+        <item name="colorPrimaryDark">@color/btn_dark_cyan</item>
+        <item name="colorAccent">@color/btn_dark_cyan</item>
+        <item name="android:textColor">@color/txt_dark</item>
+    </style>
+
     <style name="Theme.MyApp.ActionBar" parent="style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">
         <item name="elevation">0dp</item>
     </style>

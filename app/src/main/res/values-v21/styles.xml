@@ -24,6 +24,14 @@
         <!--<item name="android:datePickerStyle">@style/MyDatePickerStyle</item>-->
     </style>
 
+    <style name="IntroTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/btn_dark_cyan</item>
+        <item name="colorPrimaryDark">@color/btn_dark_cyan</item>
+        <item name="colorAccent">@color/btn_dark_cyan</item>
+        <item name="android:textColor">@color/txt_dark</item>
+        <item name="android:statusBarColor">@color/btn_dark_cyan</item>
+    </style>
+
     <!--<style name="MyDatePickerStyle" parent="@android:style/Widget.Material.Light.DatePicker">-->
     <!--<item name="android:headerBackground">@color/btn_cyan</item>-->
     <!--</style>-->
