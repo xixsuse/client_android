@@ -1,6 +1,10 @@
 package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.gson.Gson;
+
 import android.content.Context;
+import android.os.Bundle;
 
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.PreferredJourney;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.PreferredStation;
@@ -32,6 +36,7 @@ public class PreferredStationsHelper {
                 buildPrefId(journey.getStation1().getStationShortId(),
                         journey.getStation2().getStationShortId()),
                 journey);
+        log(context, "saved_preferred_journey", new Gson().toJson(journey));
     }
 
 
@@ -41,6 +46,7 @@ public class PreferredStationsHelper {
 
     public static void removePreferredJourney(Context context, String id1, String id2) {
         SharedPrefsHelper.removeSharedPreferenceObject(context, buildPrefId(id1, id2));
+        log(context, "saved_preferred_journey", buildPrefId(id1, id2));
     }
 
     public static void removePreferredJourney(Context context, List<Station4Database> list) {
@@ -49,6 +55,11 @@ public class PreferredStationsHelper {
 
     public static void removePreferredJourney(Context context, PreferredStation departureStation, PreferredStation arrivalStation) {
         removePreferredJourney(context, departureStation.getStationShortId(), arrivalStation.getStationShortId());
+        log(context, "saved_preferred_journey", buildPrefId(departureStation.getStationLongId(), arrivalStation.getStationLongId())
+                + " - "
+                + departureStation.getNameLong()
+                + " - "
+                + arrivalStation.getNameLong());
     }
 
     public static Map<String, PreferredJourney> getAll(Context context) {
@@ -59,10 +70,17 @@ public class PreferredStationsHelper {
         return SharedPrefsHelper.getAllAsObject(context);
     }
 
-
     private static String buildPrefId(String id1, String id2) {
         int cod1 = Integer.parseInt(id1);
         int cod2 = Integer.parseInt(id2);
         return Math.min(cod1, cod2) + "-" + Math.max(cod1, cod2);
+    }
+
+    public static void log(Context context, String id, String value) {
+        FirebaseAnalytics firebaseAnalytics = FirebaseAnalytics.getInstance(context);
+        Bundle bundle = new Bundle();
+        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, id);
+        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, value);
+        firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
     }
 }

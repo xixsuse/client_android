@@ -23,6 +23,7 @@ import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.Station
 import org.joda.time.DateTime;
 
 import java.net.ConnectException;
+import java.net.SocketException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -226,22 +227,21 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
             if (exception.getMessage().equals("HTTP 404 ")) {
                 onJourneyNotFound();
             } else {
+                Log.e("onServerError: ", exception.toString());
                 if (exception instanceof HttpException) {
                     Log.d(((HttpException) exception).response().errorBody(), ((HttpException) exception).response().code());
                     if (((HttpException) exception).response().code() == 500) {
                         view.showErrorMessage("Il server sta avendo dei problemi", "Segnala il problema", INTENT_C.ERROR_BTN.SEND_REPORT);
                     }
-                    // TODO controlla 500, 404 e non so che altro
                 } else if (exception instanceof ConnectException) {
                     if (isNetworkAvailable()) {
                         view.showErrorMessage("Il server sta avendo dei problemi", "Segnala il problema", INTENT_C.ERROR_BTN.SEND_REPORT);
                     } else {
                         view.showErrorMessage("Assicurati di essere connesso a Internet", "Attiva connessione", INTENT_C.ERROR_BTN.CONN_SETTINGS);
                     }
-                } else {
-                    Log.d(exception.toString());
+                } else if (exception instanceof SocketException) {
+                    view.showErrorMessage("Assicurati di essere connesso a Internet", "Attiva connessione", INTENT_C.ERROR_BTN.CONN_SETTINGS);
                 }
-//                view.showSnackbar("Si è verificato un problema!", INTENT_C.SNACKBAR_ACTIONS.REFRESH);
             }
         }
     }

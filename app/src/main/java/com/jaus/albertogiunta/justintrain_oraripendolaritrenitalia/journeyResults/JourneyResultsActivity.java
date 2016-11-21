@@ -20,6 +20,7 @@ import android.widget.TextView;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.R;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.Journey;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_C;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.PreferredStationsHelper;
 
 import java.util.List;
 
@@ -111,6 +112,8 @@ public class JourneyResultsActivity extends AppCompatActivity implements Journey
 
     @Override
     public void showSnackbar(String message, INTENT_C.SNACKBAR_ACTIONS intent) {
+        journeyResultsAdapter.notifyItemChanged(0);
+        journeyResultsAdapter.notifyItemChanged(journeyResultsAdapter.getItemCount() - 1);
         Log.w(android.R.id.message);
         Snackbar snackbar = Snackbar
                 .make(rvJourneySolutions, message, Snackbar.LENGTH_LONG);
@@ -150,7 +153,7 @@ public class JourneyResultsActivity extends AppCompatActivity implements Journey
             switch (intent) {
                 case CONN_SETTINGS:
                     Log.d("intent a settings");
-                    i = new Intent(Settings.ACTION_WIRELESS_SETTINGS);
+                    i = new Intent(Settings.ACTION_SETTINGS);
                     startActivity(i);
                     break;
                 case SEND_REPORT:
@@ -174,11 +177,16 @@ public class JourneyResultsActivity extends AppCompatActivity implements Journey
     public void updateSolutionsList(List<Journey.Solution> solutionList) {
         rvJourneySolutions.getRecycledViewPool().clear();
         journeyResultsAdapter.notifyDataSetChanged();
-//        normalButton();
     }
 
     @Override
     public void updateSolution(int elementIndex) {
+        Journey.Solution s = presenter.getSolutionList().get(elementIndex + 1);
+        PreferredStationsHelper.log(this, "solution_update_requested",
+                "trainId: " + s.getTrainId()
+                        + " journeyAepartureStation: " + s.getDepartureStationName()
+                        + " journeyDepartureStation: " + s.getArrivalStationName());
+
         journeyResultsAdapter.notifyItemChanged(elementIndex + 1);
     }
 
@@ -195,25 +203,5 @@ public class JourneyResultsActivity extends AppCompatActivity implements Journey
     public void setStationNames(String departure, String arrival) {
         this.tvHeaderDepartureStation.setText(departure);
         this.tvHeaderArrivalStation.setText(arrival);
-    }
-
-    private void normalButton() {
-        try {
-            rvJourneySolutions.postDelayed(() -> {
-                if (rvJourneySolutions.findViewHolderForAdapterPosition(0) != null) {
-                    ((JourneyResultsAdapter.LoadMoreBeforeHolder) rvJourneySolutions.findViewHolderForAdapterPosition(0)).readyButton();
-                }
-                if (rvJourneySolutions.findViewHolderForAdapterPosition(presenter.getSolutionList().size() + 1) != null) {
-                    ((JourneyResultsAdapter.LoadMoreAfterHolder) rvJourneySolutions.findViewHolderForAdapterPosition(presenter.getSolutionList().size() + 1)).readyButton();
-                }
-            }, 100);
-            rvJourneySolutions.postDelayed(() -> {
-                if (rvJourneySolutions.findViewHolderForAdapterPosition(presenter.getSolutionList().size() + 1) != null) {
-                    ((JourneyResultsAdapter.LoadMoreAfterHolder) rvJourneySolutions.findViewHolderForAdapterPosition(presenter.getSolutionList().size() + 1)).readyButton();
-                }
-            }, 1000);
-        } catch (ClassCastException e) {
-            e.printStackTrace();
-        }
     }
 }

@@ -1,16 +1,18 @@
 package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.notification;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.Journey;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.TrainHeader;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.networking.DateTimeAdapter;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.networking.JourneyService;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.networking.ServiceFactory;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.PreferredStationsHelper;
 
 import org.joda.time.DateTime;
 
@@ -39,6 +41,11 @@ public class NotificationService extends IntentService {
 
     public static void startActionStartNotification(Context context, String journeyDepartureStationId, String journeyArrivalStationId, Journey.Solution solution) {
         Log.d("startActionStartNotification:", "start");
+        PreferredStationsHelper.log(context, "notification_requested",
+                "journeyDepartureStationId " + journeyDepartureStationId
+                        + " journeyArrivalStationId " + journeyArrivalStationId
+                        + " data: " + new Gson().toJson(solution));
+
         Intent intent = new Intent(context, NotificationService.class);
         intent.setAction(ACTION_START_NOTIFICATION);
         String trainId;

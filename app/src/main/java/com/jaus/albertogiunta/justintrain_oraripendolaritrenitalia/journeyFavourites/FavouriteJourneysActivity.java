@@ -1,6 +1,5 @@
 package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeyFavourites;
 
-import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.gson.Gson;
 
 import android.content.Context;
@@ -37,7 +36,6 @@ import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.
 
 public class FavouriteJourneysActivity extends AppCompatActivity implements FavouritesContract.View {
 
-    FirebaseAnalytics firebaseAnalytics;
     FavouritesContract.Presenter presenter;
 
     @BindView(R.id.rv_favourite_journeys)
@@ -59,7 +57,6 @@ public class FavouriteJourneysActivity extends AppCompatActivity implements Favo
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_favourite_journeys);
         ButterKnife.bind(this);
-        firebaseAnalytics = FirebaseAnalytics.getInstance(this);
         checkIntro();
         presenter = new FavouritesPresenter(this);
         adapter = new FavouriteJourneysAdapter(presenter.getPreferredJourneys());
@@ -93,38 +90,6 @@ public class FavouriteJourneysActivity extends AppCompatActivity implements Favo
                 Log.d("long clicked");
             }
         });
-    }
-
-    private void checkIntro() {
-        //  Declare a new thread to do a preference check
-        Thread t = new Thread(() -> {
-            //  Initialize SharedPreferences
-            SharedPreferences getPrefs = PreferenceManager
-                    .getDefaultSharedPreferences(getBaseContext());
-
-            //  Create a new boolean and preference and set it to true
-            boolean isFirstStart = getPrefs.getBoolean("firstStart", true);
-
-            //  If the activity has never started before...
-            if (isFirstStart) {
-
-                //  Launch app intro
-                Intent i = new Intent(FavouriteJourneysActivity.this, IntroActivity.class);
-                startActivity(i);
-
-                //  Make a new preferences editor
-                SharedPreferences.Editor e = getPrefs.edit();
-
-                //  Edit preference to make it false because we don't want this to run again
-                e.putBoolean("firstStart", false);
-
-                //  Apply changes
-                e.apply();
-            }
-        });
-
-        // Start the thread
-        t.start();
     }
 
     @Override
@@ -184,6 +149,38 @@ public class FavouriteJourneysActivity extends AppCompatActivity implements Favo
     public void displayEntryButton() {
         rvFavouriteJourneys.setVisibility(View.GONE);
         llAddFavourite.setVisibility(View.VISIBLE);
+    }
+
+    private void checkIntro() {
+        //  Declare a new thread to do a preference check
+        Thread t = new Thread(() -> {
+            //  Initialize SharedPreferences
+            SharedPreferences getPrefs = PreferenceManager
+                    .getDefaultSharedPreferences(getBaseContext());
+
+            //  Create a new boolean and preference and set it to true
+            boolean isFirstStart = getPrefs.getBoolean("firstStart", true);
+
+            //  If the activity has never started before...
+            if (isFirstStart) {
+
+                //  Launch app intro
+                Intent i = new Intent(FavouriteJourneysActivity.this, IntroActivity.class);
+                startActivity(i);
+
+                //  Make a new preferences editor
+                SharedPreferences.Editor e = getPrefs.edit();
+
+                //  Edit preference to make it false because we don't want this to run again
+                e.putBoolean("firstStart", false);
+
+                //  Apply changes
+                e.apply();
+            }
+        });
+
+        // Start the thread
+        t.start();
     }
 
     private Bundle bundleJourney(PreferredJourney journey) {
