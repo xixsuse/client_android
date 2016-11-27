@@ -60,6 +60,8 @@ public class JourneySearchActivity extends AppCompatActivity implements JourneyS
     TextView tvDate;
     @BindView(R.id.btn_search)
     Button btnSearchJourney;
+    @BindView(R.id.btn_add_new_favourite)
+    ImageButton btnHeaderToggleFavorite;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -69,7 +71,6 @@ public class JourneySearchActivity extends AppCompatActivity implements JourneyS
         presenter = new JourneySearchPresenter(this);
 
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         this.tvDeparture.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG);
@@ -81,6 +82,7 @@ public class JourneySearchActivity extends AppCompatActivity implements JourneyS
         this.rlArrival.setOnClickListener(v -> onStationNameTextViewClick(I_CODE_ARRIVAL));
 
         btnSwapStationNames.setOnClickListener(v -> presenter.onSwapButtonClick(tvDeparture.getText().toString(), tvArrival.getText().toString()));
+        btnHeaderToggleFavorite.setOnClickListener(v -> presenter.onFavouriteButtonClick());
 
         // TIME PANEL
         tvTime.setOnClickListener(v -> onTimeClick());
@@ -157,8 +159,10 @@ public class JourneySearchActivity extends AppCompatActivity implements JourneyS
             String stationName = data.getStringExtra("stationName");
             if (requestCode == I_CODE_DEPARTURE) {
                 this.tvDeparture.setText(stationName);
+                presenter.onDepartureStationNameChanged(stationName);
             } else if (requestCode == I_CODE_ARRIVAL) {
                 this.tvArrival.setText(stationName);
+                presenter.onArrivalStationNameChanged(stationName);
             }
         }
     }
@@ -186,6 +190,7 @@ public class JourneySearchActivity extends AppCompatActivity implements JourneyS
         myIntent.putExtras(presenter.getState(getIntent().getExtras()));
         startActivity(myIntent);
     }
+
     @Override
     public void onInvalidSearchParameters() {
     }
@@ -211,5 +216,14 @@ public class JourneySearchActivity extends AppCompatActivity implements JourneyS
     private void onStationNameTextViewClick(int code) {
         Intent myIntent = new Intent(JourneySearchActivity.this, StationSearchActivity.class);
         startActivityForResult(myIntent, code);
+    }
+
+    @Override
+    public void setFavouriteButtonStatus(boolean isPreferred) {
+        if (isPreferred) {
+            this.btnHeaderToggleFavorite.setImageResource(R.drawable.ic_star_black);
+        } else {
+            this.btnHeaderToggleFavorite.setImageResource(R.drawable.ic_star_border);
+        }
     }
 }

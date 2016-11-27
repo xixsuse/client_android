@@ -55,7 +55,7 @@ public class PreferredStationsHelper {
 
     public static void removePreferredJourney(Context context, PreferredStation departureStation, PreferredStation arrivalStation) {
         removePreferredJourney(context, departureStation.getStationShortId(), arrivalStation.getStationShortId());
-        log(context, "saved_preferred_journey", buildPrefId(departureStation.getStationLongId(), arrivalStation.getStationLongId())
+        log(context, "saved_preferred_journey", buildPrefId(departureStation.getStationShortId(), arrivalStation.getStationShortId())
                 + " - "
                 + departureStation.getNameLong()
                 + " - "

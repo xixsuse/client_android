@@ -145,14 +145,14 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
             setFavouriteButtonStatus();
             view.showSnackbar("Tratta rimossa dai Preferiti", INTENT_C.SNACKBAR_ACTIONS.NONE);
         } else {
-            if (journeySolutions.size() > 0) {
+//            if (journeySolutions.size() > 0) {
                 PreferredStationsHelper.setPreferredJourney(view.getViewContext(),
                         new PreferredJourney(departureStation, arrivalStation));
                 setFavouriteButtonStatus();
                 view.showSnackbar("Tratta aggiunta ai Preferiti", INTENT_C.SNACKBAR_ACTIONS.NONE);
-            } else {
-                view.showSnackbar("Impossibile aggiungere ai preferiti una tratta senza soluzioni", INTENT_C.SNACKBAR_ACTIONS.NONE);
-            }
+//            } else {
+//                view.showSnackbar("Impossibile aggiungere ai preferiti una tratta senza soluzioni", INTENT_C.SNACKBAR_ACTIONS.NONE);
+//            }
         }
     }
 

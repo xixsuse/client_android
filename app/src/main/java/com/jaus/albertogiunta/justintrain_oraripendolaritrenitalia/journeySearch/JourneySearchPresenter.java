@@ -8,6 +8,8 @@ import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.Preferre
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.PreferredStation;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.Station4Database;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_C;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.PreferredStationsHelper;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.StationRealmUtils;
 
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -22,6 +24,7 @@ import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.
 import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_C.I_TIME;
 import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.StationRealmUtils.getStation4DatabaseObject;
 import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.StationRealmUtils.isStationNameValid;
+import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.StationRealmUtils.isThisJourneyPreferred;
 
 class JourneySearchPresenter implements JourneySearchContract.Presenter {
 
@@ -50,6 +53,7 @@ class JourneySearchPresenter implements JourneySearchContract.Presenter {
             this.departureStation = journey.getStation1();
             this.arrivalStation = journey.getStation2();
             view.setStationNames(departureStation.getNameLong(), arrivalStation.getNameLong());
+            setFavouriteButtonStatus();
             Log.d("onResuming: resuming bundle", journey.toString());
         } else {
             Log.d("no bundle found");
@@ -68,6 +72,18 @@ class JourneySearchPresenter implements JourneySearchContract.Presenter {
         bundle.putLong(I_TIME, dateTime.getMillis());
         Log.d("Current bundled DateTime is: ", dateTime);
         return bundle;
+    }
+
+    @Override
+    public void onDepartureStationNameChanged(String name) {
+        departureStation = new PreferredStation(StationRealmUtils.getStation4DatabaseObject(name));
+        setFavouriteButtonStatus();
+    }
+
+    @Override
+    public void onArrivalStationNameChanged(String name) {
+        arrivalStation = new PreferredStation(StationRealmUtils.getStation4DatabaseObject(name));
+        setFavouriteButtonStatus();
     }
 
     @Override
@@ -117,29 +133,62 @@ class JourneySearchPresenter implements JourneySearchContract.Presenter {
     }
 
     @Override
+    public void onFavouriteButtonClick() {
+        if (isDataValid()) {
+            if (isThisJourneyPreferred(departureStation, arrivalStation, view.getViewContext())) {
+                PreferredStationsHelper.removePreferredJourney(view.getViewContext(),
+                        departureStation,
+                        arrivalStation);
+                setFavouriteButtonStatus();
+                view.showSnackbar("Tratta rimossa dai Preferiti", INTENT_C.SNACKBAR_ACTIONS.NONE);
+            } else {
+                PreferredStationsHelper.setPreferredJourney(view.getViewContext(),
+                        new PreferredJourney(departureStation, arrivalStation));
+                setFavouriteButtonStatus();
+                view.showSnackbar("Tratta aggiunta ai Preferiti", INTENT_C.SNACKBAR_ACTIONS.NONE);
+            }
+        }
+    }
+
+    @Override
+    public void setFavouriteButtonStatus() {
+        if (isThisJourneyPreferred(departureStation, arrivalStation, view.getViewContext())) {
+            view.setFavouriteButtonStatus(true);
+        } else {
+            view.setFavouriteButtonStatus(false);
+        }
+    }
+
+    @Override
     public void onSearchButtonClick(String departureStationName, String arrivalStationName) {
-        if (isStationNameValid(departureStationName, stationList)) {
-            departureStation = new PreferredStation(getStation4DatabaseObject(departureStationName, stationList));
-        } else {
-            view.showSnackbar("Stazione di partenza mancante!", INTENT_C.SNACKBAR_ACTIONS.SELECT_DEPARTURE);
-            Log.d(departureStationName + " not found!");
-            return;
+        if (isDataValid()) {
+            view.onValidSearchParameters();
+            Log.d("Searching for: " + departureStation.toString(), arrivalStation.toString());
         }
-
-        if (isStationNameValid(arrivalStationName, stationList)) {
-            arrivalStation = new PreferredStation(getStation4DatabaseObject(arrivalStationName, stationList));
-        } else {
-            view.showSnackbar("Stazione di arrivo mancante!", INTENT_C.SNACKBAR_ACTIONS.SELECT_ARRIVAL);
-            Log.d(arrivalStationName + " not found!");
-            return;
-        }
-
-        view.onValidSearchParameters();
-        Log.d("Searching for: " + departureStation.toString(), arrivalStation.toString());
     }
 
     private void setDateTime() {
         view.setTime(dateTime.toString(DateTimeFormat.forPattern("HH:mm")));
         view.setDate(dateTime.toString(DateTimeFormat.forPattern("EE d MMMM").withLocale(Locale.ITALY)));
+    }
+
+    private boolean isDataValid() {
+        if (departureStation != null && isStationNameValid(departureStation.getNameShort(), stationList)) {
+            departureStation = new PreferredStation(getStation4DatabaseObject(departureStation.getNameShort(), stationList));
+        } else {
+            view.showSnackbar("Stazione di partenza mancante!", INTENT_C.SNACKBAR_ACTIONS.SELECT_DEPARTURE);
+            if (departureStation != null) Log.d(departureStation.getNameShort() + " not found!");
+            return false;
+        }
+
+        if (arrivalStation != null && isStationNameValid(arrivalStation.getNameShort(), stationList)) {
+            arrivalStation = new PreferredStation(getStation4DatabaseObject(arrivalStation.getNameShort(), stationList));
+        } else {
+            view.showSnackbar("Stazione di arrivo mancante!", INTENT_C.SNACKBAR_ACTIONS.SELECT_ARRIVAL);
+            if (arrivalStation != null) Log.d(arrivalStation.getNameShort() + " not found!");
+            return false;
+        }
+
+        return true;
     }
 }

@@ -10,6 +10,20 @@ interface JourneySearchContract {
     interface Presenter extends BasePresenter {
 
         /**
+         * It triggers an action when the user clicks on the "star" icon button.
+         * The action will most likely be to toggle the icon and save/remove the current
+         * journey from the favourite journeys.
+         */
+        void onFavouriteButtonClick();
+
+        /**
+         * It is called in order to automatically set the status of the favourite button.
+         * When called it will check for the current journey if it's already favourite, and
+         * it will set the button status depending on that.
+         */
+        void setFavouriteButtonStatus();
+
+        /**
          * It triggers an action when the user clicks on the "search" button.
          * It will check for correspondence of the inserted stations, and if everything's alright
          * it will fire the search. Otherwise it will notify the user with an error message.
@@ -17,6 +31,10 @@ interface JourneySearchContract {
          * @param arrivalStationName name for the arrival station
          */
         void onSearchButtonClick(String departureStationName, String arrivalStationName);
+
+        void onDepartureStationNameChanged(String name);
+
+        void onArrivalStationNameChanged(String name);
 
         /**
          * Acts as a listener for time changes. It's triggered by the user clicks on the time buttons
@@ -111,5 +129,7 @@ interface JourneySearchContract {
          * - Generic error
          */
         void onInvalidSearchParameters();
+
+        void setFavouriteButtonStatus(boolean isPreferred);
     }
 }

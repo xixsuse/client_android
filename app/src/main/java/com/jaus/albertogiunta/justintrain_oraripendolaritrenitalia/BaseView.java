@@ -30,5 +30,4 @@ public interface BaseView {
      * @param intent use it to understand what to do. It also should determine the action string.
      */
     void showSnackbar(String message, INTENT_C.SNACKBAR_ACTIONS intent);
-
 }

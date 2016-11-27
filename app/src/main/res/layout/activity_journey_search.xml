@@ -349,19 +349,38 @@
         </RelativeLayout>
     </LinearLayout>
 
-    <Button
-            android:id="@+id/btn_search"
+    <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_gravity="bottom"
-            android:layout_marginEnd="@dimen/margin_default"
-            android:layout_marginStart="@dimen/margin_default"
+            android:orientation="horizontal"
             android:layout_weight=".4"
-            android:background="@drawable/border_radius"
-            android:elevation="@dimen/elevation_default"
-            android:text="@string/search"
-            android:textColor="@color/txt_white"
-            android:textSize="@dimen/text_size_default_plus"
-            />
+            android:layout_gravity="bottom"
+            >
+
+        <ImageButton
+                android:id="@+id/btn_add_new_favourite"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_smaller"
+                android:layout_marginStart="@dimen/margin_default"
+                android:background="@android:color/transparent"
+                android:clickable="true"
+                android:tint="@color/btn_cyan"
+                app:srcCompat="@drawable/ic_star_border"
+                />
+
+        <Button
+                android:id="@+id/btn_search"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="@dimen/margin_default"
+                android:layout_marginStart="@dimen/margin_default"
+                android:background="@drawable/border_radius"
+                android:elevation="@dimen/elevation_default"
+                android:text="@string/search"
+                android:textColor="@color/txt_white"
+                android:textSize="@dimen/text_size_default_plus"
+                />
+    </LinearLayout>
 </LinearLayout>
 
