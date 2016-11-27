@@ -2,9 +2,6 @@ package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeyResul
 
 import com.google.gson.Gson;
 
-import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Pair;
 
@@ -18,6 +15,7 @@ import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.networking.Jo
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.networking.ServiceFactory;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.notification.NotificationService;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_C;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.NetworkingUtils;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.PreferredStationsHelper;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.StationRealmUtils;
 
@@ -290,7 +288,7 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
                         view.showErrorMessage("Il server sta avendo dei problemi", "Segnala il problema", INTENT_C.ERROR_BTN.SEND_REPORT);
                     }
                 } else if (exception instanceof ConnectException) {
-                    if (isNetworkAvailable()) {
+                    if (NetworkingUtils.isNetworkAvailable(view.getViewContext())) {
                         view.showErrorMessage("Il server sta avendo dei problemi", "Segnala il problema", INTENT_C.ERROR_BTN.SEND_REPORT);
                     } else {
                         view.showErrorMessage("Assicurati di essere connesso a Internet", "Attiva connessione", INTENT_C.ERROR_BTN.CONN_SETTINGS);
@@ -337,12 +335,6 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
     private boolean isInstant(DateTime selectedHour) {
         return selectedHour.getHourOfDay() == DateTime.now().getHourOfDay() &&
                 selectedHour.getMinuteOfHour() == DateTime.now().getMinuteOfHour();
-    }
-
-    private boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager = (ConnectivityManager) view.getViewContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
     private static class SearchInstantlyStrategy implements JourneyResultsContract.View.JourneySearchStrategy {

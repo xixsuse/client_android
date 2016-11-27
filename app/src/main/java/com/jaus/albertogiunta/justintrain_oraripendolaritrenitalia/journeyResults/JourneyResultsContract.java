@@ -102,7 +102,6 @@ interface JourneyResultsContract {
 
         /**
          * Called when a new set of solutions is ready. It will then notify the adapter
-         * @param solutionList the solutionlist to be set in the adapter
          */
         void updateSolutionsList();
 

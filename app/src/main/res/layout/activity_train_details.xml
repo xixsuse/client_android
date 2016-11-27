@@ -21,6 +21,37 @@
                 android:visibility="visible"
                 />
 
+        <RelativeLayout
+                android:id="@+id/rl_error"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_centerInParent="true"
+                >
+
+            <TextView
+                    android:id="@+id/tv_error_message"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:gravity="center"
+                    android:padding="@dimen/margin_default_plus"
+                    android:text="Messaggio"
+                    android:textSize="@dimen/text_size_default_plus"
+                    android:textStyle="italic"
+                    />
+
+            <Button
+                    android:id="@+id/btn_error_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tv_error_message"
+                    android:layout_centerHorizontal="true"
+                    android:backgroundTint="@color/btn_dark_cyan"
+                    android:text="Testo"
+                    android:textColor="@color/txt_white"
+                    />
+        </RelativeLayout>
+
         <android.support.v7.widget.RecyclerView
                 android:id="@+id/rv_train_details"
                 android:layout_width="match_parent"

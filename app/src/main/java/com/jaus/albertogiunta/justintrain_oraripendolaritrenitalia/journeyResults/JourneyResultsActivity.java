@@ -88,12 +88,12 @@ public class JourneyResultsActivity extends AppCompatActivity implements Journey
         rvJourneySolutions.addOnScrollListener(new HideShowScrollListener() {
             @Override
             public void onHide() {
-                btnRefresh.animate().setInterpolator(new LinearInterpolator()).translationY(150).setDuration(150);
+                btnRefresh.animate().setInterpolator(new LinearInterpolator()).translationY(150).setDuration(200);
             }
 
             @Override
             public void onShow() {
-                btnRefresh.animate().setInterpolator(new LinearInterpolator()).translationY(0).setDuration(150);
+                btnRefresh.animate().setInterpolator(new LinearInterpolator()).translationY(0).setDuration(200);
             }
         });
 

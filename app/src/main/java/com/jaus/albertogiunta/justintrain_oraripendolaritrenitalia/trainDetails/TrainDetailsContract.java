@@ -3,6 +3,7 @@ package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.trainDetails
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.BasePresenter;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.BaseView;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.Train;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_C;
 
 import java.util.List;
 
@@ -35,6 +36,15 @@ public interface TrainDetailsContract {
 
 
         void updateTrainDetails();
+
+        /**
+         * Hides everything and shows an error message with an action button
+         *
+         * @param tvMessage message to be shown
+         * @param btnMessage text for the button
+         * @param intent action to execute on button press
+         */
+        void showErrorMessage(String tvMessage, String btnMessage, INTENT_C.ERROR_BTN intent);
 
     }
 

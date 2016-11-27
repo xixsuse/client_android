@@ -13,14 +13,19 @@ import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.networking.Po
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.networking.ServiceFactory;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.networking.TrainService;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.notification.NotificationService;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_C;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.NetworkingUtils;
 
 import org.joda.time.DateTime;
 
+import java.net.ConnectException;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
+import retrofit2.adapter.rxjava.HttpException;
 import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
@@ -100,8 +105,29 @@ class TrainDetailsPresenter implements TrainDetailsContract.Presenter {
             }
 
             @Override
-            public void onError(Throwable e) {
-
+            public void onError(Throwable exception) {
+                Log.d(exception.getMessage());
+                if (view != null) {
+                    if (exception.getMessage().equals("HTTP 404 ")) {
+                        view.showErrorMessage("La tratta inserita non ha viaggi disponibili", "Torna alle soluzioni", INTENT_C.ERROR_BTN.NO_SOLUTIONS);
+                    } else {
+                        Log.e("onServerError: ", exception.toString());
+                        if (exception instanceof HttpException) {
+                            Log.d(((HttpException) exception).response().errorBody(), ((HttpException) exception).response().code());
+                            if (((HttpException) exception).response().code() == 500) {
+                                view.showErrorMessage("Il server sta avendo dei problemi", "Segnala il problema", INTENT_C.ERROR_BTN.SEND_REPORT);
+                            }
+                        } else if (exception instanceof ConnectException) {
+                            if (NetworkingUtils.isNetworkAvailable(view.getViewContext())) {
+                                view.showErrorMessage("Il server sta avendo dei problemi", "Segnala il problema", INTENT_C.ERROR_BTN.SEND_REPORT);
+                            } else {
+                                view.showErrorMessage("Assicurati di essere connesso a Internet", "Attiva connessione", INTENT_C.ERROR_BTN.CONN_SETTINGS);
+                            }
+                        } else if (exception instanceof SocketException) {
+                            view.showErrorMessage("Assicurati di essere connesso a Internet", "Attiva connessione", INTENT_C.ERROR_BTN.CONN_SETTINGS);
+                        }
+                    }
+                }
             }
 
             @Override
@@ -140,7 +166,6 @@ class TrainDetailsPresenter implements TrainDetailsContract.Presenter {
             trainStopList.add(t);
             trainStopList.addAll(sl);
         }
-        Log.w("getFlatTrainList: ", trainStopList.toString());
         return trainStopList;
     }
 
@@ -158,7 +183,6 @@ class TrainDetailsPresenter implements TrainDetailsContract.Presenter {
 
     @Override
     public void onNotificationRequested(int position) {
-        Log.d("onNotificationRequested: ", position);
         NotificationService.startActionStartNotification(view.getViewContext(),
                 preferredJourney.getStation1(),
                 preferredJourney.getStation2(),
