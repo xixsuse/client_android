@@ -9,12 +9,16 @@ public class PreferredJourney {
     private PreferredStation station2;
     private long timestamp;
     private int priority;
+    private String category;
+    private String version;
 
     public PreferredJourney(PreferredStation station1, PreferredStation station2) {
         this.station1 = station1;
         this.station2 = station2;
         timestamp = DateTime.now().toInstant().getMillis();
         priority = -1;
+        category = "";
+        version = "";
     }
 
     public PreferredJourney withStationsSwapped() {
@@ -54,6 +58,22 @@ public class PreferredJourney {
 
     public void setPriority(int priority) {
         this.priority = priority;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
     }
 
     @Override

@@ -69,13 +69,13 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_toLeftOf="@id/dummy"
-                android:maxLines="1"
+                android:maxLines="2"
                 android:text="Ciao"
                 android:textAlignment="textStart"
                 android:textSize="20sp"
                 android:textStyle="bold"
-                autofit:minTextSize="14sp"
                 android:textAllCaps="true"
+                autofit:minTextSize="14sp"
                 />
 
         <me.grantland.widget.AutofitTextView

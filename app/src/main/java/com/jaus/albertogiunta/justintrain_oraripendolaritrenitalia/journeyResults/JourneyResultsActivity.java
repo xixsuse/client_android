@@ -3,6 +3,7 @@ package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeyResul
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.provider.Settings;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
@@ -11,6 +12,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.view.animation.LinearInterpolator;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
@@ -19,10 +21,9 @@ import android.widget.TextView;
 
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.R;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.Journey;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.HideShowScrollListener;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_C;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.PreferredStationsHelper;
-
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -64,6 +65,7 @@ public class JourneyResultsActivity extends AppCompatActivity implements Journey
 
     JourneyResultsAdapter journeyResultsAdapter;
     JourneyResultsPresenter presenter;
+    private long refreshBtnLastClickTime = SystemClock.elapsedRealtime();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,7 +85,24 @@ public class JourneyResultsActivity extends AppCompatActivity implements Journey
         rvJourneySolutions.setHasFixedSize(true);
         rvJourneySolutions.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
 
-        btnRefresh.setOnClickListener(v -> presenter.searchFromSearch(true));
+        rvJourneySolutions.addOnScrollListener(new HideShowScrollListener() {
+            @Override
+            public void onHide() {
+                btnRefresh.animate().setInterpolator(new LinearInterpolator()).translationY(150).setDuration(150);
+            }
+
+            @Override
+            public void onShow() {
+                btnRefresh.animate().setInterpolator(new LinearInterpolator()).translationY(0).setDuration(150);
+            }
+        });
+
+        btnRefresh.setOnClickListener(v -> {
+            if (SystemClock.elapsedRealtime() - refreshBtnLastClickTime > 1000) {
+                presenter.searchFromSearch(true);
+            }
+            refreshBtnLastClickTime = SystemClock.elapsedRealtime();
+        });
         presenter.setState(getIntent().getExtras());
         presenter.searchFromSearch(true);
     }
@@ -94,9 +113,15 @@ public class JourneyResultsActivity extends AppCompatActivity implements Journey
     }
 
     @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        presenter.setState(savedInstanceState);
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
-        presenter.setState(getIntent().getExtras());
+//        presenter.setState(getIntent().getExtras());
     }
 
     @Override
@@ -174,14 +199,15 @@ public class JourneyResultsActivity extends AppCompatActivity implements Journey
 //    }
 
     @Override
-    public void updateSolutionsList(List<Journey.Solution> solutionList) {
+    public void updateSolutionsList() {
         rvJourneySolutions.getRecycledViewPool().clear();
         journeyResultsAdapter.notifyDataSetChanged();
     }
 
     @Override
     public void updateSolution(int elementIndex) {
-        Journey.Solution s = presenter.getSolutionList().get(elementIndex + 1);
+        Journey.Solution s = presenter.getSolutionList().get(elementIndex);
+        Log.d("updateSolution: ", s.toString());
         PreferredStationsHelper.log(this, "solution_update_requested",
                 "trainId: " + s.getTrainId()
                         + " journeyAepartureStation: " + s.getDepartureStationName()

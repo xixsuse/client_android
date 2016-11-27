@@ -17,6 +17,14 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
+//    dexOptions {
+//        incremental true
+//        preDexLibraries = false
+//        jumboMode = false
+//        maxProcessCount 4
+//        javaMaxHeapSize "6g"
+//    }
+
     defaultConfig {
         applicationId "com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia"
         minSdkVersion 19
@@ -60,6 +68,7 @@ dependencies {
     compile group: 'com.squareup.retrofit2', name: 'converter-jackson', version: '2.1.0'
     compile 'com.android.support:multidex:1.0.0'
     compile 'co.trikita:log:1.1.5'
+//    compile 'com.jakewharton.rxbinding:rxbinding:0.4.0'
     compile 'com.github.paolorotolo:appintro:4.1.0'
     compile 'com.android.support:support-v4:24.2.1'
     compile 'com.android.support:appcompat-v7:24.2.1'

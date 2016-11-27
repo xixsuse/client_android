@@ -9,13 +9,16 @@
     <color name="bg_dark">#455A64</color>
     <color name="bg_grey">#B0BEC5</color>
     <color name="bg_grey_lighter">#ECECEC</color>
+    <color name="bg_white_darker">#F5F5F5</color>
     <color name="bg_white">#FFFFFF</color>
-    <color name="white_darker">#F5F5F5</color>
+    <color name="bg_yellow">#FFFF8D</color>
+    <color name="bg_red">#ff8a80</color>
 
     <!-- TEXT -->
     <color name="txt_white">#FFFFFF</color>
     <color name="txt_red">#EF5350</color>
     <color name="txt_orange">#FFCA28</color>
+    <color name="txt_yellow">#fbff28</color>
     <color name="txt_green">#9CCC65</color>
     <color name="txt_dark">#37474F</color>
     <color name="txt_grey">#9E9E9E</color>
@@ -24,8 +27,12 @@
     <!-- BUTTONS-->
     <color name="btn_yellow">#FFFF8D</color>
     <color name="btn_cyan">#80D8FF</color>
+    <color name="btn_grey">#BDBDBD</color>
     <color name="ic_dark">#607D8B</color>
+    <color name="ic_red">#EF5350</color>
+    <color name="ic_orange">#FFCA28</color>
     <color name="ic_light">#ECECEC</color>
     <color name="btn_light_cyan">#E3F2FD</color>
     <color name="btn_dark_cyan">#01579B</color>
+    <color name="btn_red">#de294d</color>
 </resources>

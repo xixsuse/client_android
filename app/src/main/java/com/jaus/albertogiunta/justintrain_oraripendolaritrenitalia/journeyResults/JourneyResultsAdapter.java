@@ -1,7 +1,11 @@
 package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeyResults;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import android.content.Context;
-import android.support.v4.content.ContextCompat;
+import android.content.Intent;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,7 +18,9 @@ import android.widget.TextView;
 
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.R;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.Journey;
-import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.ViewsUtils;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.networking.DateTimeAdapter;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.networking.PostProcessingEnabler;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.trainDetails.TrainDetailsActivity;
 
 import org.joda.time.DateTime;
 
@@ -24,6 +30,14 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.BindViews;
 import butterknife.ButterKnife;
+
+import static butterknife.ButterKnife.apply;
+import static butterknife.ButterKnife.bind;
+import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_C.I_SOLUTION;
+import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_C.I_STATIONS;
+import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.ViewsUtils.GONE;
+import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.ViewsUtils.VISIBLE;
+import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.ViewsUtils.getColor;
 
 class JourneyResultsAdapter extends RecyclerView.Adapter {
 
@@ -91,9 +105,12 @@ class JourneyResultsAdapter extends RecyclerView.Adapter {
 
     class JourneyHolder extends RecyclerView.ViewHolder {
 
+        @BindView(R.id.cv_journey)
+        CardView cvJourney; // used for click
+
         @BindView(R.id.tv_train_category)
         TextView tvTrainCategory;
-        @BindView(R.id.tv_train_number)
+        @BindView(R.id.tv_train_id)
         TextView tvTrainNumber;
 
         @BindView(R.id.tv_changes_number)
@@ -111,15 +128,12 @@ class JourneyResultsAdapter extends RecyclerView.Adapter {
         @BindView(R.id.tv_arrival_time_with_delay)
         TextView tvArrivalTimeWithDelay;
 
-        @BindView(R.id.rl_time_difference)
-        RelativeLayout rlTimeDifference;
         @BindView(R.id.tv_time_difference)
         TextView tvTimeDifference;
-//        @BindView(R.id.tv_time_difference_text)
-//        TextView tvTimeDifferenceText;
-
         @BindView(R.id.btn_refresh_journey)
         ImageButton btnRefreshJourney;
+        @BindView(R.id.iv_suppressed)
+        ImageView ivSuppressed;
 
         ///
 
@@ -136,24 +150,34 @@ class JourneyResultsAdapter extends RecyclerView.Adapter {
 
         @BindView(R.id.ic_bolt)
         ImageView icBolt;
+        @BindView(R.id.ic_warning)
+        ImageView icWarning;
 
         @BindView(R.id.ll_notification)
         LinearLayout llNotification;
 
         @BindViews({R.id.ll_changes_number, R.id.rl_changes})
-        List<View> solutionChangesViews;
+        List<View> viewsForSolutionWithChanges;
 
-        @BindViews({R.id.ll_train_identification})
-        List<View> solutionDirectViews;
+        @BindViews({R.id.ll_train_identification, R.id.rl_platform})
+        List<View> viewsForDirectSolution;
 
-        @BindViews({R.id.rl_time_difference, R.id.tv_arrival_time_with_delay, R.id.tv_departure_time_with_delay})
-        List<View> solutionWithDelay;
+        @BindViews({R.id.tv_time_difference, R.id.tv_arrival_time_with_delay, R.id.tv_departure_time_with_delay})
+        List<View> viewsForTimeDifference;
 
         @BindViews({R.id.btn_refresh_journey})
-        List<View> solutionWithoutDelay;
+        List<View> viewsForRefreshableSolution;
 
         @BindViews({R.id.tv_arrival_time_with_delay, R.id.tv_departure_time_with_delay})
         List<View> timesWithDelay;
+
+        @BindViews({R.id.iv_suppressed})
+        List<View> viewsForSuppressedSolution;
+
+        @BindViews({R.id.tv_time_difference, R.id.tv_arrival_time_with_delay, R.id.tv_departure_time_with_delay})
+        List<View> viewsForFilledNotSuppressedSolution;
+
+        boolean isFilled, isSuppressed, hasAlert, isOnTime, hasEmptyRightSide;
 
         JourneyHolder(View itemView) {
             super(itemView);
@@ -161,77 +185,112 @@ class JourneyResultsAdapter extends RecyclerView.Adapter {
         }
 
         void bind(Journey.Solution solution) {
+            isFilled = solution.getTimeDifference() != null;
+            isSuppressed = !solution.hasChanges() && solution.getTrainStatusCode() != null && solution.getTrainStatusCode() == 2;
+            hasAlert = !solution.hasChanges() && solution.getTrainStatusCode() != null && solution.getTrainStatusCode() != 1 && solution.getTrainStatusCode() != 2;
+            isOnTime = solution.getTimeDifference() != null && solution.getTimeDifference() == 0;
+            hasEmptyRightSide = false;
+
+            if ((solution.getDepartureTime().isAfter(DateTime.now().withHourOfDay(23).withMinuteOfHour(59)) ||
+                    solution.getArrivalTime().isBefore(DateTime.now().withHourOfDay(0).withMinuteOfHour(0)))) {
+                if (solution.getDepartureTime().getHourOfDay() > 3 ||
+                        DateTime.now().getHourOfDay() < 22) {
+                    hasEmptyRightSide = true;
+                }
+            }
+
+            cvJourney.setOnClickListener(v -> {
+                Gson gson = new GsonBuilder()
+                        .registerTypeAdapter(DateTime.class, new DateTimeAdapter())
+                        .registerTypeAdapterFactory(new PostProcessingEnabler())
+                        .create();
+                Intent i = new Intent(context, TrainDetailsActivity.class);
+                i.putExtra(I_SOLUTION, gson.toJson(solution));
+                i.putExtra(I_STATIONS, gson.toJson(presenter.getPreferredJourney()));
+                context.startActivity(i);
+            });
 
             tvDepartureTime.setText(solution.getDepartureTimeReadable());
             tvArrivalTime.setText(solution.getArrivalTimeReadable());
             tvLastingTime.setText(solution.getDuration());
             llNotification.setOnClickListener(v -> presenter.onNotificationRequested(getAdapterPosition() - 1));
 
-            // se non è una soluzione di oggi non è possibile richiedere l'orario (controlla meglio la condizione)
-
-            if (solution.getTimeDifference() != null) {
-                ButterKnife.apply(solutionWithoutDelay, ViewsUtils.GONE);
-                ButterKnife.apply(solutionWithDelay, ViewsUtils.VISIBLE);
-                tvTimeDifference.setText(Integer.toString(solution.getTimeDifference()) + "'");
-//                tvTimeDifferenceText.setText(setProgress(solution.getProgress()));
-                if (solution.getTimeDifference() != 0) {
-                    tvDepartureTimeWithDelay.setText(solution.getDepartureTimeWithDelayReadable());
-                    tvArrivalTimeWithDelay.setText(solution.getArrivalTimeWithDelayReadable());
-                } else {
-                    ButterKnife.apply(timesWithDelay, ViewsUtils.GONE);
-                }
-                setColors(context, solution.getTimeDifference());
-                rlTimeDifference.setOnLongClickListener(view -> {
-                    presenter.onJourneyRefreshRequested(getAdapterPosition() - 1);
-                    return true;
-                });
+            if (isSuppressed) {
+                apply(viewsForSuppressedSolution, VISIBLE);
+                apply(llNotification, GONE);
+                apply(viewsForFilledNotSuppressedSolution, GONE);
+                apply(viewsForRefreshableSolution, GONE);
             } else {
-                ButterKnife.apply(solutionWithDelay, ViewsUtils.GONE);
-                ButterKnife.apply(solutionWithoutDelay, ViewsUtils.VISIBLE);
-                btnRefreshJourney.setOnClickListener(view -> presenter.onJourneyRefreshRequested(getAdapterPosition() - 1));
-            }
+                if (isFilled) {
+                    apply(viewsForSuppressedSolution, GONE);
+                    apply(llNotification, VISIBLE);
+                    apply(viewsForFilledNotSuppressedSolution, VISIBLE);
+                    apply(viewsForRefreshableSolution, GONE);
 
-//            Log.d("\ndep", solution.getDepartureTime().toString(), "\narr", solution.getArrivalTime().toString(), "\nnow", DateTime.now().toString(), "\n\n");
-//            Log.d("");
-//            Log.d("3", DateTime.now().withHourOfDay(3).withMinuteOfHour(0).toString());
-//            Log.d("22", DateTime.now().withHourOfDay(22).withMinuteOfHour(0));
-//            Log.d("");
-            if ((solution.getDepartureTime().isAfter(DateTime.now().withHourOfDay(23).withMinuteOfHour(59)) ||
-                    solution.getArrivalTime().isBefore(DateTime.now().withHourOfDay(0).withMinuteOfHour(0)))) {
-                if (solution.getDepartureTime().getHourOfDay() > 3 ||
-                        DateTime.now().getHourOfDay() < 22) {
-                    ButterKnife.apply(solutionWithDelay, ViewsUtils.GONE);
-                    ButterKnife.apply(solutionWithoutDelay, ViewsUtils.GONE);
+                    tvTimeDifference.setText(Integer.toString(solution.getTimeDifference()) + "'");
+                    tvTimeDifference.setTextColor(getColor(context, solution.getTimeDifference()));
+                    tvTimeDifference.setOnLongClickListener(view -> {
+                        presenter.onJourneyRefreshRequested(getAdapterPosition() - 1);
+                        return true;
+                    });
+
+                    if (isOnTime) {
+                        apply(timesWithDelay, GONE);
+                    } else {
+                        tvDepartureTimeWithDelay.setText(solution.getDepartureTimeWithDelayReadable());
+                        tvDepartureTimeWithDelay.setTextColor(getColor(context, solution.getTimeDifference()));
+                        tvArrivalTimeWithDelay.setText(solution.getArrivalTimeWithDelayReadable());
+                        tvArrivalTimeWithDelay.setTextColor(getColor(context, solution.getTimeDifference()));
+                    }
+                } else {
+                    apply(viewsForSuppressedSolution, GONE);
+                    apply(viewsForFilledNotSuppressedSolution, GONE);
+                    apply(viewsForRefreshableSolution, VISIBLE);
+                    btnRefreshJourney.setOnClickListener(view -> presenter.onJourneyRefreshRequested(getAdapterPosition() - 1));
                 }
+
+                if (hasAlert) {
+                    apply(icWarning, VISIBLE);
+                } else {
+                    apply(icWarning, GONE);
+                }
+
+                if (hasEmptyRightSide) {
+                    apply(viewsForSuppressedSolution, GONE);
+                    apply(viewsForFilledNotSuppressedSolution, GONE);
+                    apply(viewsForRefreshableSolution, GONE);
+                }
+
             }
 
-            if (!solution.isHasChanges()) {
-                ButterKnife.apply(solutionChangesViews, ViewsUtils.GONE);
-                ButterKnife.apply(solutionDirectViews, ViewsUtils.VISIBLE);
+            // -------------------------------------------------------- //
+
+            if (solution.hasChanges()) {
+                apply(viewsForDirectSolution, GONE);
+                apply(viewsForSolutionWithChanges, VISIBLE);
+                int changesNumber = solution.getChangesList().size() - 1;
+                tvChangesNumber.setText(Integer.toString(changesNumber));
+                tvChangesText.setText(changesNumber == 1 ? "Cambio" : "Cambi");
+                tvChange.setText(setChangesString(solution));
+            } else {
+                apply(viewsForSolutionWithChanges, GONE);
+                apply(viewsForDirectSolution, VISIBLE);
                 tvTrainCategory.setText(solution.getTrainCategory());
                 tvTrainNumber.setText(solution.getTrainId());
-            } else {
-                ButterKnife.apply(solutionDirectViews, ViewsUtils.GONE);
-                ButterKnife.apply(solutionChangesViews, ViewsUtils.VISIBLE);
-                int changesNumber = solution.getChangesList().size() - 1;
-                String changesText = changesNumber == 1 ? "Cambio" : "Cambi";
-                tvChangesNumber.setText(Integer.toString(changesNumber));
-                tvChangesText.setText(changesText);
-                tvChange.setText(setChangesString(solution));
+
+                if (solution.getDeparturePlatform() != null) {
+                    apply(rlPlatform, VISIBLE);
+                    tvPlatform.setText(solution.getDeparturePlatform());
+                } else {
+                    apply(rlPlatform, GONE);
+                }
             }
 
-            if (solution.getDeparturePlatform() != null && !solution.isHasChanges()) {
-                ButterKnife.apply(rlPlatform, ViewsUtils.VISIBLE);
-                tvPlatform.setText(solution.getDeparturePlatform());
-            } else {
-                ButterKnife.apply(rlPlatform, ViewsUtils.GONE);
-            }
-
-            if (solution.isArrivesFirst()) {
-                ButterKnife.apply(icBolt, ViewsUtils.VISIBLE);
-            } else {
-                ButterKnife.apply(icBolt, ViewsUtils.GONE);
-            }
+//            if (solution.isArrivesFirst()) {
+//                apply(icBolt, VISIBLE);
+//            } else {
+//                apply(icBolt, GONE);
+//            }
         }
 
         private String setChangesString(Journey.Solution solution) {
@@ -249,21 +308,6 @@ class JourneyResultsAdapter extends RecyclerView.Adapter {
             }
             return string;
         }
-
-        private void setColors(Context context, int timeDifference) {
-            int color = ContextCompat.getColor(context, R.color.txt_white);
-            if (timeDifference == 0) {
-                color = ContextCompat.getColor(context, R.color.ontime);
-            } else if (timeDifference > 0) {
-                color = ContextCompat.getColor(context, R.color.late1);
-            } else if (timeDifference < 0) {
-                color = ContextCompat.getColor(context, R.color.early1);
-            }
-
-            tvTimeDifference.setTextColor(color);
-            tvDepartureTimeWithDelay.setTextColor(color);
-            tvArrivalTimeWithDelay.setTextColor(color);
-        }
     }
 
     @SuppressWarnings("WeakerAccess")
@@ -275,7 +319,7 @@ class JourneyResultsAdapter extends RecyclerView.Adapter {
 
         LoadMoreBeforeHolder(View itemView) {
             super(itemView);
-            ButterKnife.bind(this, itemView);
+            bind(this, itemView);
             btn.setOnClickListener(view -> {
                 presenter.onLoadMoreItemsBefore();
                 busyButton();
@@ -283,13 +327,13 @@ class JourneyResultsAdapter extends RecyclerView.Adapter {
         }
 
         void busyButton() {
-            ButterKnife.apply(relativeLayout, ViewsUtils.VISIBLE);
-            ButterKnife.apply(btn, ViewsUtils.GONE);
+            apply(relativeLayout, VISIBLE);
+            apply(btn, GONE);
         }
 
         void readyButton() {
-            ButterKnife.apply(relativeLayout, ViewsUtils.GONE);
-            ButterKnife.apply(btn, ViewsUtils.VISIBLE);
+            apply(relativeLayout, GONE);
+            apply(btn, VISIBLE);
         }
     }
 
@@ -301,7 +345,7 @@ class JourneyResultsAdapter extends RecyclerView.Adapter {
 
         LoadMoreAfterHolder(View itemView) {
             super(itemView);
-            ButterKnife.bind(this, itemView);
+            bind(this, itemView);
             btn.setOnClickListener(view -> {
                 presenter.onLoadMoreItemsAfter();
                 busyButton();
@@ -309,13 +353,13 @@ class JourneyResultsAdapter extends RecyclerView.Adapter {
         }
 
         void busyButton() {
-            ButterKnife.apply(relativeLayout, ViewsUtils.VISIBLE);
-            ButterKnife.apply(btn, ViewsUtils.GONE);
+            apply(relativeLayout, VISIBLE);
+            apply(btn, GONE);
         }
 
         void readyButton() {
-            ButterKnife.apply(relativeLayout, ViewsUtils.GONE);
-            ButterKnife.apply(btn, ViewsUtils.VISIBLE);
+            apply(relativeLayout, GONE);
+            apply(btn, VISIBLE);
         }
     }
 }

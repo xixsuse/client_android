@@ -78,6 +78,8 @@ public class Journey implements PostProcessingEnabler.PostProcessable {
         private boolean hasChanges;
         private List<Change> changesList;
 
+        private Integer trainStatusCode;
+
         public String getTrainCategory() {
             return trainCategory;
         }
@@ -206,7 +208,7 @@ public class Journey implements PostProcessingEnabler.PostProcessable {
             this.arrivesFirst = arrivesFirst;
         }
 
-        public boolean isHasChanges() {
+        public boolean hasChanges() {
             return hasChanges;
         }
 
@@ -220,6 +222,14 @@ public class Journey implements PostProcessingEnabler.PostProcessable {
 
         public void setChangesList(List<Change> changesList) {
             this.changesList = changesList;
+        }
+
+        public Integer getTrainStatusCode() {
+            return trainStatusCode;
+        }
+
+        public void setTrainStatusCode(Integer trainStatusCode) {
+            this.trainStatusCode = trainStatusCode;
         }
 
         private String makeDateTimeReadable(DateTime dt) {

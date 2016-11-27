@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_small"
+        android:layout_marginEnd="@dimen/margin_small"
+        android:layout_marginTop="@dimen/margin_small"
+        android:layout_marginBottom="1dp"
+        app:cardElevation="@dimen/elevation_default"
+        android:background="@color/bg_white"
+        app:cardCornerRadius="5dp"
+        app:cardUseCompatPadding="false"
+        >
+
+    <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="@dimen/margin_default"
+            >
+
+        <LinearLayout
+                android:id="@+id/ll_time_difference"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_alignParentEnd="true"
+                >
+
+            <TextView
+                    android:id="@+id/tv_time_difference"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:textColor="@color/late1"
+                    android:textSize="@dimen/text_size_bigger"
+                    android:text="4'"
+                    />
+
+            <TextView
+                    android:id="@+id/tv_progress"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:maxLines="1"
+                    android:textColor="@color/txt_grey_lighter"
+                    android:textSize="@dimen/text_size_smaller"
+                    android:textStyle="italic"
+                    android:text="Rallentando"
+                    />
+        </LinearLayout>
+
+        <RelativeLayout
+                android:id="@+id/ll_train_info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/margin_default"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentStart="true"
+                android:layout_toStartOf="@id/ll_time_difference"
+                >
+
+            <TextView
+                    android:id="@+id/tv_train_number_category"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAlignment="textStart"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:textAllCaps="true"
+                    android:text="IC 605"
+                    />
+
+            <TextView
+                    android:id="@+id/tv_train_status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toEndOf="@id/tv_train_number_category"
+                    android:layout_marginStart="@dimen/margin_default"
+                    android:layout_marginTop="5dp"
+                    android:textSize="12sp"
+                    android:textAllCaps="true"
+                    android:textStyle="bold"
+                    android:text="in viaggio"
+                    />
+
+            <me.grantland.widget.AutofitTextView
+                    android:id="@+id/tv_with_exception"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tv_train_status"
+                    android:layout_alignStart="@id/tv_train_status"
+                    android:textSize="1sp"
+                    android:maxLines="2"
+                    android:textAllCaps="true"
+                    android:textStyle="bold"
+                    android:text="con fermate straordinarie"
+                    android:visibility="visible"
+                    />
+        </RelativeLayout>
+
+        <LinearLayout
+                android:id="@+id/ll_from_to"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_below="@id/ll_train_info"
+                >
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="5dp"
+                    android:textSize="@dimen/text_size_smaller"
+                    android:text="Da"
+                    />
+
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="5dp"
+                    android:textSize="@dimen/text_size_smaller"
+                    android:layout_gravity="end"
+                    android:text="a"
+                    />
+        </LinearLayout>
+
+        <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/ll_train_info"
+                android:layout_toEndOf="@id/ll_from_to"
+                android:orientation="vertical"
+                >
+
+            <TextView
+                    android:id="@+id/tv_departure_station_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/text_size_smaller"
+                    android:layout_gravity="start"
+                    android:textStyle="bold"
+                    android:text="Milano Centrale (05:40)"
+                    />
+
+            <TextView
+                    android:id="@+id/tv_arrival_station_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/text_size_smaller"
+                    android:layout_gravity="start"
+                    android:textStyle="bold"
+                    android:text="Pescara (23:55)"
+                    />
+        </LinearLayout>
+
+
+        <LinearLayout
+                android:id="@+id/ll_last_seen"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_below="@id/ll_from_to"
+                android:layout_alignParentStart="true"
+                android:layout_toStartOf="@id/btn_pin"
+                android:layout_marginTop="@dimen/margin_default"
+                >
+
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="5dp"
+                    android:textSize="@dimen/text_size_smaller"
+                    android:text="Visto a"
+                    />
+
+            <me.grantland.widget.AutofitTextView
+                    android:id="@+id/tv_last_seen_station_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="5dp"
+                    android:textSize="@dimen/text_size_smaller"
+                    android:maxLines="3"
+                    android:textStyle="bold"
+                    android:text="Cattolica San Giovanni Gabicce (23:30)"
+                    />
+        </LinearLayout>
+
+        <me.grantland.widget.AutofitTextView
+                android:id="@+id/tv_cancelled_stops_info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/ll_last_seen"
+                android:layout_alignParentStart="true"
+                android:layout_marginTop="12dp"
+                android:maxLines="3"
+                android:text=""
+                />
+
+        <ImageView
+                android:id="@+id/btn_pin"
+                android:layout_width="@dimen/ic_big"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_below="@id/ll_time_difference"
+                android:layout_marginTop="@dimen/margin_default"
+                android:layout_marginEnd="@dimen/margin_default"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:tint="@color/btn_dark_cyan"
+                app:srcCompat="@drawable/ic_pin2"
+                android:visibility="visible"
+                />
+    </RelativeLayout>
+
+</android.support.v7.widget.CardView>

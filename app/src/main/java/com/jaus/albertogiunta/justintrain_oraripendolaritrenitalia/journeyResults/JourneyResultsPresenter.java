@@ -6,6 +6,7 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.util.Pair;
 
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.Journey;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.PreferredJourney;
@@ -24,12 +25,15 @@ import org.joda.time.DateTime;
 
 import java.net.ConnectException;
 import java.net.SocketException;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
 import retrofit2.adapter.rxjava.HttpException;
+import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -77,6 +81,11 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
         } else {
             Log.d("no bundle found");
         }
+    }
+
+    @Override
+    public PreferredJourney getPreferredJourney() {
+        return new PreferredJourney(departureStation, arrivalStation);
     }
 
     @Override
@@ -168,36 +177,83 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
     @Override
     public void onNotificationRequested(int elementIndex) {
         NotificationService.startActionStartNotification(view.getViewContext(),
-                departureStation.getStationShortId(),
-                arrivalStation.getStationShortId(),
-                journeySolutions.get(elementIndex));
+                departureStation,
+                arrivalStation,
+                journeySolutions.get(elementIndex),
+                journeySolutions.get(elementIndex).hasChanges() ? 0 : null);
     }
 
     @Override
     public void onJourneyRefreshRequested(int elementIndex) {
         RealmResults<Station4Database> stationList = Realm.getDefaultInstance().where(Station4Database.class).findAll();
-        if (journeySolutions.get(elementIndex).isHasChanges()) {
+        Map<Pair<String, String>, String> m = new HashMap<>();
+        if (journeySolutions.get(elementIndex).hasChanges()) {
             for (int changeIndex = 0; changeIndex < journeySolutions.get(elementIndex).getChangesList().size(); changeIndex++) {
-                String departureStationName = journeySolutions.get(elementIndex).getChangesList().get(changeIndex).getDepartureStationName();
-                String arrivalStationName = journeySolutions.get(elementIndex).getChangesList().get(changeIndex).getArrivalStationName();
                 try {
+                    String departureStationName = journeySolutions.get(elementIndex).getChangesList().get(changeIndex).getDepartureStationName();
+                    String arrivalStationName = journeySolutions.get(elementIndex).getChangesList().get(changeIndex).getArrivalStationName();
                     Station4Database tempDepartureStation = StationRealmUtils.getStation4DatabaseObject(departureStationName, stationList);
                     Station4Database tempArrivalStation = StationRealmUtils.getStation4DatabaseObject(arrivalStationName, stationList);
-                    refreshChange(elementIndex, changeIndex,
-                            tempDepartureStation.getStationShortId(),
-                            tempArrivalStation.getStationShortId(),
-                            journeySolutions.get(elementIndex).getChangesList().get(changeIndex).getTrainId());
+
+                    m.put(new Pair<>(tempDepartureStation.getStationShortId(), tempArrivalStation.getStationShortId()), journeySolutions.get(elementIndex).getChangesList().get(changeIndex).getTrainId());
                 } catch (Exception e) {
                     view.showSnackbar("Non riesco ad aggiornare questa soluzione", INTENT_C.SNACKBAR_ACTIONS.NONE);
-                    Log.e("onJourneyRefreshRequested: ", "Non è stata trovata nessuna corrispondenza per le stazioni: ", departureStationName, arrivalStationName);
                 }
             }
         } else {
-            refreshChange(elementIndex, -1,
-                    departureStation.getStationShortId(),
-                    arrivalStation.getStationShortId(),
-                    journeySolutions.get(elementIndex).getTrainId());
+            m.put(new Pair<>(departureStation.getStationShortId(), arrivalStation.getStationShortId()), journeySolutions.get(elementIndex).getTrainId());
         }
+        Observable.concatDelayError(refreshChange(m)).subscribe(new Subscriber<TrainHeader>() {
+            @Override
+            public void onCompleted() {
+                journeySolutions.get(elementIndex).refreshData();
+                view.updateSolution(elementIndex);
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                if (e.getMessage().equals("HTTP 404 ")) {
+                    view.showSnackbar("Il treno potrebbe avere cambiato codice", INTENT_C.SNACKBAR_ACTIONS.NONE);
+                }
+            }
+
+            @Override
+            public void onNext(TrainHeader trainHeader) {
+                Integer changeIndex = null;
+                Journey.Solution sol = journeySolutions.get(elementIndex);
+
+                if (sol.hasChanges()) {
+                    List<Journey.Solution.Change> changes = sol.getChangesList();
+                    for (Journey.Solution.Change c : changes) {
+                        if (trainHeader.getTrainId().equalsIgnoreCase(c.getTrainId()))
+                            changeIndex = changes.indexOf(c);
+                    }
+                    if (changeIndex != null) {
+                        changes.get(changeIndex).setDeparturePlatform(trainHeader.getDeparturePlatform());
+                        if (trainHeader.isDeparted()) {
+                            changes.get(changeIndex).setTimeDifference(trainHeader.getTimeDifference());
+                            changes.get(changeIndex).setProgress(trainHeader.getProgress());
+                            changes.get(changeIndex).postProcess();
+                        } else if (sol.getTimeDifference() == null) {
+                            view.showSnackbar("Il treno "
+                                    + trainHeader.getTrainCategory()
+                                    + " "
+                                    + trainHeader.getTrainId()
+                                    + " non è ancora partito", INTENT_C.SNACKBAR_ACTIONS.NONE);
+                        }
+                    }
+                } else {
+                    sol.setDeparturePlatform(trainHeader.getDeparturePlatform());
+                    if (trainHeader.isDeparted()) {
+                        sol.setTimeDifference(trainHeader.getTimeDifference());
+                        sol.setProgress(trainHeader.getProgress());
+                    } else {
+                        view.showSnackbar("Il treno non è ancora partito", INTENT_C.SNACKBAR_ACTIONS.NONE);
+                    }
+                }
+
+            }
+        });
     }
 
     @Override
@@ -249,87 +305,39 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
     @Override
     public void onSuccess() {
         view.hideProgress();
-        view.updateSolutionsList(journeySolutions);
+        view.updateSolutionsList();
     }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
-    private void refreshChange(int solutionIndex, int changeIndex, String departureStationId, String arrivalStationId, String trainId) {
-        Log.d("refreshChange:", solutionIndex, changeIndex, trainId);
-        try {
-            Integer.parseInt(departureStationId);
-            Integer.parseInt(arrivalStationId);
-            Integer.parseInt(trainId);
-        } catch (NumberFormatException e) {
-            view.showSnackbar("Premere di nuovo il pulsante aggiorna", INTENT_C.SNACKBAR_ACTIONS.NONE);
-            Log.e("refreshChange: ", "There are problems with these parameters:", departureStationId, arrivalStationId, trainId);
-            view.updateSolution(solutionIndex);
-            view.updateSolution(solutionIndex);
-            return;
+    private List<Observable<TrainHeader>> refreshChange(Map<Pair<String, String>, String> info) {
+        List<Observable<TrainHeader>> o = new LinkedList<>();
+        for (Pair<String, String> p : info.keySet()) {
+            Log.d("refreshChange: trainId", info.get(p));
+            try {
+                Integer.parseInt(p.first);
+                Integer.parseInt(p.second);
+                Integer.parseInt(info.get(p));
+            } catch (NumberFormatException e) {
+                view.showSnackbar("Problema di aggiornamento", INTENT_C.SNACKBAR_ACTIONS.NONE);
+                Log.e("refreshChange: ", "There are problems with these parameters:", p.first, p.second, info.get(p));
+                continue;
+            }
+
+            o.add(ServiceFactory.createRetrofitService(JourneyService.class, JourneyService.SERVICE_ENDPOINT)
+                    .getDelay(p.first,
+                            p.second,
+                            info.get(p))
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread()));
         }
-
-        ServiceFactory.createRetrofitService(JourneyService.class, JourneyService.SERVICE_ENDPOINT)
-                .getDelay(departureStationId,
-                        arrivalStationId,
-                        trainId)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<TrainHeader>() {
-                    @Override
-                    public void onCompleted() {
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.d(e.getMessage());
-                    }
-
-                    @Override
-                    public void onNext(TrainHeader trainHeader) {
-                        Log.d("onNext:", trainHeader.toString());
-
-                        if (journeySolutions.get(solutionIndex).isHasChanges()) {
-                            journeySolutions.get(solutionIndex).getChangesList().get(changeIndex).setDeparturePlatform(trainHeader.getDeparturePlatform());
-                            if (trainHeader.isDeparted()) {
-                                journeySolutions.get(solutionIndex).getChangesList().get(changeIndex).setTimeDifference(trainHeader.getTimeDifference());
-                                journeySolutions.get(solutionIndex).getChangesList().get(changeIndex).setProgress(trainHeader.getProgress());
-                                journeySolutions.get(solutionIndex).getChangesList().get(changeIndex).postProcess();
-                            } else if (journeySolutions.get(solutionIndex).getTimeDifference() == null) {
-                                view.showSnackbar("Il treno "
-                                        + trainHeader.getTrainCategory()
-                                        + " "
-                                        + trainHeader.getTrainId()
-                                        + " non è ancora partito", INTENT_C.SNACKBAR_ACTIONS.NONE);
-                            }
-                        } else {
-                            journeySolutions.get(solutionIndex).setDeparturePlatform(trainHeader.getDeparturePlatform());
-                            if (trainHeader.isDeparted()) {
-                                journeySolutions.get(solutionIndex).setTimeDifference(trainHeader.getTimeDifference());
-                                journeySolutions.get(solutionIndex).setProgress(trainHeader.getProgress());
-                            } else {
-                                view.showSnackbar("Il treno non è ancora partito", INTENT_C.SNACKBAR_ACTIONS.NONE);
-                            }
-                        }
-                        journeySolutions.get(solutionIndex).refreshData();
-
-                        if (!journeySolutions.get(solutionIndex).isHasChanges() || (journeySolutions.get(solutionIndex).isHasChanges() && changeIndex == journeySolutions.get(solutionIndex).getChangesList().size() - 1)) {
-                            view.updateSolution(solutionIndex);
-                        }
-                    }
-                });
+        return o;
     }
+
 
     private boolean isInstant(DateTime selectedHour) {
         return selectedHour.getHourOfDay() == DateTime.now().getHourOfDay() &&
                 selectedHour.getMinuteOfHour() == DateTime.now().getMinuteOfHour();
     }
-
-//    private String sanitizeStationName(String dirtyName) {
-//        return dirtyName
-//                .replaceAll("Bologna Centrale", "Bologna C.LE")
-//                .replaceAll("TO Lingotto", "Torino Lingotto")
-//                .replaceAll("Torino P. Susa", "Torino Porta Susa")
-//                .replaceAll("Verona P.Nuova", "Verona Porta Nuova");
-//    }
 
     private boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager = (ConnectivityManager) view.getViewContext().getSystemService(Context.CONNECTIVITY_SERVICE);

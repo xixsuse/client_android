@@ -16,12 +16,18 @@ import android.support.v4.app.NotificationCompat;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.R;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.TrainHeader;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.networking.DateTimeAdapter;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.trainDetails.TrainDetailsActivity;
 
 import org.joda.time.DateTime;
+
+import java.util.Random;
 
 import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.notification.NotificationService.ACTION_STOP_NOTIFICATION;
 import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.notification.NotificationService.ACTION_UPDATE_NOTIFICATION;
 import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.notification.NotificationService.EXTRA_NOTIFICATION_DATA;
+import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.notification.NotificationService.solution;
+import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_C.I_SOLUTION;
+import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_C.I_STATIONS;
 
 /**
  * Helper class for showing and canceling train
@@ -59,6 +65,16 @@ class TrainNotification {
         Intent iStop = new Intent(context, NotificationService.class);
         iStop.setAction(ACTION_STOP_NOTIFICATION);
 
+        Intent notificationIntent = new Intent(context, TrainDetailsActivity.class);
+        notificationIntent.putExtra(I_SOLUTION, gson.toJson(solution));
+        notificationIntent.putExtra(I_STATIONS, gson.toJson(NotificationService.preferredJourney));
+        notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        PendingIntent intent = PendingIntent.getActivity(context, new Random().nextInt(),
+                notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        int refreshIc = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP ? R.drawable.ic_refresh : R.drawable.ic_refresh2;
+        int closeIc = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP ? R.drawable.ic_close : R.drawable.ic_close2;
+
         final NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
                 .setDefaults(Notification.DEFAULT_SOUND)
                 // Set required fields, including the small icon, the notification title, and text.
@@ -75,16 +91,19 @@ class TrainNotification {
                         .setBigContentTitle(title)
                         .setSummaryText(smallText))
                 .addAction(
-                        R.drawable.ic_refresh2,
+                        refreshIc,
                         res.getString(R.string.action_refresh),
                         PendingIntent.getService(context, 1000, iUpdate, PendingIntent.FLAG_UPDATE_CURRENT))
                 .addAction(
-                        R.drawable.ic_close2,
+                        closeIc,
                         res.getString(R.string.action_end),
                         PendingIntent.getService(context, 1001, iStop, PendingIntent.FLAG_UPDATE_CURRENT))
                 // Automatically dismiss the notification when it is touched.
                 .setAutoCancel(false)
-                .setOngoing(true);
+                .setOngoing(true)
+                .setContentIntent(intent);
+
+
 
         if (!hasVibration) {
             builder.setVibrate(null);

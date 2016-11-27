@@ -3,6 +3,7 @@ package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeyResul
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.BasePresenter;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.BaseView;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.Journey;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.PreferredJourney;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_C;
 
 import org.joda.time.DateTime;
@@ -74,6 +75,8 @@ interface JourneyResultsContract {
          * @return the current solution list
          */
         List<Journey.Solution> getSolutionList();
+
+        PreferredJourney getPreferredJourney();
     }
 
     interface View extends BaseView {
@@ -101,7 +104,7 @@ interface JourneyResultsContract {
          * Called when a new set of solutions is ready. It will then notify the adapter
          * @param solutionList the solutionlist to be set in the adapter
          */
-        void updateSolutionsList(List<Journey.Solution> solutionList);
+        void updateSolutionsList();
 
         /**
          * Called when only one solution has been updated

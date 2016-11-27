@@ -8,11 +8,14 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.Journey;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.PreferredJourney;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.PreferredStation;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.TrainHeader;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.networking.DateTimeAdapter;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.networking.JourneyService;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.networking.ServiceFactory;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.PreferredStationsHelper;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.StationRealmUtils;
 
 import org.joda.time.DateTime;
 
@@ -31,6 +34,9 @@ public class NotificationService extends IntentService {
     public static final String ACTION_UPDATE_NOTIFICATION = "com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.action.UPDATE_NOTIFICATION";
     public static final String EXTRA_NOTIFICATION_DATA = "com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.extra.NOTIFICATION_DATA";
 
+    public static PreferredJourney preferredJourney;
+    public static Journey.Solution solution;
+
     Gson gson = new GsonBuilder()
             .registerTypeAdapter(DateTime.class, new DateTimeAdapter())
             .create();
@@ -39,21 +45,31 @@ public class NotificationService extends IntentService {
         super("NotificationService");
     }
 
-    public static void startActionStartNotification(Context context, String journeyDepartureStationId, String journeyArrivalStationId, Journey.Solution solution) {
+    public static void startActionStartNotification(Context context, PreferredStation journeyDepartureStation, PreferredStation journeyArrivalStation, Journey.Solution sol, Integer indexOfJourneyToBeNotified) {
         Log.d("startActionStartNotification:", "start");
+
+        String trainId;
+        String journeyDepartureStationId = journeyDepartureStation.getStationShortId();
+        String journeyArrivalStationId = journeyArrivalStation.getStationShortId();
+        Intent intent = new Intent(context, NotificationService.class);
+
+        preferredJourney = new PreferredJourney(journeyArrivalStation, journeyArrivalStation);
+        solution = sol;
+
+        intent.setAction(ACTION_START_NOTIFICATION);
+
         PreferredStationsHelper.log(context, "notification_requested",
                 "journeyDepartureStationId " + journeyDepartureStationId
                         + " journeyArrivalStationId " + journeyArrivalStationId
-                        + " data: " + new Gson().toJson(solution));
+                        + " data: " + new Gson().toJson(sol));
 
-        Intent intent = new Intent(context, NotificationService.class);
-        intent.setAction(ACTION_START_NOTIFICATION);
-        String trainId;
-        if (solution.isHasChanges()) {
-            trainId = solution.getChangesList().get(0).getTrainId();
-            journeyArrivalStationId = solution.getChangesList().get(0).getArrivalStationName();
+
+        if (sol.hasChanges() && indexOfJourneyToBeNotified != null) {
+            trainId = sol.getChangesList().get(indexOfJourneyToBeNotified).getTrainId();
+            journeyDepartureStationId = StationRealmUtils.getStation4DatabaseObject(sol.getChangesList().get(indexOfJourneyToBeNotified).getDepartureStationName()).getStationShortId();
+            journeyArrivalStationId = StationRealmUtils.getStation4DatabaseObject(sol.getChangesList().get(indexOfJourneyToBeNotified).getArrivalStationName()).getStationShortId();
         } else {
-            trainId = solution.getTrainId();
+            trainId = sol.getTrainId();
         }
         getData(journeyDepartureStationId,
                 journeyArrivalStationId,

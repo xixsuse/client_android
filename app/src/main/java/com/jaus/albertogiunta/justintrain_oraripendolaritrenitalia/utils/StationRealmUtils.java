@@ -54,4 +54,8 @@ public class StationRealmUtils {
         }
         return temp;
     }
+
+    public static Station4Database getStation4DatabaseObject(String stationName) {
+        return getStation4DatabaseObject(stationName, Realm.getDefaultInstance().where(Station4Database.class).findAll());
+    }
 }
