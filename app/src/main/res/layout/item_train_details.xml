@@ -204,6 +204,7 @@
                 android:layout_below="@id/ll_time_difference"
                 android:layout_marginTop="@dimen/margin_default"
                 android:layout_marginEnd="@dimen/margin_default"
+                android:layout_marginStart="@dimen/margin_default_plus"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:tint="@color/btn_dark_cyan"
                 app:srcCompat="@drawable/ic_pin2"

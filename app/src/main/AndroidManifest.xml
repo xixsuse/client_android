@@ -22,10 +22,28 @@
                 android:label="Intro Just In Train"
                 android:theme="@style/AppThemeNoShadowActionbar"/>
         <activity
+                android:name=".journeyFavourites.FavouriteJourneysActivity"
+                android:label="Just In Train"
+                >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+        <activity
             android:name=".journeySearch.JourneySearchActivity"
             android:label="Cerca tratta"
             android:theme="@style/AppThemeNoShadowActionbar"
             >
+        </activity>
+        <activity
+                android:name=".journeySearch.StationSearchActivity"
+                android:launchMode="singleTop"
+                android:label="Cerca stazione"
+                >
+            <meta-data
+                    android:name="android.app.searchable"
+                    android:resource="@xml/searchable"/>
         </activity>
         <activity
             android:name=".journeyResults.JourneyResultsActivity"
@@ -38,24 +56,6 @@
                 android:label="Dettagli treno"
                 android:launchMode="singleTop"
                 />
-        <activity
-            android:name=".journeyFavourites.FavouriteJourneysActivity"
-            android:label="Just In Train"
-            >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".journeySearch.StationSearchActivity"
-            android:launchMode="singleTop"
-            android:label="Cerca stazione"
-            >
-            <meta-data
-                android:name="android.app.searchable"
-                android:resource="@xml/searchable"/>
-        </activity>
         <service
             android:name=".notification.NotificationService"
             android:exported="false">

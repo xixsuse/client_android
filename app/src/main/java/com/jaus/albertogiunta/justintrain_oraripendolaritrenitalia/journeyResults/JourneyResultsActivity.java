@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.LinearInterpolator;
 import android.widget.Button;
@@ -75,7 +76,7 @@ public class JourneyResultsActivity extends AppCompatActivity implements Journey
         presenter = new JourneyResultsPresenter(this);
 
         setSupportActionBar(toolbar);
-        getSupportActionBar();
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         btnHeaderSwapStationNames.setOnClickListener(v -> presenter.onSwapButtonClick());
         btnHeaderToggleFavorite.setOnClickListener(v -> presenter.onFavouriteButtonClick());
@@ -88,12 +89,12 @@ public class JourneyResultsActivity extends AppCompatActivity implements Journey
         rvJourneySolutions.addOnScrollListener(new HideShowScrollListener() {
             @Override
             public void onHide() {
-                btnRefresh.animate().setInterpolator(new LinearInterpolator()).translationY(150).setDuration(200);
+                btnRefresh.animate().setInterpolator(new LinearInterpolator()).translationY(150).setDuration(100);
             }
 
             @Override
             public void onShow() {
-                btnRefresh.animate().setInterpolator(new LinearInterpolator()).translationY(0).setDuration(200);
+                btnRefresh.animate().setInterpolator(new LinearInterpolator()).translationY(0).setDuration(100);
             }
         });
 
@@ -105,6 +106,17 @@ public class JourneyResultsActivity extends AppCompatActivity implements Journey
         });
         presenter.setState(getIntent().getExtras());
         presenter.searchFromSearch(true);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            // Respond to the action bar's Up/Home button
+            case android.R.id.home:
+                finish();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

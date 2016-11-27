@@ -75,7 +75,7 @@
                 android:textSize="20sp"
                 android:textStyle="bold"
                 android:textAllCaps="true"
-                autofit:minTextSize="14sp"
+                autofit:minTextSize="17sp"
                 />
 
         <me.grantland.widget.AutofitTextView
@@ -90,7 +90,7 @@
                 android:textAlignment="textEnd"
                 android:textSize="20sp"
                 android:textStyle="bold"
-                autofit:minTextSize="14sp"
+                autofit:minTextSize="17sp"
                 android:textAllCaps="true"
                 />
     </RelativeLayout>

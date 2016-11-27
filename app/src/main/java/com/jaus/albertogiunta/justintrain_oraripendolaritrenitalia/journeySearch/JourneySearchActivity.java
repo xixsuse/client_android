@@ -11,6 +11,8 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
@@ -30,6 +32,9 @@ import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.
 public class JourneySearchActivity extends AppCompatActivity implements JourneySearchContract.View {
 
     private JourneySearchContract.Presenter presenter;
+
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
 
     @BindView(R.id.rl_departure)
     RelativeLayout rlDeparture;
@@ -63,6 +68,10 @@ public class JourneySearchActivity extends AppCompatActivity implements JourneyS
         ButterKnife.bind(this);
         presenter = new JourneySearchPresenter(this);
 
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         this.tvDeparture.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG);
         this.tvArrival.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG);
         this.tvTime.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG);
@@ -84,6 +93,17 @@ public class JourneySearchActivity extends AppCompatActivity implements JourneyS
         presenter.onDateChanged(0);
 
         btnSearchJourney.setOnClickListener(v -> presenter.onSearchButtonClick(tvDeparture.getText().toString(), tvArrival.getText().toString()));
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            // Respond to the action bar's Up/Home button
+            case android.R.id.home:
+                finish();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

@@ -11,6 +11,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.LinearInterpolator;
 import android.widget.Button;
@@ -30,6 +31,7 @@ import trikita.log.Log;
 public class TrainDetailsActivity extends AppCompatActivity implements TrainDetailsContract.View {
 
     TrainDetailsContract.Presenter presenter;
+
     @BindView(R.id.loading_spinner)
     ProgressBar progressBar;
     @BindView(R.id.rv_train_details)
@@ -56,6 +58,8 @@ public class TrainDetailsActivity extends AppCompatActivity implements TrainDeta
         presenter = new TrainDetailsPresenter(this);
         presenter.setState(getIntent().getExtras());
 
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         adapter = new TrainDetailsAdapter(getApplicationContext(), presenter);
         rvTrainDetails.setAdapter(adapter);
         rvTrainDetails.setHasFixedSize(true);
@@ -63,12 +67,12 @@ public class TrainDetailsActivity extends AppCompatActivity implements TrainDeta
         rvTrainDetails.addOnScrollListener(new HideShowScrollListener() {
             @Override
             public void onHide() {
-                btnRefresh.animate().setInterpolator(new LinearInterpolator()).translationY(150).setDuration(200);
+                btnRefresh.animate().setInterpolator(new LinearInterpolator()).translationY(150).setDuration(100);
             }
 
             @Override
             public void onShow() {
-                btnRefresh.animate().setInterpolator(new LinearInterpolator()).translationY(0).setDuration(200);
+                btnRefresh.animate().setInterpolator(new LinearInterpolator()).translationY(0).setDuration(100);
             }
         });
 
@@ -80,6 +84,17 @@ public class TrainDetailsActivity extends AppCompatActivity implements TrainDeta
         });
 
         presenter.updateRequested();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            // Respond to the action bar's Up/Home button
+            case android.R.id.home:
+                finish();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

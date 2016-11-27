@@ -9,7 +9,9 @@
         <item name="android:timePickerDialogTheme">@style/MyDatePickerDialogTheme</item>
     </style>
 
+    <!--<style name="AppThemeNoShadowActionbar" parent="Theme.AppCompat.Light">-->
     <style name="AppThemeNoShadowActionbar" parent="Theme.AppCompat.Light">
+        <item name="actionBarTheme">@style/Theme.MyApp.ActionBar</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="android:windowDrawsSystemBarBackgrounds" tools:targetApi="lollipop">true</item>
