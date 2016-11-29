@@ -20,18 +20,34 @@ import android.widget.TextView;
 
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.R;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeyResults.JourneyResultsActivity;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.Analytics;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_C;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import trikita.log.Log;
 
+import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.Analytics.ACTION_DATE_CLICK;
+import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.Analytics.ACTION_DATE_MINUS;
+import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.Analytics.ACTION_DATE_PLUS;
+import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.Analytics.ACTION_REMOVE_FAVOURITE_FROM_SEARCH;
+import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.Analytics.ACTION_SEARCH_JOURNEY_FROM_SEARCH;
+import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.Analytics.ACTION_SELECT_ARRIVAL;
+import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.Analytics.ACTION_SELECT_DEPARTURE;
+import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.Analytics.ACTION_SET_FAVOURITE_FROM_SEARCH;
+import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.Analytics.ACTION_SWAP_STATIONS_FROM_SEARCH;
+import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.Analytics.ACTION_TIME_CLICK;
+import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.Analytics.ACTION_TIME_MINUS;
+import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.Analytics.ACTION_TIME_PLUS;
+import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.Analytics.ERROR_NOT_FOUND_STATION;
+import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.Analytics.SCREEN_SEARCH_JOURNEY;
 import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_C.I_CODE_ARRIVAL;
 import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_C.I_CODE_DEPARTURE;
 
 public class JourneySearchActivity extends AppCompatActivity implements JourneySearchContract.View {
 
-    private JourneySearchContract.Presenter presenter;
+    JourneySearchContract.Presenter presenter;
+    Analytics analytics;
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -68,6 +84,7 @@ public class JourneySearchActivity extends AppCompatActivity implements JourneyS
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_journey_search);
         ButterKnife.bind(this);
+        analytics = Analytics.getInstance(getViewContext());
         presenter = new JourneySearchPresenter(this);
 
         setSupportActionBar(toolbar);
@@ -78,23 +95,53 @@ public class JourneySearchActivity extends AppCompatActivity implements JourneyS
         this.tvTime.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG);
         this.tvDate.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG);
 
-        this.rlDeparture.setOnClickListener(v -> onStationNameTextViewClick(I_CODE_DEPARTURE));
-        this.rlArrival.setOnClickListener(v -> onStationNameTextViewClick(I_CODE_ARRIVAL));
+        this.rlDeparture.setOnClickListener(v -> {
+            analytics.logScreenEvent(SCREEN_SEARCH_JOURNEY, ACTION_SELECT_DEPARTURE);
+            onStationNameTextViewClick(I_CODE_DEPARTURE);
+        });
+        this.rlArrival.setOnClickListener(v -> {
+            analytics.logScreenEvent(SCREEN_SEARCH_JOURNEY, ACTION_SELECT_ARRIVAL);
+            onStationNameTextViewClick(I_CODE_ARRIVAL);
+        });
 
-        btnSwapStationNames.setOnClickListener(v -> presenter.onSwapButtonClick(tvDeparture.getText().toString(), tvArrival.getText().toString()));
+        btnSwapStationNames.setOnClickListener(v -> {
+            analytics.logScreenEvent(SCREEN_SEARCH_JOURNEY, ACTION_SWAP_STATIONS_FROM_SEARCH);
+            presenter.onSwapButtonClick(tvDeparture.getText().toString(), tvArrival.getText().toString());
+        });
         btnHeaderToggleFavorite.setOnClickListener(v -> presenter.onFavouriteButtonClick());
 
         // TIME PANEL
-        tvTime.setOnClickListener(v -> onTimeClick());
-        tvMinusOneHour.setOnClickListener(v -> presenter.onTimeChanged(-1));
-        tvPlusOneHour.setOnClickListener(v -> presenter.onTimeChanged(1));
+        tvTime.setOnClickListener(v -> {
+            analytics.logScreenEvent(SCREEN_SEARCH_JOURNEY, ACTION_TIME_CLICK);
+            onTimeClick();
+        });
+        tvMinusOneHour.setOnClickListener(v -> {
+            analytics.logScreenEvent(SCREEN_SEARCH_JOURNEY, ACTION_TIME_MINUS);
+            presenter.onTimeChanged(-1);
+        });
+        tvPlusOneHour.setOnClickListener(v -> {
+            analytics.logScreenEvent(SCREEN_SEARCH_JOURNEY, ACTION_TIME_PLUS);
+            presenter.onTimeChanged(1);
+        });
         presenter.onTimeChanged(0);
-        tvDate.setOnClickListener(v -> onDateClick());
-        tvMinusOneDay.setOnClickListener(v -> presenter.onDateChanged(-1));
-        tvPlusOneDay.setOnClickListener(v -> presenter.onDateChanged(1));
+        tvDate.setOnClickListener(v -> {
+            analytics.logScreenEvent(SCREEN_SEARCH_JOURNEY, ACTION_DATE_CLICK);
+            onDateClick();
+        });
+        tvMinusOneDay.setOnClickListener(v -> {
+            analytics.logScreenEvent(SCREEN_SEARCH_JOURNEY, ACTION_DATE_MINUS);
+            presenter.onDateChanged(-1);
+        });
+        tvPlusOneDay.setOnClickListener(v -> {
+            analytics.logScreenEvent(SCREEN_SEARCH_JOURNEY, ACTION_DATE_PLUS);
+            presenter.onDateChanged(1);
+        });
         presenter.onDateChanged(0);
 
-        btnSearchJourney.setOnClickListener(v -> presenter.onSearchButtonClick(tvDeparture.getText().toString(), tvArrival.getText().toString()));
+        btnSearchJourney.setOnClickListener(v -> {
+            analytics.logScreenEvent(SCREEN_SEARCH_JOURNEY, ACTION_SEARCH_JOURNEY_FROM_SEARCH);
+            presenter.onSearchButtonClick(tvDeparture.getText().toString(), tvArrival.getText().toString());
+        });
     }
 
     @Override
@@ -135,12 +182,13 @@ public class JourneySearchActivity extends AppCompatActivity implements JourneyS
             case NONE:
                 break;
             case SELECT_DEPARTURE:
+                analytics.logScreenEvent(SCREEN_SEARCH_JOURNEY, ERROR_NOT_FOUND_STATION);
                 snackbar.setAction("Seleziona", view -> onStationNameTextViewClick(I_CODE_DEPARTURE))
                         .setActionTextColor(ContextCompat.getColor(this, R.color.btn_cyan));
                 break;
             case SELECT_ARRIVAL:
+                analytics.logScreenEvent(SCREEN_SEARCH_JOURNEY, ERROR_NOT_FOUND_STATION);
                 snackbar.setAction("Seleziona", view -> onStationNameTextViewClick(I_CODE_ARRIVAL))
-
                         .setActionTextColor(ContextCompat.getColor(this, R.color.btn_cyan));
                 break;
         }
@@ -221,8 +269,10 @@ public class JourneySearchActivity extends AppCompatActivity implements JourneyS
     @Override
     public void setFavouriteButtonStatus(boolean isPreferred) {
         if (isPreferred) {
+            analytics.logScreenEvent(SCREEN_SEARCH_JOURNEY, ACTION_SET_FAVOURITE_FROM_SEARCH);
             this.btnHeaderToggleFavorite.setImageResource(R.drawable.ic_star_black);
         } else {
+            analytics.logScreenEvent(SCREEN_SEARCH_JOURNEY, ACTION_REMOVE_FAVOURITE_FROM_SEARCH);
             this.btnHeaderToggleFavorite.setImageResource(R.drawable.ic_star_border);
         }
     }

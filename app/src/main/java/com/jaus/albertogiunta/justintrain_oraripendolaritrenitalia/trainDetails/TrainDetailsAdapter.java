@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.R;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.Train;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.Analytics;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.ViewsUtils.COLORS;
 
 import java.util.List;
@@ -23,6 +24,8 @@ import butterknife.BindViews;
 import butterknife.ButterKnife;
 
 import static butterknife.ButterKnife.apply;
+import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.Analytics.ACTION_SET_NOTIFICATION_FROM_SOLUTION;
+import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.Analytics.SCREEN_SOLUTION_DETAILS;
 import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.ViewsUtils.GONE;
 import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.ViewsUtils.INVISIBLE;
 import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.ViewsUtils.VISIBLE;
@@ -125,7 +128,10 @@ class TrainDetailsAdapter extends RecyclerView.Adapter {
             tvDepartureStationName.setText(train.getTrainDepartureStationName());
             tvArrivalStationName.setText(train.getTrainArrivalStationName());
 
-            this.btnPin.setOnClickListener(v -> presenter.onNotificationRequested(getAdapterPosition()));
+            this.btnPin.setOnClickListener(v -> {
+                Analytics.getInstance(context).logScreenEvent(SCREEN_SOLUTION_DETAILS, ACTION_SET_NOTIFICATION_FROM_SOLUTION);
+                presenter.onNotificationRequested(getAdapterPosition());
+            });
 
             if (train.getTrainStatusCode() == 2) {
                 // soppresso
@@ -181,7 +187,7 @@ class TrainDetailsAdapter extends RecyclerView.Adapter {
                 this.tvTimeDifference.setTextColor(getColor(context, train.getTimeDifference()));
             }
 
-            if (train.getCancelledStopsInfo() != null && train.getCancelledStopsInfo() != "") {
+            if (train.getCancelledStopsInfo() != null && !train.getCancelledStopsInfo().equals("")) {
                 apply(tvCancelledStopsInfo, VISIBLE);
                 this.tvCancelledStopsInfo.setText(train.getCancelledStopsInfo());
                 this.tvCancelledStopsInfo.setTextColor(getColor(context, COLORS.ORANGE));

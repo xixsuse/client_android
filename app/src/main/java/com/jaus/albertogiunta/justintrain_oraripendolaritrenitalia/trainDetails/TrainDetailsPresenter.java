@@ -8,11 +8,12 @@ import android.os.Bundle;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.Journey;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.PreferredJourney;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.Train;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.networking.APINetworkingFactory;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.networking.DateTimeAdapter;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.networking.PostProcessingEnabler;
-import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.networking.ServiceFactory;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.networking.TrainService;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.notification.NotificationService;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.ConfigsHelper;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_C;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.NetworkingUtils;
 
@@ -149,7 +150,7 @@ class TrainDetailsPresenter implements TrainDetailsContract.Presenter {
         Log.d("searchTrainDetails: searching train with id:", trainId);
         List<Observable<Train>> o = new LinkedList<>();
         for (String s : trainId) {
-            o.add(ServiceFactory.createRetrofitService(TrainService.class, TrainService.SERVICE_ENDPOINT).getTrainDetails(s)
+            o.add(APINetworkingFactory.createRetrofitService(TrainService.class, ConfigsHelper.getAPIEndpoint(view.getViewContext())).getTrainDetails(s)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread()));
         }

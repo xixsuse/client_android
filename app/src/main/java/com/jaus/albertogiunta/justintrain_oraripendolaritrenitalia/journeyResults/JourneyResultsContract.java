@@ -1,5 +1,7 @@
 package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeyResults;
 
+import android.content.Context;
+
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.BasePresenter;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.BaseView;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.Journey;
@@ -155,6 +157,8 @@ interface JourneyResultsContract {
                  * no solution. Check for it)
                  */
                 void onSuccess();
+
+                Context getViewContext();
 
             }
 

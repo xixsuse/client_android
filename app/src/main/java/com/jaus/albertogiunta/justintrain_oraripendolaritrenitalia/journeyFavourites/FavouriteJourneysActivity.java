@@ -4,9 +4,7 @@ import com.google.gson.Gson;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
@@ -24,19 +22,33 @@ import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.Message;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.PreferredJourney;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeyResults.JourneyResultsActivity;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeySearch.JourneySearchActivity;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.Analytics;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_C;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.SharedPrefsHelper;
+
+import java.util.List;
 
 import butterknife.BindView;
+import butterknife.BindViews;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import co.dift.ui.SwipeToAction;
 import trikita.log.Log;
 
+import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.Analytics.ACTION_NO_SWIPE_BUT_CLICK;
+import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.Analytics.ACTION_NO_SWIPE_BUT_LONG_CLICK;
+import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.Analytics.ACTION_SEARCH_JOURNEY_FROM_FAVOURITES;
+import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.Analytics.ACTION_SWIPE_LEFT_TO_RIGHT;
+import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.Analytics.ACTION_SWIPE_RIGHT_TO_LEFT;
+import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.Analytics.SCREEN_FAVOURITE_JOURNEYS;
 import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_C.I_STATIONS;
+import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.ViewsUtils.GONE;
+import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.ViewsUtils.VISIBLE;
 
 public class FavouriteJourneysActivity extends AppCompatActivity implements FavouritesContract.View {
 
     FavouritesContract.Presenter presenter;
+    Analytics analytics;
 
     @BindView(R.id.rv_favourite_journeys)
     RecyclerView rvFavouriteJourneys;
@@ -51,12 +63,15 @@ public class FavouriteJourneysActivity extends AppCompatActivity implements Favo
     TextView tvBody;
     @BindView(R.id.fab_search_journey)
     FloatingActionButton fabSearchJourney;
+    @BindViews({R.id.hint_left, R.id.hint_right})
+    List<View> hints;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_favourite_journeys);
         ButterKnife.bind(this);
+        analytics = Analytics.getInstance(getViewContext());
         checkIntro();
         presenter = new FavouritesPresenter(this);
         adapter = new FavouriteJourneysAdapter(presenter.getPreferredJourneys());
@@ -66,14 +81,17 @@ public class FavouriteJourneysActivity extends AppCompatActivity implements Favo
         new SwipeToAction(rvFavouriteJourneys, new SwipeToAction.SwipeListener<PreferredJourney>() {
             @Override
             public boolean swipeLeft(PreferredJourney preferredJourney) {
+                analytics.logScreenEvent(SCREEN_FAVOURITE_JOURNEYS, ACTION_SWIPE_RIGHT_TO_LEFT);
                 Intent myIntent = new Intent(FavouriteJourneysActivity.this, JourneyResultsActivity.class);
                 myIntent.putExtras(bundleJourney(preferredJourney.withStationsSwapped()));
                 FavouriteJourneysActivity.this.startActivity(myIntent);
                 return true;
             }
 
+
             @Override
             public boolean swipeRight(PreferredJourney preferredJourney) {
+                analytics.logScreenEvent(SCREEN_FAVOURITE_JOURNEYS, ACTION_SWIPE_LEFT_TO_RIGHT);
                 Intent myIntent = new Intent(FavouriteJourneysActivity.this, JourneyResultsActivity.class);
                 myIntent.putExtras(bundleJourney(preferredJourney));
                 FavouriteJourneysActivity.this.startActivity(myIntent);
@@ -83,11 +101,13 @@ public class FavouriteJourneysActivity extends AppCompatActivity implements Favo
             @Override
             public void onClick(PreferredJourney preferredJourney) {
                 Log.d("clicked");
+                analytics.logScreenEvent(SCREEN_FAVOURITE_JOURNEYS, ACTION_NO_SWIPE_BUT_CLICK);
             }
 
             @Override
             public void onLongClick(PreferredJourney preferredJourney) {
                 Log.d("long clicked");
+                analytics.logScreenEvent(SCREEN_FAVOURITE_JOURNEYS, ACTION_NO_SWIPE_BUT_LONG_CLICK);
             }
         });
     }
@@ -111,7 +131,7 @@ public class FavouriteJourneysActivity extends AppCompatActivity implements Favo
 
     @Override
     public void showSnackbar(String message, INTENT_C.SNACKBAR_ACTIONS intent) {
-        Log.w(android.R.id.message);
+        Log.w(message);
         Snackbar snackbar = Snackbar
                 .make(this.rvFavouriteJourneys, message, Snackbar.LENGTH_LONG);
         ((TextView) snackbar.getView().findViewById(android.support.design.R.id.snackbar_text)).setTextColor(ContextCompat.getColor(this, R.color.txt_white));
@@ -124,6 +144,7 @@ public class FavouriteJourneysActivity extends AppCompatActivity implements Favo
 
     @OnClick({R.id.fab_search_journey, R.id.ll_add_favourite})
     public void search() {
+        analytics.logScreenEvent(SCREEN_FAVOURITE_JOURNEYS, ACTION_SEARCH_JOURNEY_FROM_FAVOURITES);
         Intent myIntent = new Intent(FavouriteJourneysActivity.this, JourneySearchActivity.class);
         FavouriteJourneysActivity.this.startActivity(myIntent);
     }
@@ -141,45 +162,29 @@ public class FavouriteJourneysActivity extends AppCompatActivity implements Favo
 
     @Override
     public void displayFavouriteJourneys() {
-        rvFavouriteJourneys.setVisibility(View.VISIBLE);
-        llAddFavourite.setVisibility(View.GONE);
+        ButterKnife.apply(hints, VISIBLE);
+        ButterKnife.apply(rvFavouriteJourneys, VISIBLE);
+        ButterKnife.apply(llAddFavourite, GONE);
     }
 
     @Override
     public void displayEntryButton() {
-        rvFavouriteJourneys.setVisibility(View.GONE);
-        llAddFavourite.setVisibility(View.VISIBLE);
+        ButterKnife.apply(hints, GONE);
+        ButterKnife.apply(rvFavouriteJourneys, GONE);
+        ButterKnife.apply(llAddFavourite, VISIBLE);
     }
 
     private void checkIntro() {
-        //  Declare a new thread to do a preference check
         Thread t = new Thread(() -> {
-            //  Initialize SharedPreferences
-            SharedPreferences getPrefs = PreferenceManager
-                    .getDefaultSharedPreferences(getBaseContext());
-
-            //  Create a new boolean and preference and set it to true
-            boolean isFirstStart = getPrefs.getBoolean("firstStart", true);
-
-            //  If the activity has never started before...
+            boolean isFirstStart = SharedPrefsHelper.getSharedPreferenceBoolean(getViewContext(), "firstStart", true);
+            Log.d("checkIntro: ", isFirstStart);
             if (isFirstStart) {
-
-                //  Launch app intro
+                SharedPrefsHelper.setSharedPreferenceBoolean(getViewContext(), "firstStart", false);
+                Log.d("checkIntro: set to false");
                 Intent i = new Intent(FavouriteJourneysActivity.this, IntroActivity.class);
                 startActivity(i);
-
-                //  Make a new preferences editor
-                SharedPreferences.Editor e = getPrefs.edit();
-
-                //  Edit preference to make it false because we don't want this to run again
-                e.putBoolean("firstStart", false);
-
-                //  Apply changes
-                e.apply();
             }
         });
-
-        // Start the thread
         t.start();
     }
 

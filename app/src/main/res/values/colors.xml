@@ -10,7 +10,7 @@
     <color name="bg_grey">#B0BEC5</color>
     <color name="bg_grey_lighter">#ECECEC</color>
     <color name="bg_white_darker">#F5F5F5</color>
-    <color name="bg_white">#FFFFFF</color>
+    <color name="bg_white">#ffffff</color>
     <color name="bg_yellow">#FFFF8D</color>
     <color name="bg_red">#ff8a80</color>
 

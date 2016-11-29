@@ -21,6 +21,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.R;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.Analytics;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.HideShowScrollListener;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_C;
 
@@ -28,9 +29,16 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import trikita.log.Log;
 
+import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.Analytics.ACTION_REFRESH_SOLUTION;
+import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.Analytics.ERROR_CONNECTIVITY;
+import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.Analytics.ERROR_NOT_FOUND_SOLUTION;
+import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.Analytics.ERROR_SERVER;
+import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.Analytics.SCREEN_SOLUTION_DETAILS;
+
 public class TrainDetailsActivity extends AppCompatActivity implements TrainDetailsContract.View {
 
     TrainDetailsContract.Presenter presenter;
+    Analytics analytics;
 
     @BindView(R.id.loading_spinner)
     ProgressBar progressBar;
@@ -55,6 +63,7 @@ public class TrainDetailsActivity extends AppCompatActivity implements TrainDeta
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_train_details);
         ButterKnife.bind(this);
+        analytics = Analytics.getInstance(getViewContext());
         presenter = new TrainDetailsPresenter(this);
         presenter.setState(getIntent().getExtras());
 
@@ -78,6 +87,7 @@ public class TrainDetailsActivity extends AppCompatActivity implements TrainDeta
 
         btnRefresh.setOnClickListener(v -> {
             if (SystemClock.elapsedRealtime() - refreshBtnLastClickTime > 1000) {
+                analytics.logScreenEvent(SCREEN_SOLUTION_DETAILS, ACTION_REFRESH_SOLUTION);
                 presenter.refreshRequested();
             }
             refreshBtnLastClickTime = SystemClock.elapsedRealtime();
@@ -166,14 +176,17 @@ public class TrainDetailsActivity extends AppCompatActivity implements TrainDeta
             Intent i;
             switch (intent) {
                 case CONN_SETTINGS:
+                    analytics.logScreenEvent(SCREEN_SOLUTION_DETAILS, ERROR_CONNECTIVITY);
                     Log.d("intent a settings");
                     i = new Intent(Settings.ACTION_SETTINGS);
                     startActivity(i);
                     break;
                 case SEND_REPORT:
+                    analytics.logScreenEvent(SCREEN_SOLUTION_DETAILS, ERROR_SERVER);
                     Log.d("intent a report");
                     break;
                 case NO_SOLUTIONS:
+                    analytics.logScreenEvent(SCREEN_SOLUTION_DETAILS, ERROR_NOT_FOUND_SOLUTION);
                     Log.d("intent a ricerca");
                     finish();
                     break;

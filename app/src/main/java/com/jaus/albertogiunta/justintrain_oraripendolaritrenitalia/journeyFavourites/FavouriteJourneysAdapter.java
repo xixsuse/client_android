@@ -16,7 +16,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import co.dift.ui.SwipeToAction;
 import me.grantland.widget.AutofitTextView;
-import trikita.log.Log;
 
 class FavouriteJourneysAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -32,7 +31,6 @@ class FavouriteJourneysAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         switch (viewType) {
             case VIEW_TYPES.Header:
                 View v = layoutInflater.inflate(R.layout.item_header_favourite_journeys, parent, false);
-                v.setOnClickListener(view -> Log.d("onCreateViewHolder:", "niente"));
                 return new HeaderViewHolder(v);
             default:
                 return new JourneyViewHolder(layoutInflater.inflate(R.layout.item_favourite_journey, parent, false));
@@ -43,17 +41,12 @@ class FavouriteJourneysAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof JourneyViewHolder) {
             JourneyViewHolder vh = (JourneyViewHolder) holder;
-            vh.bind(list.get(position - 1));
-//        } else if (holder instanceof HeaderViewHolder) {
-//            HeaderViewHolder vh = (HeaderViewHolder) holder;
+            vh.bind(list.get(position));
         }
     }
 
     @Override
     public int getItemViewType(int position) {
-        if (position == 0) {
-            return VIEW_TYPES.Header;
-        }
         return super.getItemViewType(position);
     }
 
@@ -62,19 +55,11 @@ class FavouriteJourneysAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         if (list == null) {
             return 0;
         }
-
-        if (list.size() == 0) {
-            //Return 1 here to show nothing
-            return 1;
-        }
-
-        // Add extra view to show the footer view
-        return list.size() + 1;
+        return list.size();
     }
 
     private class VIEW_TYPES {
         static final int Header = 1;
-//        static final int Normal = 2;
     }
 
     class HeaderViewHolder extends RecyclerView.ViewHolder {
@@ -103,8 +88,8 @@ class FavouriteJourneysAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         }
 
         void bind(PreferredJourney preferredJourney) {
-            tvPreferredStation1.setText(preferredJourney.getStation1().getNameLong());
-            tvPreferredStation2.setText(preferredJourney.getStation2().getNameLong());
+            tvPreferredStation1.setText(preferredJourney.getStation1().getNameShort());
+            tvPreferredStation2.setText(preferredJourney.getStation2().getNameShort());
             data = preferredJourney;
         }
     }

@@ -22,15 +22,27 @@ import android.widget.TextView;
 
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.R;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.Journey;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.Analytics;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.HideShowScrollListener;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_C;
-import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.PreferredStationsHelper;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import trikita.log.Log;
 
+import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.Analytics.ACTION_REFRESH_JOURNEY;
+import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.Analytics.ACTION_REMOVE_FAVOURITE_FROM_RESULTS;
+import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.Analytics.ACTION_SET_FAVOURITE_FROM_RESULTS;
+import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.Analytics.ACTION_SWAP_STATIONS_FROM_RESULTS;
+import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.Analytics.ERROR_CONNECTIVITY;
+import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.Analytics.ERROR_NOT_FOUND_JOURNEY;
+import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.Analytics.ERROR_SERVER;
+import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.Analytics.SCREEN_JOURNEY_RESULTS;
+
 public class JourneyResultsActivity extends AppCompatActivity implements JourneyResultsContract.View {
+
+    JourneyResultsContract.Presenter presenter;
+    Analytics analytics;
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -65,7 +77,7 @@ public class JourneyResultsActivity extends AppCompatActivity implements Journey
     ImageButton btnRefresh;
 
     JourneyResultsAdapter journeyResultsAdapter;
-    JourneyResultsPresenter presenter;
+
     private long refreshBtnLastClickTime = SystemClock.elapsedRealtime();
 
     @Override
@@ -73,12 +85,17 @@ public class JourneyResultsActivity extends AppCompatActivity implements Journey
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_journey_results);
         ButterKnife.bind(this);
+        analytics = Analytics.getInstance(getViewContext());
         presenter = new JourneyResultsPresenter(this);
 
         setSupportActionBar(toolbar);
+        //noinspection ConstantConditions
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        btnHeaderSwapStationNames.setOnClickListener(v -> presenter.onSwapButtonClick());
+        btnHeaderSwapStationNames.setOnClickListener(v -> {
+            analytics.logScreenEvent(SCREEN_JOURNEY_RESULTS, ACTION_SWAP_STATIONS_FROM_RESULTS);
+            presenter.onSwapButtonClick();
+        });
         btnHeaderToggleFavorite.setOnClickListener(v -> presenter.onFavouriteButtonClick());
 
         journeyResultsAdapter = new JourneyResultsAdapter(this, presenter);
@@ -100,6 +117,7 @@ public class JourneyResultsActivity extends AppCompatActivity implements Journey
 
         btnRefresh.setOnClickListener(v -> {
             if (SystemClock.elapsedRealtime() - refreshBtnLastClickTime > 1000) {
+                analytics.logScreenEvent(SCREEN_JOURNEY_RESULTS, ACTION_REFRESH_JOURNEY);
                 presenter.searchFromSearch(true);
             }
             refreshBtnLastClickTime = SystemClock.elapsedRealtime();
@@ -190,13 +208,16 @@ public class JourneyResultsActivity extends AppCompatActivity implements Journey
             switch (intent) {
                 case CONN_SETTINGS:
                     Log.d("intent a settings");
+                    analytics.logScreenEvent(SCREEN_JOURNEY_RESULTS, ERROR_CONNECTIVITY);
                     i = new Intent(Settings.ACTION_SETTINGS);
                     startActivity(i);
                     break;
                 case SEND_REPORT:
+                    analytics.logScreenEvent(SCREEN_JOURNEY_RESULTS, ERROR_SERVER);
                     Log.d("intent a report");
                     break;
                 case NO_SOLUTIONS:
+                    analytics.logScreenEvent(SCREEN_JOURNEY_RESULTS, ERROR_NOT_FOUND_JOURNEY);
                     Log.d("intent a ricerca");
                     finish();
                     break;
@@ -220,19 +241,16 @@ public class JourneyResultsActivity extends AppCompatActivity implements Journey
     public void updateSolution(int elementIndex) {
         Journey.Solution s = presenter.getSolutionList().get(elementIndex);
         Log.d("updateSolution: ", s.toString());
-        PreferredStationsHelper.log(this, "solution_update_requested",
-                "trainId: " + s.getTrainId()
-                        + " journeyAepartureStation: " + s.getDepartureStationName()
-                        + " journeyDepartureStation: " + s.getArrivalStationName());
-
         journeyResultsAdapter.notifyItemChanged(elementIndex + 1);
     }
 
     @Override
     public void setFavouriteButtonStatus(boolean isPreferred) {
         if (isPreferred) {
+            analytics.logScreenEvent(SCREEN_JOURNEY_RESULTS, ACTION_SET_FAVOURITE_FROM_RESULTS);
             this.btnHeaderToggleFavorite.setImageResource(R.drawable.ic_star_black);
         } else {
+            analytics.logScreenEvent(SCREEN_JOURNEY_RESULTS, ACTION_REMOVE_FAVOURITE_FROM_RESULTS);
             this.btnHeaderToggleFavorite.setImageResource(R.drawable.ic_star_border);
         }
     }

@@ -21,6 +21,7 @@ import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.Journey;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.networking.DateTimeAdapter;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.networking.PostProcessingEnabler;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.trainDetails.TrainDetailsActivity;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.Analytics;
 
 import org.joda.time.DateTime;
 
@@ -33,6 +34,13 @@ import butterknife.ButterKnife;
 
 import static butterknife.ButterKnife.apply;
 import static butterknife.ButterKnife.bind;
+import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.Analytics.ACTION_REFRESH_DELAY_ALREADY;
+import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.Analytics.ACTION_REFRESH_DELAY_FIRST;
+import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.Analytics.ACTION_SEARCH_MORE_AFTER;
+import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.Analytics.ACTION_SEARCH_MORE_BEFORE;
+import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.Analytics.ACTION_SET_NOTIFICATION_FROM_RESULTS;
+import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.Analytics.ACTION_SOLUTION_CLICK;
+import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.Analytics.SCREEN_JOURNEY_RESULTS;
 import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_C.I_SOLUTION;
 import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_C.I_STATIONS;
 import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.ViewsUtils.GONE;
@@ -200,6 +208,7 @@ class JourneyResultsAdapter extends RecyclerView.Adapter {
             }
 
             cvJourney.setOnClickListener(v -> {
+                Analytics.getInstance(context).logScreenEvent(SCREEN_JOURNEY_RESULTS, ACTION_SOLUTION_CLICK);
                 Gson gson = new GsonBuilder()
                         .registerTypeAdapter(DateTime.class, new DateTimeAdapter())
                         .registerTypeAdapterFactory(new PostProcessingEnabler())
@@ -213,7 +222,10 @@ class JourneyResultsAdapter extends RecyclerView.Adapter {
             tvDepartureTime.setText(solution.getDepartureTimeReadable());
             tvArrivalTime.setText(solution.getArrivalTimeReadable());
             tvLastingTime.setText(solution.getDuration());
-            llNotification.setOnClickListener(v -> presenter.onNotificationRequested(getAdapterPosition() - 1));
+            llNotification.setOnClickListener(v -> {
+                Analytics.getInstance(context).logScreenEvent(SCREEN_JOURNEY_RESULTS, ACTION_SET_NOTIFICATION_FROM_RESULTS);
+                presenter.onNotificationRequested(getAdapterPosition() - 1);
+            });
 
             if (isSuppressed) {
                 apply(viewsForSuppressedSolution, VISIBLE);
@@ -230,6 +242,7 @@ class JourneyResultsAdapter extends RecyclerView.Adapter {
                     tvTimeDifference.setText(Integer.toString(solution.getTimeDifference()) + "'");
                     tvTimeDifference.setTextColor(getColor(context, solution.getTimeDifference()));
                     tvTimeDifference.setOnLongClickListener(view -> {
+                        Analytics.getInstance(context).logScreenEvent(SCREEN_JOURNEY_RESULTS, ACTION_REFRESH_DELAY_ALREADY);
                         presenter.onJourneyRefreshRequested(getAdapterPosition() - 1);
                         return true;
                     });
@@ -246,7 +259,10 @@ class JourneyResultsAdapter extends RecyclerView.Adapter {
                     apply(viewsForSuppressedSolution, GONE);
                     apply(viewsForFilledNotSuppressedSolution, GONE);
                     apply(viewsForRefreshableSolution, VISIBLE);
-                    btnRefreshJourney.setOnClickListener(view -> presenter.onJourneyRefreshRequested(getAdapterPosition() - 1));
+                    btnRefreshJourney.setOnClickListener(view -> {
+                        Analytics.getInstance(context).logScreenEvent(SCREEN_JOURNEY_RESULTS, ACTION_REFRESH_DELAY_FIRST);
+                        presenter.onJourneyRefreshRequested(getAdapterPosition() - 1);
+                    });
                 }
 
                 if (hasAlert) {
@@ -321,6 +337,7 @@ class JourneyResultsAdapter extends RecyclerView.Adapter {
             super(itemView);
             bind(this, itemView);
             btn.setOnClickListener(view -> {
+                Analytics.getInstance(context).logScreenEvent(SCREEN_JOURNEY_RESULTS, ACTION_SEARCH_MORE_BEFORE);
                 presenter.onLoadMoreItemsBefore();
                 busyButton();
             });
@@ -347,6 +364,7 @@ class JourneyResultsAdapter extends RecyclerView.Adapter {
             super(itemView);
             bind(this, itemView);
             btn.setOnClickListener(view -> {
+                Analytics.getInstance(context).logScreenEvent(SCREEN_JOURNEY_RESULTS, ACTION_SEARCH_MORE_AFTER);
                 presenter.onLoadMoreItemsAfter();
                 busyButton();
             });

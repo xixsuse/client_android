@@ -10,7 +10,7 @@ import rx.Observable;
 
 public interface JourneyService {
 
-    String SERVICE_ENDPOINT = "http:///46.101.130.226:8081";
+//    String SERVICE_ENDPOINT = "http:///46.101.130.226:8081";
 
     //INSTANT
     @GET("/departure/{departureStationId}/arrival/{arrivalStationId}/instant")

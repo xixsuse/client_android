@@ -4,12 +4,9 @@ import android.app.Application;
 import android.content.Context;
 import android.support.multidex.MultiDex;
 
-import com.facebook.stetho.Stetho;
-
 import net.danlew.android.joda.JodaTimeAndroid;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 
@@ -18,22 +15,18 @@ import io.realm.internal.IOException;
 
 public class MyApplication extends Application {
 
-    private static MyApplication context;
+//    private static MyApplication context;
 
-    public MyApplication getContext() {
-        return context;
-    }
+//    public MyApplication getContext() {
+//        return context;
+//    }
 
     @Override
     public void onCreate() {
         super.onCreate();
-//        DTInstaller.install(this)
-//                .enable()
-//                .run();
 
-        context = this;
+//        context = this;
         JodaTimeAndroid.init(this);
-        Stetho.initializeWithDefaults(this);
         Realm.init(this);
         copyBundledRealmFile(this.getResources().openRawResource(R.raw.station), Realm.DEFAULT_REALM_NAME);
 
@@ -72,11 +65,7 @@ public class MyApplication extends Application {
             }
             outputStream.close();
             return file.getAbsolutePath();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (java.io.IOException e) {
+        } catch (IOException | java.io.IOException e) {
             e.printStackTrace();
         }
         return null;

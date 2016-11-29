@@ -2,6 +2,7 @@ package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeyResul
 
 import com.google.gson.Gson;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Pair;
 
@@ -11,9 +12,11 @@ import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.Preferre
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.Station4Database;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.TrainHeader;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeyResults.JourneyResultsContract.View.JourneySearchStrategy.OnJourneySearchFinishedListener;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.networking.APINetworkingFactory;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.networking.JourneyService;
-import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.networking.ServiceFactory;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.notification.NotificationService;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.Analytics;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.ConfigsHelper;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_C;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.NetworkingUtils;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.PreferredStationsHelper;
@@ -37,6 +40,10 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import trikita.log.Log;
 
+import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.Analytics.ERROR_NOT_FOUND_JOURNEY_AFTER;
+import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.Analytics.ERROR_NOT_FOUND_JOURNEY_BEFORE;
+import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.Analytics.ERROR_NOT_FOUND_SOLUTION;
+import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.Analytics.SCREEN_JOURNEY_RESULTS;
 import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_C.I_STATIONS;
 import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_C.I_TIME;
 import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.StationRealmUtils.isThisJourneyPreferred;
@@ -195,6 +202,7 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
 
                     m.put(new Pair<>(tempDepartureStation.getStationShortId(), tempArrivalStation.getStationShortId()), journeySolutions.get(elementIndex).getChangesList().get(changeIndex).getTrainId());
                 } catch (Exception e) {
+                    Analytics.getInstance(view.getViewContext()).logScreenEvent(SCREEN_JOURNEY_RESULTS, ERROR_NOT_FOUND_SOLUTION);
                     view.showSnackbar("Non riesco ad aggiornare questa soluzione", INTENT_C.SNACKBAR_ACTIONS.NONE);
                 }
             }
@@ -211,6 +219,7 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
             @Override
             public void onError(Throwable e) {
                 if (e.getMessage().equals("HTTP 404 ")) {
+                    Analytics.getInstance(view.getViewContext()).logScreenEvent(SCREEN_JOURNEY_RESULTS, ERROR_NOT_FOUND_SOLUTION);
                     view.showSnackbar("Il treno potrebbe avere cambiato codice", INTENT_C.SNACKBAR_ACTIONS.NONE);
                 }
             }
@@ -266,11 +275,13 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
 
     @Override
     public void onJourneyBeforeNotFound() {
+        Analytics.getInstance(view.getViewContext()).logScreenEvent(SCREEN_JOURNEY_RESULTS, ERROR_NOT_FOUND_JOURNEY_BEFORE);
         view.showSnackbar("Sembra non ci siano altre soluzioni in giornata", INTENT_C.SNACKBAR_ACTIONS.NONE);
     }
 
     @Override
     public void onJourneyAfterNotFound() {
+        Analytics.getInstance(view.getViewContext()).logScreenEvent(SCREEN_JOURNEY_RESULTS, ERROR_NOT_FOUND_JOURNEY_AFTER);
         view.showSnackbar("Sembra non ci siano altre soluzioni in giornata", INTENT_C.SNACKBAR_ACTIONS.NONE);
     }
 
@@ -306,6 +317,11 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
         view.updateSolutionsList();
     }
 
+    @Override
+    public Context getViewContext() {
+        return view.getViewContext();
+    }
+
     @SuppressWarnings("ResultOfMethodCallIgnored")
     private List<Observable<TrainHeader>> refreshChange(Map<Pair<String, String>, String> info) {
         List<Observable<TrainHeader>> o = new LinkedList<>();
@@ -321,7 +337,7 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
                 continue;
             }
 
-            o.add(ServiceFactory.createRetrofitService(JourneyService.class, JourneyService.SERVICE_ENDPOINT)
+            o.add(APINetworkingFactory.createRetrofitService(JourneyService.class, ConfigsHelper.getAPIEndpoint(view.getViewContext()))
                     .getDelay(p.first,
                             p.second,
                             info.get(p))
@@ -342,7 +358,7 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
         @Override
         public void searchJourney(boolean isNewSearch, String departureStationId, String arrivalStationId, DateTime timestamp, boolean isPreemptive, boolean withDelays, OnJourneySearchFinishedListener listener) {
             Log.d(departureStationId, arrivalStationId, timestamp, isPreemptive, withDelays);
-            ServiceFactory.createRetrofitService(JourneyService.class, JourneyService.SERVICE_ENDPOINT).getJourneyInstant(departureStationId, arrivalStationId, isPreemptive)
+            APINetworkingFactory.createRetrofitService(JourneyService.class, ConfigsHelper.getAPIEndpoint(listener.getViewContext())).getJourneyInstant(departureStationId, arrivalStationId, isPreemptive)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new Subscriber<Journey>() {
@@ -372,7 +388,7 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
     private static class SearchAfterTimeStrategy implements JourneyResultsContract.View.JourneySearchStrategy {
         @Override
         public void searchJourney(boolean isNewSearch, String departureStationId, String arrivalStationId, DateTime timestamp, boolean isPreemptive, boolean withDelays, OnJourneySearchFinishedListener listener) {
-            ServiceFactory.createRetrofitService(JourneyService.class, JourneyService.SERVICE_ENDPOINT)
+            APINetworkingFactory.createRetrofitService(JourneyService.class, ConfigsHelper.getAPIEndpoint(listener.getViewContext()))
                     .getJourneyAfterTime(departureStationId, arrivalStationId, timestamp.toString("yyyy-MM-dd'T'HH:mmZ"), withDelays, isPreemptive)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -410,7 +426,7 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
         @Override
         public void searchJourney(boolean isNewSearch, String departureStationId, String arrivalStationId, DateTime timestamp, boolean isPreemptive, boolean withDelays, OnJourneySearchFinishedListener listener) {
             Log.d(timestamp);
-            ServiceFactory.createRetrofitService(JourneyService.class, JourneyService.SERVICE_ENDPOINT).getJourneyBeforeTime(departureStationId, arrivalStationId, timestamp.toString("yyyy-MM-dd'T'HH:mmZ"), withDelays, isPreemptive)
+            APINetworkingFactory.createRetrofitService(JourneyService.class, ConfigsHelper.getAPIEndpoint(listener.getViewContext())).getJourneyBeforeTime(departureStationId, arrivalStationId, timestamp.toString("yyyy-MM-dd'T'HH:mmZ"), withDelays, isPreemptive)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new Subscriber<Journey>() {
