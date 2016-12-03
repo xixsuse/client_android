@@ -21,7 +21,7 @@ import android.widget.TextView;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.R;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeyResults.JourneyResultsActivity;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.Analytics;
-import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_C;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_CONST;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -41,8 +41,8 @@ import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.
 import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.Analytics.ACTION_TIME_PLUS;
 import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.Analytics.ERROR_NOT_FOUND_STATION;
 import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.Analytics.SCREEN_SEARCH_JOURNEY;
-import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_C.I_CODE_ARRIVAL;
-import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_C.I_CODE_DEPARTURE;
+import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_CONST.I_CODE_ARRIVAL;
+import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_CONST.I_CODE_DEPARTURE;
 
 public class JourneySearchActivity extends AppCompatActivity implements JourneySearchContract.View {
 
@@ -173,7 +173,7 @@ public class JourneySearchActivity extends AppCompatActivity implements JourneyS
     }
 
     @Override
-    public void showSnackbar(String message, INTENT_C.SNACKBAR_ACTIONS intent) {
+    public void showSnackbar(String message, INTENT_CONST.SNACKBAR_ACTIONS intent) {
         Log.w(android.R.id.message);
         Snackbar snackbar = Snackbar
                 .make(this.rlDeparture, message, Snackbar.LENGTH_LONG);

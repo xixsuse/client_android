@@ -7,9 +7,9 @@ import android.os.Bundle;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.PreferredJourney;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.PreferredStation;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.Station4Database;
-import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_C;
-import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.PreferredStationsHelper;
-import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.StationRealmUtils;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_CONST;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.helpers.DatabaseHelper;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.helpers.PreferredStationsHelper;
 
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -20,11 +20,11 @@ import io.realm.Realm;
 import io.realm.RealmResults;
 import trikita.log.Log;
 
-import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_C.I_STATIONS;
-import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_C.I_TIME;
-import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.StationRealmUtils.getStation4DatabaseObject;
-import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.StationRealmUtils.isStationNameValid;
-import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.StationRealmUtils.isThisJourneyPreferred;
+import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_CONST.I_STATIONS;
+import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_CONST.I_TIME;
+import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.helpers.DatabaseHelper.getStation4DatabaseObject;
+import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.helpers.DatabaseHelper.isStationNameValid;
+import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.helpers.DatabaseHelper.isThisJourneyPreferred;
 
 class JourneySearchPresenter implements JourneySearchContract.Presenter {
 
@@ -76,13 +76,13 @@ class JourneySearchPresenter implements JourneySearchContract.Presenter {
 
     @Override
     public void onDepartureStationNameChanged(String name) {
-        departureStation = new PreferredStation(StationRealmUtils.getStation4DatabaseObject(name));
+        departureStation = new PreferredStation(DatabaseHelper.getStation4DatabaseObject(name));
         setFavouriteButtonStatus();
     }
 
     @Override
     public void onArrivalStationNameChanged(String name) {
-        arrivalStation = new PreferredStation(StationRealmUtils.getStation4DatabaseObject(name));
+        arrivalStation = new PreferredStation(DatabaseHelper.getStation4DatabaseObject(name));
         setFavouriteButtonStatus();
     }
 
@@ -140,12 +140,12 @@ class JourneySearchPresenter implements JourneySearchContract.Presenter {
                         departureStation,
                         arrivalStation);
                 setFavouriteButtonStatus();
-                view.showSnackbar("Tratta rimossa dai Preferiti", INTENT_C.SNACKBAR_ACTIONS.NONE);
+                view.showSnackbar("Tratta rimossa dai Preferiti", INTENT_CONST.SNACKBAR_ACTIONS.NONE);
             } else {
                 PreferredStationsHelper.setPreferredJourney(view.getViewContext(),
                         new PreferredJourney(departureStation, arrivalStation));
                 setFavouriteButtonStatus();
-                view.showSnackbar("Tratta aggiunta ai Preferiti", INTENT_C.SNACKBAR_ACTIONS.NONE);
+                view.showSnackbar("Tratta aggiunta ai Preferiti", INTENT_CONST.SNACKBAR_ACTIONS.NONE);
             }
         }
     }
@@ -169,14 +169,14 @@ class JourneySearchPresenter implements JourneySearchContract.Presenter {
 
     private void setDateTime() {
         view.setTime(dateTime.toString(DateTimeFormat.forPattern("HH:mm")));
-        view.setDate(dateTime.toString(DateTimeFormat.forPattern("EE d MMMM").withLocale(Locale.ITALY)));
+        view.setDate(dateTime.toString(DateTimeFormat.forPattern("EE d MMM").withLocale(Locale.ITALY)));
     }
 
     private boolean isDataValid() {
         if (departureStation != null && isStationNameValid(departureStation.getNameShort(), stationList)) {
             departureStation = new PreferredStation(getStation4DatabaseObject(departureStation.getNameShort(), stationList));
         } else {
-            view.showSnackbar("Stazione di partenza mancante!", INTENT_C.SNACKBAR_ACTIONS.SELECT_DEPARTURE);
+            view.showSnackbar("Stazione di partenza mancante!", INTENT_CONST.SNACKBAR_ACTIONS.SELECT_DEPARTURE);
             if (departureStation != null) Log.d(departureStation.getNameShort() + " not found!");
             return false;
         }
@@ -184,7 +184,7 @@ class JourneySearchPresenter implements JourneySearchContract.Presenter {
         if (arrivalStation != null && isStationNameValid(arrivalStation.getNameShort(), stationList)) {
             arrivalStation = new PreferredStation(getStation4DatabaseObject(arrivalStation.getNameShort(), stationList));
         } else {
-            view.showSnackbar("Stazione di arrivo mancante!", INTENT_C.SNACKBAR_ACTIONS.SELECT_ARRIVAL);
+            view.showSnackbar("Stazione di arrivo mancante!", INTENT_CONST.SNACKBAR_ACTIONS.SELECT_ARRIVAL);
             if (arrivalStation != null) Log.d(arrivalStation.getNameShort() + " not found!");
             return false;
         }

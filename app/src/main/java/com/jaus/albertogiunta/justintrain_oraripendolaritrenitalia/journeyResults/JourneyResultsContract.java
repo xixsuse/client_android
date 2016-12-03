@@ -6,7 +6,7 @@ import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.BasePresenter
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.BaseView;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.Journey;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.PreferredJourney;
-import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_C;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_CONST;
 
 import org.joda.time.DateTime;
 
@@ -100,7 +100,7 @@ interface JourneyResultsContract {
          * @param btnMessage text for the button
          * @param intent action to execute on button press
          */
-        void showErrorMessage(String tvMessage, String btnMessage, INTENT_C.ERROR_BTN intent);
+        void showErrorMessage(String tvMessage, String btnMessage, INTENT_CONST.ERROR_BTN intent);
 
         /**
          * Called when a new set of solutions is ready. It will then notify the adapter

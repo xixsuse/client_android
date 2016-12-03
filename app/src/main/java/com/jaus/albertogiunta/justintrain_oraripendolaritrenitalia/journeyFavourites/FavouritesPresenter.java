@@ -10,8 +10,8 @@ import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.Preferre
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.ServerConfig;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.networking.ConfigsNetworkingFactory;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.networking.ConfigsService;
-import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.PreferredStationsHelper;
-import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.SharedPrefsHelper;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.helpers.PreferredStationsHelper;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.helpers.SharedPreferencesHelper;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -75,7 +75,7 @@ class FavouritesPresenter implements FavouritesContract.Presenter {
                     @Override
                     public void onError(Throwable e) {
                         ServerConfig config = new ServerConfig(address, true, 0);
-                        SharedPrefsHelper.setSharedPreferenceObject(view.getViewContext(), "serverConfig", new Gson().toJson(config));
+                        SharedPreferencesHelper.setSharedPreferenceObject(view.getViewContext(), "serverConfig", new Gson().toJson(config));
                     }
 
                     @Override
@@ -86,7 +86,7 @@ class FavouritesPresenter implements FavouritesContract.Presenter {
                         } else {
                             config = serverConfigs.get(0);
                         }
-                        SharedPrefsHelper.setSharedPreferenceObject(view.getViewContext(), "serverConfig", new Gson().toJson(config));
+                        SharedPreferencesHelper.setSharedPreferenceObject(view.getViewContext(), "serverConfig", new Gson().toJson(config));
                     }
                 });
     }

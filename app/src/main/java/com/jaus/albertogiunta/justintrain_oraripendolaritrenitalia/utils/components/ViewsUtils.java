@@ -1,4 +1,4 @@
-package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils;
+package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.components;
 
 import android.content.Context;
 import android.support.v4.content.ContextCompat;

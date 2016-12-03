@@ -207,15 +207,8 @@ public class Train {
         private Integer currentStopTypeCode;
         private Integer currentAndNextStopStatusCode;
 
-        private DateTime plannedArrivalTime;
-        private DateTime actualArrivalTime;
-
         private DateTime plannedDepartureTime;
-        private String plannedDeparturePlatform;
-
         private DateTime actualDepartureTime;
-        private String actualDeparturePlatform;
-
         private String departurePlatform;
 
         private Integer timeDifference;
@@ -262,22 +255,6 @@ public class Train {
             this.currentAndNextStopStatusCode = currentAndNextStopStatusCode;
         }
 
-        public DateTime getPlannedArrivalTime() {
-            return plannedArrivalTime;
-        }
-
-        public void setPlannedArrivalTime(DateTime plannedArrivalTime) {
-            this.plannedArrivalTime = plannedArrivalTime;
-        }
-
-        public DateTime getActualArrivalTime() {
-            return actualArrivalTime;
-        }
-
-        public void setActualArrivalTime(DateTime actualArrivalTime) {
-            this.actualArrivalTime = actualArrivalTime;
-        }
-
         public DateTime getPlannedDepartureTime() {
             return plannedDepartureTime;
         }
@@ -286,28 +263,12 @@ public class Train {
             this.plannedDepartureTime = plannedDepartureTime;
         }
 
-        public String getPlannedDeparturePlatform() {
-            return plannedDeparturePlatform;
-        }
-
-        public void setPlannedDeparturePlatform(String plannedDeparturePlatform) {
-            this.plannedDeparturePlatform = plannedDeparturePlatform;
-        }
-
         public DateTime getActualDepartureTime() {
             return actualDepartureTime;
         }
 
         public void setActualDepartureTime(DateTime actualDepartureTime) {
             this.actualDepartureTime = actualDepartureTime;
-        }
-
-        public String getActualDeparturePlatform() {
-            return actualDeparturePlatform;
-        }
-
-        public void setActualDeparturePlatform(String actualDeparturePlatform) {
-            this.actualDeparturePlatform = actualDeparturePlatform;
         }
 
         public String getDeparturePlatform() {
@@ -342,12 +303,8 @@ public class Train {
                     ", currentStopStatusCode=" + currentStopStatusCode +
                     ", currentStopTypeCode=" + currentStopTypeCode +
                     ", currentAndNextStopStatusCode=" + currentAndNextStopStatusCode +
-                    ", plannedArrivalTime=" + plannedArrivalTime +
-                    ", actualArrivalTime=" + actualArrivalTime +
                     ", plannedDepartureTime=" + plannedDepartureTime +
-                    ", plannedDeparturePlatform='" + plannedDeparturePlatform + '\'' +
                     ", actualDepartureTime=" + actualDepartureTime +
-                    ", actualDeparturePlatform='" + actualDeparturePlatform + '\'' +
                     ", departurePlatform='" + departurePlatform + '\'' +
                     ", timeDifference=" + timeDifference +
                     ", isVisited=" + isVisited +

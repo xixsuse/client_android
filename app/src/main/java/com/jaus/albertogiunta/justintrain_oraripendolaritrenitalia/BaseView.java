@@ -2,7 +2,7 @@ package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia;
 
 import android.content.Context;
 
-import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_C;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_CONST;
 
 public interface BaseView {
 
@@ -29,5 +29,5 @@ public interface BaseView {
      * @param message The message to display
      * @param intent use it to understand what to do. It also should determine the action string.
      */
-    void showSnackbar(String message, INTENT_C.SNACKBAR_ACTIONS intent);
+    void showSnackbar(String message, INTENT_CONST.SNACKBAR_ACTIONS intent);
 }

@@ -10,6 +10,16 @@
         tools:context=".journeyFavourites.FavouriteJourneysActivity"
         >
 
+
+    <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab_search_journey"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="@dimen/margin_default"
+            app:fabSize="normal"
+            app:srcCompat="@drawable/ic_search"
+            />
     <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -56,86 +66,81 @@
 
         </LinearLayout>
 
-        <ImageView
-                android:id="@+id/hint_left"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="2dp"
-                android:layout_marginBottom="2dp"
-                app:srcCompat="@drawable/ic_hint_swipe_right"
-                />
-
-        <ImageView
-                android:id="@+id/hint_right"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentTop="true"
-                android:layout_marginEnd="8dp"
-                android:layout_marginTop="2dp"
-                android:layout_marginBottom="2dp"
-                android:rotation="180"
-                app:srcCompat="@drawable/ic_hint_swipe_right"
-                />
-
-        <android.support.v7.widget.RecyclerView
-                android:id="@+id/rv_favourite_journeys"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_below="@id/hint_left"
-                android:visibility="gone"
-                >
-        </android.support.v7.widget.RecyclerView>
-
         <RelativeLayout
-                android:id="@+id/rl_dashboard"
+                android:id="@+id/rl_message"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_marginStart="@dimen/margin_default"
-                android:layout_marginEnd="@dimen/margin_default"
-                android:layout_marginBottom="70dp"
+                android:background="@color/bg_white"
+                android:elevation="@dimen/elevation_smaller"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentStart="true"
                 >
 
             <TextView
-                    android:id="@+id/tv_title"
-                    android:layout_width="match_parent"
+                    android:id="@+id/tv_message_title"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/margin_default"
                     android:textStyle="bold"
-                    android:text=""
-                    android:textAlignment="center"
-                    android:textColor="@color/txt_grey"
-                    android:textSize="@dimen/text_size_default_plus"
+                    android:textColor="@color/txt_red"
+                    android:layout_margin="@dimen/margin_small"
+                    android:text="SCIOPERO"
                     />
 
             <TextView
-                    android:id="@+id/tv_body"
+                    android:id="@+id/tv_message_body"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/tv_title"
-                    android:layout_marginTop="0dp"
-                    android:textAlignment="center"
-                    android:text=""
-                    android:textStyle="italic"
-                    android:textColor="@color/txt_grey"
+                    android:layout_toEndOf="@id/tv_message_title"
+                    android:textSize="@dimen/text_size_smaller"
+                    android:layout_margin="@dimen/margin_small"
+                    android:text="Ci sarà uno sciopero nazionale il 19 dicembre 2016 dalle ore 00:00 alle ore 24:00 dle asdlkòj sddkd asòlkfj asdfòlk jasdòlkj"
                     />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/rl_message"
+                android:elevation="@dimen/elevation_default"
+                android:layout_centerHorizontal="true"
+                >
+
+            <ImageView
+                    android:id="@+id/hint_left"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginBottom="2dp"
+                    app:srcCompat="@drawable/ic_hint_swipe_right"
+                    android:visibility="visible"
+                    />
+
+            <ImageView
+                    android:id="@+id/hint_right"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginBottom="2dp"
+                    android:rotation="180"
+                    app:srcCompat="@drawable/ic_hint_swipe_right"
+                    android:visibility="visible"
+                    />
+
+            <android.support.v7.widget.RecyclerView
+                    android:id="@+id/rv_favourite_journeys"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="26dp"
+                    android:visibility="visible"
+                    >
+            </android.support.v7.widget.RecyclerView>
         </RelativeLayout>
 
     </RelativeLayout>
-
-
-    <android.support.design.widget.FloatingActionButton
-            android:id="@+id/fab_search_journey"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_margin="@dimen/margin_default"
-            app:fabSize="normal"
-            app:srcCompat="@drawable/ic_search"
-            />
 
 </android.support.design.widget.CoordinatorLayout>

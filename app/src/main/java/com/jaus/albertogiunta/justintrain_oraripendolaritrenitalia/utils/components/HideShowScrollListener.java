@@ -1,4 +1,4 @@
-package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils;
+package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.components;
 
 import android.support.v7.widget.RecyclerView;
 

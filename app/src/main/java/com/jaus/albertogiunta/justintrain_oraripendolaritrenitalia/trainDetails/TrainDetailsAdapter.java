@@ -13,34 +13,49 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.R;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.Journey;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.PreferredStation;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.Train;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.Analytics;
-import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.ViewsUtils.COLORS;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.components.ViewsUtils.COLORS;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.helpers.DatabaseHelper;
 
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.BindViews;
 import butterknife.ButterKnife;
+import trikita.log.Log;
 
 import static butterknife.ButterKnife.apply;
 import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.Analytics.ACTION_SET_NOTIFICATION_FROM_SOLUTION;
 import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.Analytics.SCREEN_SOLUTION_DETAILS;
-import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.ViewsUtils.GONE;
-import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.ViewsUtils.INVISIBLE;
-import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.ViewsUtils.VISIBLE;
-import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.ViewsUtils.getColor;
+import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.components.ViewsUtils.GONE;
+import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.components.ViewsUtils.INVISIBLE;
+import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.components.ViewsUtils.VISIBLE;
+import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.components.ViewsUtils.getColor;
 
 class TrainDetailsAdapter extends RecyclerView.Adapter {
 
     private Context context;
     private List<Object> trainList;
+    private Journey.Solution solution;
     private TrainDetailsContract.Presenter presenter;
 
     TrainDetailsAdapter(Context context, TrainDetailsContract.Presenter presenter) {
         this.context = context;
         this.presenter = presenter;
         trainList = presenter.getFlatTrainList();
+        solution = presenter.getSolution();
+        if (solution.hasChanges()) {
+            for (Journey.Solution.Change c : solution.getChangesList()) {
+                c.setDepartureStationId(new PreferredStation(DatabaseHelper.getStation4DatabaseObject(c.getDepartureStationName())).getStationLongId());
+                c.setArrivalStationId(new PreferredStation(DatabaseHelper.getStation4DatabaseObject(c.getArrivalStationName())).getStationLongId());
+            }
+        } else {
+            solution.setDepartureStationId(new PreferredStation(DatabaseHelper.getStation4DatabaseObject(solution.getDepartureStationName())).getStationLongId());
+            solution.setArrivalStationId(new PreferredStation(DatabaseHelper.getStation4DatabaseObject(solution.getArrivalStationName())).getStationLongId());
+        }
     }
 
     @Override
@@ -243,7 +258,7 @@ class TrainDetailsAdapter extends RecyclerView.Adapter {
         @BindView(R.id.tv_planned_departure_time)
         TextView tvPlannedDepartureTime;
         @BindView(R.id.tv_departure_time)
-        TextView tvDepartureTime;
+        TextView tvActualOrPlannedWithTimeDifference;
         @BindView(R.id.ll_node_first)
         LinearLayout llNodeFirst;
         @BindView(R.id.ll_node_in_between)
@@ -266,6 +281,17 @@ class TrainDetailsAdapter extends RecyclerView.Adapter {
         @BindView(R.id.iv_node_last)
         ImageView ivNodeLast;
 
+        @BindView(R.id.tv_mark_as_change_arrival)
+        TextView tvMarkAsChangeArrival;
+        @BindView(R.id.tv_mark_as_change_departure)
+        TextView tvMarkAsChangeDeparture;
+        @BindView(R.id.tv_mark_as_in_station)
+        TextView tvMarkAsInStation;
+
+        boolean isInStation;
+        boolean trainIsOnTime;
+        boolean hasPlatform;
+
 
         @BindViews({R.id.tv_planned_departure_time, R.id.tv_departure_time, R.id.tv_station_name, R.id.tv_platform})
         List<View> textViewsToBeColored;
@@ -273,9 +299,14 @@ class TrainDetailsAdapter extends RecyclerView.Adapter {
         StopHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+
         }
 
         void bind(Train.Stop stop, Train train) {
+            isInStation = stop.isVisited() && stop.getActualDepartureTime() == null;
+            trainIsOnTime = train.getTimeDifference() != null && train.getTimeDifference() == 0;
+            hasPlatform = stop.getDeparturePlatform() == null || stop.getDeparturePlatform().equals("");
+
             tvPlannedDepartureTime.setText(stop.getPlannedDepartureTime().toString("HH:mm"));
             tvStationName.setText(stop.getStationName());
             parseCurrentStopTypeCode(stop.getCurrentStopTypeCode());
@@ -290,19 +321,21 @@ class TrainDetailsAdapter extends RecyclerView.Adapter {
                         ((TextView) v).setTextColor(getColor(context, COLORS.BLACK));
                     }
 
+                    tvPlannedDepartureTime.setPaintFlags(0);
+                    apply(tvMarkAsInStation, GONE);
 
                     if (train.isDeparted()) {
-                        if (train.getTimeDifference() != null && train.getTimeDifference() == 0) {
+                        if (trainIsOnTime) {
                             tvPlannedDepartureTime.setTextColor(getColor(context, train.getTimeDifference()));
-                            apply(tvDepartureTime, GONE);
+                            apply(tvActualOrPlannedWithTimeDifference, GONE);
                         } else {
-                            tvDepartureTime.setText(stop.getPlannedDepartureTime().plusMinutes(train.getTimeDifference()).toString("HH:mm"));
-                            tvDepartureTime.setTextColor(getColor(context, train.getTimeDifference()));
+                            apply(tvActualOrPlannedWithTimeDifference, VISIBLE);
+                            tvActualOrPlannedWithTimeDifference.setText(stop.getPlannedDepartureTime().plusMinutes(train.getTimeDifference()).toString("HH:mm"));
+                            tvActualOrPlannedWithTimeDifference.setTextColor(getColor(context, train.getTimeDifference()));
                         }
                     } else {
-                        apply(tvDepartureTime, GONE);
+                        apply(tvActualOrPlannedWithTimeDifference, GONE);
                     }
-                    tvPlannedDepartureTime.setPaintFlags(0);
                     break;
                 case 1:
                     // visitata
@@ -311,12 +344,23 @@ class TrainDetailsAdapter extends RecyclerView.Adapter {
                     }
 
                     tvPlannedDepartureTime.setPaintFlags(tvPlannedDepartureTime.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG | Paint.ANTI_ALIAS_FLAG);
-                    if (stop.getActualDepartureTime() != null) {
-                        apply(tvDepartureTime, VISIBLE);
-                        tvDepartureTime.setText(stop.getActualDepartureTime().toString("HH:mm"));
+                    if (isInStation) {
+                        Log.d("bind: in station");
+                        apply(tvActualOrPlannedWithTimeDifference, GONE);
+                        apply(tvMarkAsInStation, VISIBLE);
+                    } else if (stop.getActualDepartureTime() != null) {
+                        apply(tvMarkAsInStation, GONE);
+                        apply(tvActualOrPlannedWithTimeDifference, VISIBLE);
+                        tvActualOrPlannedWithTimeDifference.setText(stop.getActualDepartureTime().toString("HH:mm"));
+                    } else {
+                        apply(tvMarkAsInStation, GONE);
+                        apply(tvActualOrPlannedWithTimeDifference, GONE);
                     }
                     break;
             }
+
+            parseMarkingsAsChangeDepartureOrArrival(stop.getStationId());
+            // todo fa header con cambi
 
             switch (stop.getCurrentStopStatusCode()) {
                 case 2:
@@ -332,10 +376,9 @@ class TrainDetailsAdapter extends RecyclerView.Adapter {
                     break;
             }
 
-
             ///////////////////////////////////////////////////////
 
-            if (stop.getDeparturePlatform() == null || stop.getDeparturePlatform().equals("")) {
+            if (hasPlatform) {
                 apply(icPlatform, GONE);
                 apply(tvPlatform, GONE);
             } else {
@@ -344,6 +387,29 @@ class TrainDetailsAdapter extends RecyclerView.Adapter {
                 tvPlatform.setText(stop.getDeparturePlatform());
             }
         }
+
+        private void parseMarkingsAsChangeDepartureOrArrival(String id) {
+            if (solution.hasChanges()) {
+                Journey.Solution.Change c = solution.getChangesList().get(presenter.getTrainIndexForAdapterPosition(getAdapterPosition()));
+                check(id, c.getDepartureStationId(), c.getArrivalStationId());
+            } else {
+                check(id, solution.getDepartureStationId(), solution.getArrivalStationId());
+            }
+        }
+
+        private void check(String idCurrent, String idDeparture, String idArrival) {
+            if (idCurrent.equals(idDeparture)) {
+                apply(tvMarkAsChangeDeparture, VISIBLE);
+                apply(tvMarkAsChangeArrival, GONE);
+            } else if (idCurrent.equals(idArrival)) {
+                apply(tvMarkAsChangeDeparture, GONE);
+                apply(tvMarkAsChangeArrival, VISIBLE);
+            } else {
+                apply(tvMarkAsChangeDeparture, GONE);
+                apply(tvMarkAsChangeArrival, GONE);
+            }
+        }
+
 
         private void parseCurrentStopTypeCode(int code) {
             switch (code) {

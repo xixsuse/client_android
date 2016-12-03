@@ -1,4 +1,4 @@
-package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils;
+package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.helpers;
 
 import com.google.gson.Gson;
 
@@ -12,7 +12,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-public class SharedPrefsHelper {
+public class SharedPreferencesHelper {
     private final static String PREF_FILE = "PREF";
 
     /**

@@ -2,8 +2,9 @@ package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.trainDetails
 
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.BasePresenter;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.BaseView;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.Journey;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.Train;
-import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_C;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_CONST;
 
 import java.util.List;
 
@@ -15,9 +16,13 @@ public interface TrainDetailsContract {
 
         void refreshRequested();
 
+        Journey.Solution getSolution();
+
         List<Object> getFlatTrainList();
 
         Train getTrainForAdapterPosition(int position);
+
+        Integer getTrainIndexForAdapterPosition(int position);
 
         void onNotificationRequested(int position);
     }
@@ -44,7 +49,7 @@ public interface TrainDetailsContract {
          * @param btnMessage text for the button
          * @param intent action to execute on button press
          */
-        void showErrorMessage(String tvMessage, String btnMessage, INTENT_C.ERROR_BTN intent);
+        void showErrorMessage(String tvMessage, String btnMessage, INTENT_CONST.ERROR_BTN intent);
 
     }
 

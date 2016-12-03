@@ -1,4 +1,4 @@
-package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils;
+package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.helpers;
 
 import com.google.gson.Gson;
 
@@ -8,15 +8,15 @@ import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.ServerCo
 
 import java.util.List;
 
-public class ConfigsHelper {
+public class ServerConfigsHelper {
 
     public static String getAPIEndpoint(Context context) {
-        return new Gson().fromJson(SharedPrefsHelper.getSharedPreferenceObject(context, "serverConfig"), ServerConfig.class).getAddress();
+        return new Gson().fromJson(SharedPreferencesHelper.getSharedPreferenceObject(context, "serverConfig"), ServerConfig.class).getAddress();
     }
 
     public static void setAPIEndpoint(Context context, List<ServerConfig> list) {
         ServerConfig config = list.get(0);
-        SharedPrefsHelper.setSharedPreferenceObject(context, "serverConfig", new Gson().toJson(config));
+        SharedPreferencesHelper.setSharedPreferenceObject(context, "serverConfig", new Gson().toJson(config));
     }
 
 }

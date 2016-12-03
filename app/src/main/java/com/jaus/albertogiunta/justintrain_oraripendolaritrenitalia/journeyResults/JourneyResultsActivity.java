@@ -23,8 +23,8 @@ import android.widget.TextView;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.R;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.Journey;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.Analytics;
-import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.HideShowScrollListener;
-import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_C;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_CONST;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.components.HideShowScrollListener;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -166,7 +166,7 @@ public class JourneyResultsActivity extends AppCompatActivity implements Journey
     }
 
     @Override
-    public void showSnackbar(String message, INTENT_C.SNACKBAR_ACTIONS intent) {
+    public void showSnackbar(String message, INTENT_CONST.SNACKBAR_ACTIONS intent) {
         journeyResultsAdapter.notifyItemChanged(0);
         journeyResultsAdapter.notifyItemChanged(journeyResultsAdapter.getItemCount() - 1);
         Log.w(android.R.id.message);
@@ -197,7 +197,7 @@ public class JourneyResultsActivity extends AppCompatActivity implements Journey
     }
 
     @Override
-    public void showErrorMessage(String tvMessage, String btnMessage, INTENT_C.ERROR_BTN intent) {
+    public void showErrorMessage(String tvMessage, String btnMessage, INTENT_CONST.ERROR_BTN intent) {
         progressBar.setVisibility(View.GONE);
         rvJourneySolutions.setVisibility(View.GONE);
         rlEmptyJourneyBox.setVisibility(View.VISIBLE);

@@ -59,12 +59,14 @@ public class Journey implements PostProcessingEnabler.PostProcessable {
         private String trainId;
 
         private String trainDepartureStationId;
+        private String departureStationId;
         private String departureStationName;
         private DateTime departureTime;
         private String departureTimeReadable;
         private String departureTimeWithDelayReadable;
         private String departurePlatform;
 
+        private String arrivalStationId;
         private String arrivalStationName;
         private DateTime arrivalTime;
         private String arrivalTimeWithDelayReadable;
@@ -102,6 +104,14 @@ public class Journey implements PostProcessingEnabler.PostProcessable {
 
         public void setTrainDepartureStationId(String trainDepartureStationId) {
             this.trainDepartureStationId = trainDepartureStationId;
+        }
+
+        public String getDepartureStationId() {
+            return departureStationId;
+        }
+
+        public void setDepartureStationId(String departureStationId) {
+            this.departureStationId = departureStationId;
         }
 
         public String getDepartureStationName() {
@@ -150,6 +160,14 @@ public class Journey implements PostProcessingEnabler.PostProcessable {
 
         public void setArrivalStationName(String arrivalStationName) {
             this.arrivalStationName = arrivalStationName;
+        }
+
+        public String getArrivalStationId() {
+            return arrivalStationId;
+        }
+
+        public void setArrivalStationId(String arrivalStationId) {
+            this.arrivalStationId = arrivalStationId;
         }
 
         public DateTime getArrivalTime() {
@@ -288,12 +306,14 @@ public class Journey implements PostProcessingEnabler.PostProcessable {
             private String trainId;
 
             private String trainDepartureStationId;
+            private String departureStationId;
             private String departureStationName;
             private DateTime departureTime;
             private String departureTimeReadable;
             private String departureTimeWithDelayReadable;
             private String departurePlatform;
 
+            private String arrivalStationId;
             private String arrivalStationName;
             private DateTime arrivalTime;
             private String arrivalTimeReadable;
@@ -326,6 +346,14 @@ public class Journey implements PostProcessingEnabler.PostProcessable {
 
             public void setTrainDepartureStationId(String trainDepartureStationId) {
                 this.trainDepartureStationId = trainDepartureStationId;
+            }
+
+            public String getDepartureStationId() {
+                return departureStationId;
+            }
+
+            public void setDepartureStationId(String departureStationId) {
+                this.departureStationId = departureStationId;
             }
 
             public String getDepartureStationName() {
@@ -366,6 +394,14 @@ public class Journey implements PostProcessingEnabler.PostProcessable {
 
             public void setDeparturePlatform(String departurePlatform) {
                 this.departurePlatform = departurePlatform;
+            }
+
+            public String getArrivalStationId() {
+                return arrivalStationId;
+            }
+
+            public void setArrivalStationId(String arrivalStationId) {
+                this.arrivalStationId = arrivalStationId;
             }
 
             public String getArrivalStationName() {

@@ -13,9 +13,10 @@ import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.networking.Da
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.networking.PostProcessingEnabler;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.networking.TrainService;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.notification.NotificationService;
-import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.ConfigsHelper;
-import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_C;
-import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.NetworkingUtils;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_CONST;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.helpers.NetworkingHelper;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.helpers.NotificationDataHelper;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.helpers.ServerConfigsHelper;
 
 import org.joda.time.DateTime;
 
@@ -33,8 +34,8 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import trikita.log.Log;
 
-import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_C.I_SOLUTION;
-import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_C.I_STATIONS;
+import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_CONST.I_SOLUTION;
+import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_CONST.I_STATIONS;
 
 class TrainDetailsPresenter implements TrainDetailsContract.Presenter {
 
@@ -62,8 +63,12 @@ class TrainDetailsPresenter implements TrainDetailsContract.Presenter {
             // Restore value of members from saved state
             if (bundle.getString(I_SOLUTION) != null) {
                 solution = gson.fromJson(bundle.getString(I_SOLUTION), Journey.Solution.class);
-                if (solution.hasChanges()) {
-                    Arrays.copyOf(trainList.toArray(), solution.getChangesList().size());
+                if (solution == null) {
+                    // todo fai salvataggio dell'ultimo notified nei preferiti e ripescalo da qui<
+                } else {
+                    if (solution.hasChanges()) {
+                        Arrays.copyOf(trainList.toArray(), solution.getChangesList().size());
+                    }
                 }
                 Log.d("Current bundled solution is: ", solution.toString());
             }
@@ -110,22 +115,22 @@ class TrainDetailsPresenter implements TrainDetailsContract.Presenter {
                 Log.d(exception.getMessage());
                 if (view != null) {
                     if (exception.getMessage().equals("HTTP 404 ")) {
-                        view.showErrorMessage("La tratta inserita non ha viaggi disponibili", "Torna alle soluzioni", INTENT_C.ERROR_BTN.NO_SOLUTIONS);
+                        view.showErrorMessage("La tratta inserita non ha viaggi disponibili", "Torna alle soluzioni", INTENT_CONST.ERROR_BTN.NO_SOLUTIONS);
                     } else {
                         Log.e("onServerError: ", exception.toString());
                         if (exception instanceof HttpException) {
                             Log.d(((HttpException) exception).response().errorBody(), ((HttpException) exception).response().code());
                             if (((HttpException) exception).response().code() == 500) {
-                                view.showErrorMessage("Il server sta avendo dei problemi", "Segnala il problema", INTENT_C.ERROR_BTN.SEND_REPORT);
+                                view.showErrorMessage("Il server sta avendo dei problemi", "Segnala il problema", INTENT_CONST.ERROR_BTN.SEND_REPORT);
                             }
                         } else if (exception instanceof ConnectException) {
-                            if (NetworkingUtils.isNetworkAvailable(view.getViewContext())) {
-                                view.showErrorMessage("Il server sta avendo dei problemi", "Segnala il problema", INTENT_C.ERROR_BTN.SEND_REPORT);
+                            if (NetworkingHelper.isNetworkAvailable(view.getViewContext())) {
+                                view.showErrorMessage("Il server sta avendo dei problemi", "Segnala il problema", INTENT_CONST.ERROR_BTN.SEND_REPORT);
                             } else {
-                                view.showErrorMessage("Assicurati di essere connesso a Internet", "Attiva connessione", INTENT_C.ERROR_BTN.CONN_SETTINGS);
+                                view.showErrorMessage("Assicurati di essere connesso a Internet", "Attiva connessione", INTENT_CONST.ERROR_BTN.CONN_SETTINGS);
                             }
                         } else if (exception instanceof SocketException) {
-                            view.showErrorMessage("Assicurati di essere connesso a Internet", "Attiva connessione", INTENT_C.ERROR_BTN.CONN_SETTINGS);
+                            view.showErrorMessage("Assicurati di essere connesso a Internet", "Attiva connessione", INTENT_CONST.ERROR_BTN.CONN_SETTINGS);
                         }
                     }
                 }
@@ -146,11 +151,16 @@ class TrainDetailsPresenter implements TrainDetailsContract.Presenter {
         updateRequested();
     }
 
+    @Override
+    public Journey.Solution getSolution() {
+        return this.solution;
+    }
+
     private Iterable<Observable<Train>> searchTrainDetails(List<String> trainId) {
         Log.d("searchTrainDetails: searching train with id:", trainId);
         List<Observable<Train>> o = new LinkedList<>();
         for (String s : trainId) {
-            o.add(APINetworkingFactory.createRetrofitService(TrainService.class, ConfigsHelper.getAPIEndpoint(view.getViewContext())).getTrainDetails(s)
+            o.add(APINetworkingFactory.createRetrofitService(TrainService.class, ServerConfigsHelper.getAPIEndpoint(view.getViewContext())).getTrainDetails(s)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread()));
         }
@@ -183,7 +193,20 @@ class TrainDetailsPresenter implements TrainDetailsContract.Presenter {
     }
 
     @Override
+    public Integer getTrainIndexForAdapterPosition(int position) {
+        int past = 0;
+        for (Train t : trainList) {
+            if (position <= past + t.getStops().size()) {
+                return trainList.indexOf(t);
+            }
+            past += t.getStops().size() + 1;
+        }
+        return null;
+    }
+
+    @Override
     public void onNotificationRequested(int position) {
+        NotificationDataHelper.setNotificationData(view.getViewContext(), preferredJourney, solution);
         NotificationService.startActionStartNotification(view.getViewContext(),
                 preferredJourney.getStation1(),
                 preferredJourney.getStation2(),

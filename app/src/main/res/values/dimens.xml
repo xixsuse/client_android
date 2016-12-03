@@ -40,6 +40,7 @@
 
     <!--TEXT SIZES-->
     <dimen name="elevation_smaller">2dp</dimen>
+    <dimen name="elevation_small">3dp</dimen>
     <dimen name="elevation_default">5dp</dimen>
     <dimen name="elevation_big">7dp</dimen>
     <dimen name="radius_default">5dp</dimen>

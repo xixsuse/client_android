@@ -16,11 +16,12 @@ import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.networking.AP
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.networking.JourneyService;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.notification.NotificationService;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.Analytics;
-import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.ConfigsHelper;
-import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_C;
-import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.NetworkingUtils;
-import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.PreferredStationsHelper;
-import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.StationRealmUtils;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_CONST;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.helpers.DatabaseHelper;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.helpers.NetworkingHelper;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.helpers.NotificationDataHelper;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.helpers.PreferredStationsHelper;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.helpers.ServerConfigsHelper;
 
 import org.joda.time.DateTime;
 
@@ -44,9 +45,9 @@ import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.
 import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.Analytics.ERROR_NOT_FOUND_JOURNEY_BEFORE;
 import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.Analytics.ERROR_NOT_FOUND_SOLUTION;
 import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.Analytics.SCREEN_JOURNEY_RESULTS;
-import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_C.I_STATIONS;
-import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_C.I_TIME;
-import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.StationRealmUtils.isThisJourneyPreferred;
+import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_CONST.I_STATIONS;
+import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_CONST.I_TIME;
+import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.helpers.DatabaseHelper.isThisJourneyPreferred;
 
 class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJourneySearchFinishedListener {
 
@@ -150,15 +151,15 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
                     departureStation,
                     arrivalStation);
             setFavouriteButtonStatus();
-            view.showSnackbar("Tratta rimossa dai Preferiti", INTENT_C.SNACKBAR_ACTIONS.NONE);
+            view.showSnackbar("Tratta rimossa dai Preferiti", INTENT_CONST.SNACKBAR_ACTIONS.NONE);
         } else {
 //            if (journeySolutions.size() > 0) {
                 PreferredStationsHelper.setPreferredJourney(view.getViewContext(),
                         new PreferredJourney(departureStation, arrivalStation));
                 setFavouriteButtonStatus();
-                view.showSnackbar("Tratta aggiunta ai Preferiti", INTENT_C.SNACKBAR_ACTIONS.NONE);
+            view.showSnackbar("Tratta aggiunta ai Preferiti", INTENT_CONST.SNACKBAR_ACTIONS.NONE);
 //            } else {
-//                view.showSnackbar("Impossibile aggiungere ai preferiti una tratta senza soluzioni", INTENT_C.SNACKBAR_ACTIONS.NONE);
+//                view.showSnackbar("Impossibile aggiungere ai preferiti una tratta senza soluzioni", INTENT_CONST.SNACKBAR_ACTIONS.NONE);
 //            }
         }
     }
@@ -181,6 +182,7 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
 
     @Override
     public void onNotificationRequested(int elementIndex) {
+        NotificationDataHelper.setNotificationData(view.getViewContext(), new PreferredJourney(departureStation, arrivalStation), journeySolutions.get(elementIndex));
         NotificationService.startActionStartNotification(view.getViewContext(),
                 departureStation,
                 arrivalStation,
@@ -197,13 +199,13 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
                 try {
                     String departureStationName = journeySolutions.get(elementIndex).getChangesList().get(changeIndex).getDepartureStationName();
                     String arrivalStationName = journeySolutions.get(elementIndex).getChangesList().get(changeIndex).getArrivalStationName();
-                    Station4Database tempDepartureStation = StationRealmUtils.getStation4DatabaseObject(departureStationName, stationList);
-                    Station4Database tempArrivalStation = StationRealmUtils.getStation4DatabaseObject(arrivalStationName, stationList);
+                    Station4Database tempDepartureStation = DatabaseHelper.getStation4DatabaseObject(departureStationName, stationList);
+                    Station4Database tempArrivalStation = DatabaseHelper.getStation4DatabaseObject(arrivalStationName, stationList);
 
                     m.put(new Pair<>(tempDepartureStation.getStationShortId(), tempArrivalStation.getStationShortId()), journeySolutions.get(elementIndex).getChangesList().get(changeIndex).getTrainId());
                 } catch (Exception e) {
                     Analytics.getInstance(view.getViewContext()).logScreenEvent(SCREEN_JOURNEY_RESULTS, ERROR_NOT_FOUND_SOLUTION);
-                    view.showSnackbar("Non riesco ad aggiornare questa soluzione", INTENT_C.SNACKBAR_ACTIONS.NONE);
+                    view.showSnackbar("Non riesco ad aggiornare questa soluzione", INTENT_CONST.SNACKBAR_ACTIONS.NONE);
                 }
             }
         } else {
@@ -220,7 +222,7 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
             public void onError(Throwable e) {
                 if (e.getMessage().equals("HTTP 404 ")) {
                     Analytics.getInstance(view.getViewContext()).logScreenEvent(SCREEN_JOURNEY_RESULTS, ERROR_NOT_FOUND_SOLUTION);
-                    view.showSnackbar("Il treno potrebbe avere cambiato codice", INTENT_C.SNACKBAR_ACTIONS.NONE);
+                    view.showSnackbar("Il treno potrebbe avere cambiato codice", INTENT_CONST.SNACKBAR_ACTIONS.NONE);
                 }
             }
 
@@ -246,7 +248,7 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
                                     + trainHeader.getTrainCategory()
                                     + " "
                                     + trainHeader.getTrainId()
-                                    + " non è ancora partito", INTENT_C.SNACKBAR_ACTIONS.NONE);
+                                    + " non è ancora partito", INTENT_CONST.SNACKBAR_ACTIONS.NONE);
                         }
                     }
                 } else {
@@ -255,7 +257,7 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
                         sol.setTimeDifference(trainHeader.getTimeDifference());
                         sol.setProgress(trainHeader.getProgress());
                     } else {
-                        view.showSnackbar("Il treno non è ancora partito", INTENT_C.SNACKBAR_ACTIONS.NONE);
+                        view.showSnackbar("Il treno non è ancora partito", INTENT_CONST.SNACKBAR_ACTIONS.NONE);
                     }
                 }
 
@@ -270,19 +272,19 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
 
     @Override
     public void onJourneyNotFound() {
-        view.showErrorMessage("La tratta inserita non ha viaggi disponibili", "Cambia stazioni", INTENT_C.ERROR_BTN.NO_SOLUTIONS);
+        view.showErrorMessage("La tratta inserita non ha viaggi disponibili", "Cambia stazioni", INTENT_CONST.ERROR_BTN.NO_SOLUTIONS);
     }
 
     @Override
     public void onJourneyBeforeNotFound() {
         Analytics.getInstance(view.getViewContext()).logScreenEvent(SCREEN_JOURNEY_RESULTS, ERROR_NOT_FOUND_JOURNEY_BEFORE);
-        view.showSnackbar("Sembra non ci siano altre soluzioni in giornata", INTENT_C.SNACKBAR_ACTIONS.NONE);
+        view.showSnackbar("Sembra non ci siano altre soluzioni in giornata", INTENT_CONST.SNACKBAR_ACTIONS.NONE);
     }
 
     @Override
     public void onJourneyAfterNotFound() {
         Analytics.getInstance(view.getViewContext()).logScreenEvent(SCREEN_JOURNEY_RESULTS, ERROR_NOT_FOUND_JOURNEY_AFTER);
-        view.showSnackbar("Sembra non ci siano altre soluzioni in giornata", INTENT_C.SNACKBAR_ACTIONS.NONE);
+        view.showSnackbar("Sembra non ci siano altre soluzioni in giornata", INTENT_CONST.SNACKBAR_ACTIONS.NONE);
     }
 
     @Override
@@ -296,16 +298,16 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
                 if (exception instanceof HttpException) {
                     Log.d(((HttpException) exception).response().errorBody(), ((HttpException) exception).response().code());
                     if (((HttpException) exception).response().code() == 500) {
-                        view.showErrorMessage("Il server sta avendo dei problemi", "Segnala il problema", INTENT_C.ERROR_BTN.SEND_REPORT);
+                        view.showErrorMessage("Il server sta avendo dei problemi", "Segnala il problema", INTENT_CONST.ERROR_BTN.SEND_REPORT);
                     }
                 } else if (exception instanceof ConnectException) {
-                    if (NetworkingUtils.isNetworkAvailable(view.getViewContext())) {
-                        view.showErrorMessage("Il server sta avendo dei problemi", "Segnala il problema", INTENT_C.ERROR_BTN.SEND_REPORT);
+                    if (NetworkingHelper.isNetworkAvailable(view.getViewContext())) {
+                        view.showErrorMessage("Il server sta avendo dei problemi", "Segnala il problema", INTENT_CONST.ERROR_BTN.SEND_REPORT);
                     } else {
-                        view.showErrorMessage("Assicurati di essere connesso a Internet", "Attiva connessione", INTENT_C.ERROR_BTN.CONN_SETTINGS);
+                        view.showErrorMessage("Assicurati di essere connesso a Internet", "Attiva connessione", INTENT_CONST.ERROR_BTN.CONN_SETTINGS);
                     }
                 } else if (exception instanceof SocketException) {
-                    view.showErrorMessage("Assicurati di essere connesso a Internet", "Attiva connessione", INTENT_C.ERROR_BTN.CONN_SETTINGS);
+                    view.showErrorMessage("Assicurati di essere connesso a Internet", "Attiva connessione", INTENT_CONST.ERROR_BTN.CONN_SETTINGS);
                 }
             }
         }
@@ -332,12 +334,12 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
                 Integer.parseInt(p.second);
                 Integer.parseInt(info.get(p));
             } catch (NumberFormatException e) {
-                view.showSnackbar("Problema di aggiornamento", INTENT_C.SNACKBAR_ACTIONS.NONE);
+                view.showSnackbar("Problema di aggiornamento", INTENT_CONST.SNACKBAR_ACTIONS.NONE);
                 Log.e("refreshChange: ", "There are problems with these parameters:", p.first, p.second, info.get(p));
                 continue;
             }
 
-            o.add(APINetworkingFactory.createRetrofitService(JourneyService.class, ConfigsHelper.getAPIEndpoint(view.getViewContext()))
+            o.add(APINetworkingFactory.createRetrofitService(JourneyService.class, ServerConfigsHelper.getAPIEndpoint(view.getViewContext()))
                     .getDelay(p.first,
                             p.second,
                             info.get(p))
@@ -358,7 +360,7 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
         @Override
         public void searchJourney(boolean isNewSearch, String departureStationId, String arrivalStationId, DateTime timestamp, boolean isPreemptive, boolean withDelays, OnJourneySearchFinishedListener listener) {
             Log.d(departureStationId, arrivalStationId, timestamp, isPreemptive, withDelays);
-            APINetworkingFactory.createRetrofitService(JourneyService.class, ConfigsHelper.getAPIEndpoint(listener.getViewContext())).getJourneyInstant(departureStationId, arrivalStationId, isPreemptive)
+            APINetworkingFactory.createRetrofitService(JourneyService.class, ServerConfigsHelper.getAPIEndpoint(listener.getViewContext())).getJourneyInstant(departureStationId, arrivalStationId, isPreemptive)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new Subscriber<Journey>() {
@@ -388,7 +390,7 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
     private static class SearchAfterTimeStrategy implements JourneyResultsContract.View.JourneySearchStrategy {
         @Override
         public void searchJourney(boolean isNewSearch, String departureStationId, String arrivalStationId, DateTime timestamp, boolean isPreemptive, boolean withDelays, OnJourneySearchFinishedListener listener) {
-            APINetworkingFactory.createRetrofitService(JourneyService.class, ConfigsHelper.getAPIEndpoint(listener.getViewContext()))
+            APINetworkingFactory.createRetrofitService(JourneyService.class, ServerConfigsHelper.getAPIEndpoint(listener.getViewContext()))
                     .getJourneyAfterTime(departureStationId, arrivalStationId, timestamp.toString("yyyy-MM-dd'T'HH:mmZ"), withDelays, isPreemptive)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -426,7 +428,7 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
         @Override
         public void searchJourney(boolean isNewSearch, String departureStationId, String arrivalStationId, DateTime timestamp, boolean isPreemptive, boolean withDelays, OnJourneySearchFinishedListener listener) {
             Log.d(timestamp);
-            APINetworkingFactory.createRetrofitService(JourneyService.class, ConfigsHelper.getAPIEndpoint(listener.getViewContext())).getJourneyBeforeTime(departureStationId, arrivalStationId, timestamp.toString("yyyy-MM-dd'T'HH:mmZ"), withDelays, isPreemptive)
+            APINetworkingFactory.createRetrofitService(JourneyService.class, ServerConfigsHelper.getAPIEndpoint(listener.getViewContext())).getJourneyBeforeTime(departureStationId, arrivalStationId, timestamp.toString("yyyy-MM-dd'T'HH:mmZ"), withDelays, isPreemptive)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new Subscriber<Journey>() {

@@ -41,11 +41,11 @@ import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.
 import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.Analytics.ACTION_SET_NOTIFICATION_FROM_RESULTS;
 import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.Analytics.ACTION_SOLUTION_CLICK;
 import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.Analytics.SCREEN_JOURNEY_RESULTS;
-import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_C.I_SOLUTION;
-import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_C.I_STATIONS;
-import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.ViewsUtils.GONE;
-import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.ViewsUtils.VISIBLE;
-import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.ViewsUtils.getColor;
+import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_CONST.I_SOLUTION;
+import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_CONST.I_STATIONS;
+import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.components.ViewsUtils.GONE;
+import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.components.ViewsUtils.VISIBLE;
+import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.components.ViewsUtils.getColor;
 
 class JourneyResultsAdapter extends RecyclerView.Adapter {
 

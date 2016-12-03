@@ -1,4 +1,4 @@
-package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils;
+package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.helpers;
 
 import com.google.gson.Gson;
 
@@ -11,20 +11,20 @@ import java.util.List;
 
 public class PreferredStationsHelper {
 
-    private static boolean isJourneyAlreadyPreferred(Context context, String id1, String id2) {
-        return SharedPrefsHelper.getSharedPreferenceObject(context, buildPrefId(id1, id2)) != null;
+    public static boolean isJourneyAlreadyPreferred(Context context, String id1, String id2) {
+        return SharedPreferencesHelper.getSharedPreferenceObject(context, buildPrefId(id1, id2)) != null;
     }
 
 //    public static boolean isJourneyAlreadyPreferred(Context context, List<Station4Database> list) {
 //        return isJourneyAlreadyPreferred(context, list.get(0).getStationShortId(), list.get(1).getStationShortId());
 //    }
 
-    static boolean isJourneyAlreadyPreferred(Context context, PreferredStation departureStation, PreferredStation arrivalStation) {
+    public static boolean isJourneyAlreadyPreferred(Context context, PreferredStation departureStation, PreferredStation arrivalStation) {
         return isJourneyAlreadyPreferred(context, departureStation.getStationShortId(), arrivalStation.getStationShortId());
     }
 
     public static void setPreferredJourney(Context context, PreferredJourney journey) {
-        SharedPrefsHelper.setSharedPreferenceObject(context,
+        SharedPreferencesHelper.setSharedPreferenceObject(context,
                 buildPrefId(journey.getStation1().getStationShortId(),
                         journey.getStation2().getStationShortId()),
                 new Gson().toJson(journey));
@@ -32,11 +32,11 @@ public class PreferredStationsHelper {
 
 
 //    public static PreferredJourney getPreferredJourney(Context context, String id1, String id2) {
-//        return new Gson().fromJson(SharedPrefsHelper.getSharedPreferenceObject(context, buildPrefId(id1, id2)), PreferredJourney.class);
+//        return new Gson().fromJson(SharedPreferencesHelper.getSharedPreferenceObject(context, buildPrefId(id1, id2)), PreferredJourney.class);
 //    }
 
     private static void removePreferredJourney(Context context, String id1, String id2) {
-        SharedPrefsHelper.removeSharedPreferenceObject(context, buildPrefId(id1, id2));
+        SharedPreferencesHelper.removeSharedPreferenceObject(context, buildPrefId(id1, id2));
     }
 
 //    public static void removePreferredJourney(Context context, List<Station4Database> list) {
@@ -48,11 +48,11 @@ public class PreferredStationsHelper {
     }
 
 //    public static Map<String, PreferredJourney> getAll(Context context) {
-//        return (Map<String, PreferredJourney>) SharedPrefsHelper.getAll(context);
+//        return (Map<String, PreferredJourney>) SharedPreferencesHelper.getAll(context);
 //    }
 
     public static List<PreferredJourney> getAllAsObject(Context context) {
-        return SharedPrefsHelper.getAllAsObject(context);
+        return SharedPreferencesHelper.getAllAsObject(context);
     }
 
     private static String buildPrefId(String id1, String id2) {

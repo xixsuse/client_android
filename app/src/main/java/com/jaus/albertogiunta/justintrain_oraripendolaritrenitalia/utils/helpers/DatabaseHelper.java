@@ -1,4 +1,4 @@
-package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils;
+package com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.helpers;
 
 import android.content.Context;
 
@@ -14,7 +14,7 @@ import io.realm.Realm;
 import io.realm.RealmResults;
 
 @SuppressWarnings("unused")
-public class StationRealmUtils {
+public class DatabaseHelper {
 
     private static RealmResults<Station4Database> stationList = Realm.getDefaultInstance().where(Station4Database.class).findAll();
 
@@ -45,12 +45,12 @@ public class StationRealmUtils {
         return matchingStations.size() == 1 && !stationName.isEmpty();
     }
 
-    public static Station4Database getStation4DatabaseObject(String stationName, RealmResults<Station4Database> stationList) {
+    public static Station4Database getStation4DatabaseObject(String stationNameBetterIfShort, RealmResults<Station4Database> stationList) {
         Station4Database temp;
         try {
-            temp = stationList.where().equalTo("nameShort", stationName, Case.INSENSITIVE).findAll().get(0);
+            temp = stationList.where().equalTo("nameShort", stationNameBetterIfShort, Case.INSENSITIVE).findAll().get(0);
         } catch (Exception e) {
-            temp = stationList.where().equalTo("nameLong", stationName, Case.INSENSITIVE).findAll().get(0);
+            temp = stationList.where().equalTo("nameLong", stationNameBetterIfShort, Case.INSENSITIVE).findAll().get(0);
         }
         return temp;
     }

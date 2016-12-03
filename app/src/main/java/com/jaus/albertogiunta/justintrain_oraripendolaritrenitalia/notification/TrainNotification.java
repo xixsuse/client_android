@@ -17,6 +17,7 @@ import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.R;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.TrainHeader;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.networking.DateTimeAdapter;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.trainDetails.TrainDetailsActivity;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.helpers.NotificationDataHelper;
 
 import org.joda.time.DateTime;
 
@@ -25,9 +26,8 @@ import java.util.Random;
 import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.notification.NotificationService.ACTION_STOP_NOTIFICATION;
 import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.notification.NotificationService.ACTION_UPDATE_NOTIFICATION;
 import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.notification.NotificationService.EXTRA_NOTIFICATION_DATA;
-import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.notification.NotificationService.solution;
-import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_C.I_SOLUTION;
-import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_C.I_STATIONS;
+import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_CONST.I_SOLUTION;
+import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_CONST.I_STATIONS;
 
 /**
  * Helper class for showing and canceling train
@@ -66,8 +66,8 @@ class TrainNotification {
         iStop.setAction(ACTION_STOP_NOTIFICATION);
 
         Intent notificationIntent = new Intent(context, TrainDetailsActivity.class);
-        notificationIntent.putExtra(I_SOLUTION, gson.toJson(solution));
-        notificationIntent.putExtra(I_STATIONS, gson.toJson(NotificationService.preferredJourney));
+        notificationIntent.putExtra(I_SOLUTION, NotificationDataHelper.getNotificationSolutionString(context));
+        notificationIntent.putExtra(I_STATIONS, NotificationDataHelper.getNotificationPreferredJourneyString(context));
         notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         PendingIntent intent = PendingIntent.getActivity(context, new Random().nextInt(),
                 notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);

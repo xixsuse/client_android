@@ -23,8 +23,8 @@ import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.Preferre
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeyResults.JourneyResultsActivity;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeySearch.JourneySearchActivity;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.Analytics;
-import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_C;
-import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.SharedPrefsHelper;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_CONST;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.helpers.SharedPreferencesHelper;
 
 import java.util.List;
 
@@ -35,15 +35,16 @@ import butterknife.OnClick;
 import co.dift.ui.SwipeToAction;
 import trikita.log.Log;
 
+import static butterknife.ButterKnife.apply;
 import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.Analytics.ACTION_NO_SWIPE_BUT_CLICK;
 import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.Analytics.ACTION_NO_SWIPE_BUT_LONG_CLICK;
 import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.Analytics.ACTION_SEARCH_JOURNEY_FROM_FAVOURITES;
 import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.Analytics.ACTION_SWIPE_LEFT_TO_RIGHT;
 import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.Analytics.ACTION_SWIPE_RIGHT_TO_LEFT;
 import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.Analytics.SCREEN_FAVOURITE_JOURNEYS;
-import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_C.I_STATIONS;
-import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.ViewsUtils.GONE;
-import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.ViewsUtils.VISIBLE;
+import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_CONST.I_STATIONS;
+import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.components.ViewsUtils.GONE;
+import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.components.ViewsUtils.VISIBLE;
 
 public class FavouriteJourneysActivity extends AppCompatActivity implements FavouritesContract.View {
 
@@ -55,11 +56,11 @@ public class FavouriteJourneysActivity extends AppCompatActivity implements Favo
     @BindView(R.id.ll_add_favourite)
     LinearLayout llAddFavourite;
     FavouriteJourneysAdapter adapter;
-    @BindView(R.id.rl_dashboard)
+    @BindView(R.id.rl_message)
     RelativeLayout rlDashboard;
-    @BindView(R.id.tv_title)
+    @BindView(R.id.tv_message_title)
     TextView tvTitle;
-    @BindView(R.id.tv_body)
+    @BindView(R.id.tv_message_body)
     TextView tvBody;
     @BindView(R.id.fab_search_journey)
     FloatingActionButton fabSearchJourney;
@@ -130,7 +131,7 @@ public class FavouriteJourneysActivity extends AppCompatActivity implements Favo
     }
 
     @Override
-    public void showSnackbar(String message, INTENT_C.SNACKBAR_ACTIONS intent) {
+    public void showSnackbar(String message, INTENT_CONST.SNACKBAR_ACTIONS intent) {
         Log.w(message);
         Snackbar snackbar = Snackbar
                 .make(this.rvFavouriteJourneys, message, Snackbar.LENGTH_LONG);
@@ -156,30 +157,31 @@ public class FavouriteJourneysActivity extends AppCompatActivity implements Favo
 
     @Override
     public void updateDashboard(Message message) {
+        apply(this.rlDashboard, VISIBLE);
         this.tvTitle.setText(message.getTitle());
         this.tvBody.setText(message.getBody());
     }
 
     @Override
     public void displayFavouriteJourneys() {
-        ButterKnife.apply(hints, VISIBLE);
-        ButterKnife.apply(rvFavouriteJourneys, VISIBLE);
-        ButterKnife.apply(llAddFavourite, GONE);
+        apply(hints, VISIBLE);
+        apply(rvFavouriteJourneys, VISIBLE);
+        apply(llAddFavourite, GONE);
     }
 
     @Override
     public void displayEntryButton() {
-        ButterKnife.apply(hints, GONE);
-        ButterKnife.apply(rvFavouriteJourneys, GONE);
-        ButterKnife.apply(llAddFavourite, VISIBLE);
+        apply(hints, GONE);
+        apply(rvFavouriteJourneys, GONE);
+        apply(llAddFavourite, VISIBLE);
     }
 
     private void checkIntro() {
         Thread t = new Thread(() -> {
-            boolean isFirstStart = SharedPrefsHelper.getSharedPreferenceBoolean(getViewContext(), "firstStart", true);
+            boolean isFirstStart = SharedPreferencesHelper.getSharedPreferenceBoolean(getViewContext(), "firstStart", true);
             Log.d("checkIntro: ", isFirstStart);
             if (isFirstStart) {
-                SharedPrefsHelper.setSharedPreferenceBoolean(getViewContext(), "firstStart", false);
+                SharedPreferencesHelper.setSharedPreferenceBoolean(getViewContext(), "firstStart", false);
                 Log.d("checkIntro: set to false");
                 Intent i = new Intent(FavouriteJourneysActivity.this, IntroActivity.class);
                 startActivity(i);
