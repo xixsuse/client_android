@@ -10,6 +10,7 @@ import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.Preferre
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.ServerConfig;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.networking.ConfigsNetworkingFactory;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.networking.ConfigsService;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.components.ViewsUtils.COLORS;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.helpers.PreferredStationsHelper;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.helpers.SharedPreferencesHelper;
 
@@ -19,6 +20,8 @@ import java.util.List;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
+
+import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_CONST.I_SERVER_CONFIG;
 
 class FavouritesPresenter implements FavouritesContract.Presenter {
 
@@ -75,7 +78,7 @@ class FavouritesPresenter implements FavouritesContract.Presenter {
                     @Override
                     public void onError(Throwable e) {
                         ServerConfig config = new ServerConfig(address, true, 0);
-                        SharedPreferencesHelper.setSharedPreferenceObject(view.getViewContext(), "serverConfig", new Gson().toJson(config));
+                        SharedPreferencesHelper.setSharedPreferenceObject(view.getViewContext(), I_SERVER_CONFIG, new Gson().toJson(config));
                     }
 
                     @Override
@@ -86,7 +89,7 @@ class FavouritesPresenter implements FavouritesContract.Presenter {
                         } else {
                             config = serverConfigs.get(0);
                         }
-                        SharedPreferencesHelper.setSharedPreferenceObject(view.getViewContext(), "serverConfig", new Gson().toJson(config));
+                        SharedPreferencesHelper.setSharedPreferenceObject(view.getViewContext(), I_SERVER_CONFIG, new Gson().toJson(config));
                     }
                 });
     }
@@ -110,7 +113,24 @@ class FavouritesPresenter implements FavouritesContract.Presenter {
                         messages = msg;
                         Log.d("onNext: ", msg.toString());
                         Message m = messages.get(0);
-                        view.updateDashboard(m);
+                        Log.d("onNext: ", m.toString());
+                        switch (m.getCategory()) {
+                            case "STRIKE":
+                                view.updateDashboard(m, COLORS.RED);
+                                break;
+                            case "WARNING":
+                                view.updateDashboard(m, COLORS.ORANGE);
+                                break;
+                            case "TIP":
+                                view.updateDashboard(m, COLORS.GREEN);
+                                break;
+                            case "UPDATE":
+                                view.updateDashboard(m, COLORS.BLUE);
+                                break;
+                            default:
+                                view.hideDashboard();
+                                break;
+                        }
                     }
                 });
     }

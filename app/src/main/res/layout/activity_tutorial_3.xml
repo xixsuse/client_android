@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:gravity="center"
+        android:background="@color/tut_bg_3"
+        android:orientation="vertical"
+        >
+
+    <me.grantland.widget.AutofitTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="30dp"
+            android:text="Rimani informato sul tuo treno"
+            android:textSize="26sp"
+            app:minTextSize="20sp"
+            android:maxLines="1"
+            android:textStyle="bold"
+            android:textAlignment="center"
+            android:textColor="@color/tut_txt_3"
+            />
+
+    <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="60dp"
+            app:srcCompat="@drawable/tut3"
+            />
+
+</LinearLayout>

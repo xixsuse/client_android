@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.PreferredJourney;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_CONST;
 
 import java.util.Collections;
 import java.util.LinkedList;
@@ -141,7 +142,10 @@ public class SharedPreferencesHelper {
         List<PreferredJourney> list = new LinkedList<>();
         Map<String, ?> m = getAll(context);
         for (String el : m.keySet()) {
-            if (!el.equals("firstStart") && !el.equals("serverConfig")) {
+            if (!el.equals(INTENT_CONST.I_FIRST_START)
+                    && !el.equals(INTENT_CONST.I_SERVER_CONFIG)
+                    && !el.equals(INTENT_CONST.I_NOTIFICATION_PREF_JOURNEY)
+                    && !el.equals(INTENT_CONST.I_NOTIFICATION_SOLUTION)) {
                 PreferredJourney temp = gson.fromJson(((String) m.get(el)), PreferredJourney.class);
                 if (temp.getStation1() != null && temp.getStation2() != null) list.add(temp);
             }

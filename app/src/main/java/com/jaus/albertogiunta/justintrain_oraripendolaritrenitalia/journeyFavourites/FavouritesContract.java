@@ -4,6 +4,7 @@ import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.BasePresenter
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.BaseView;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.Message;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.PreferredJourney;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.components.ViewsUtils;
 
 import java.util.List;
 
@@ -19,8 +20,9 @@ interface FavouritesContract {
         /**
          * Update the message board with the selected message (downloaded from the internet)
          * @param message to display
+         * @param titleColor
          */
-        void updateDashboard(Message message);
+        void updateDashboard(Message message, ViewsUtils.COLORS titleColor);
 
         /**
          * Should be called after the preferred journey list has been updated
@@ -31,6 +33,8 @@ interface FavouritesContract {
          * Should be called when no preferred journey is present, it displays an additional button
          */
         void displayEntryButton();
+
+        void hideDashboard();
     }
 
     interface Presenter extends BasePresenter {

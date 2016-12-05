@@ -5,6 +5,9 @@ public class INTENT_CONST {
     public static final int I_CODE_DEPARTURE = 1;
     public static final int I_CODE_ARRIVAL = 2;
 
+    public static final String I_FIRST_START = "firstStart";
+    public static final String I_SERVER_CONFIG = "serverConfig";
+
     public static final String I_STATIONS = "stations";
     public static final String I_TIME = "time";
 

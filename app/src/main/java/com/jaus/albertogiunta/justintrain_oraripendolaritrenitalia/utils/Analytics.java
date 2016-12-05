@@ -106,7 +106,8 @@ public class Analytics {
     public void logScreenEvent(String screen, String action) {
         Bundle bundle = new Bundle();
         bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, screen);
-//        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, action);
-        firebase.logEvent(action, bundle);
+        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, action);
+        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, action);
+        firebase.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
     }
 }

@@ -21,7 +21,7 @@ import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.helpers
 import org.joda.time.DateTime;
 
 import java.net.ConnectException;
-import java.net.SocketException;
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -63,12 +63,8 @@ class TrainDetailsPresenter implements TrainDetailsContract.Presenter {
             // Restore value of members from saved state
             if (bundle.getString(I_SOLUTION) != null) {
                 solution = gson.fromJson(bundle.getString(I_SOLUTION), Journey.Solution.class);
-                if (solution == null) {
-                    // todo fai salvataggio dell'ultimo notified nei preferiti e ripescalo da qui<
-                } else {
-                    if (solution.hasChanges()) {
-                        Arrays.copyOf(trainList.toArray(), solution.getChangesList().size());
-                    }
+                if (solution.hasChanges()) {
+                    Arrays.copyOf(trainList.toArray(), solution.getChangesList().size());
                 }
                 Log.d("Current bundled solution is: ", solution.toString());
             }
@@ -102,6 +98,7 @@ class TrainDetailsPresenter implements TrainDetailsContract.Presenter {
         } else {
             trainIdList.add(solution.getTrainId());
         }
+
         Observable.concatDelayError(Observable.from(searchTrainDetails(trainIdList))).subscribe(new Subscriber<Train>() {
             @Override
             public void onCompleted() {
@@ -112,6 +109,10 @@ class TrainDetailsPresenter implements TrainDetailsContract.Presenter {
 
             @Override
             public void onError(Throwable exception) {
+                if (exception == null) {
+                    view.showErrorMessage("Si è verificato un errore", "Torna alle soluzioni", INTENT_CONST.ERROR_BTN.NO_SOLUTIONS);
+                    return;
+                }
                 Log.d(exception.getMessage());
                 if (view != null) {
                     if (exception.getMessage().equals("HTTP 404 ")) {
@@ -129,7 +130,7 @@ class TrainDetailsPresenter implements TrainDetailsContract.Presenter {
                             } else {
                                 view.showErrorMessage("Assicurati di essere connesso a Internet", "Attiva connessione", INTENT_CONST.ERROR_BTN.CONN_SETTINGS);
                             }
-                        } else if (exception instanceof SocketException) {
+                        } else if (exception instanceof SocketTimeoutException) {
                             view.showErrorMessage("Assicurati di essere connesso a Internet", "Attiva connessione", INTENT_CONST.ERROR_BTN.CONN_SETTINGS);
                         }
                     }

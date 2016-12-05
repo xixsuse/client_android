@@ -11,7 +11,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -23,13 +22,10 @@ import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.data.Preferre
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeyResults.JourneyResultsActivity;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.journeySearch.JourneySearchActivity;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.Analytics;
-import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_CONST;
+import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.components.ViewsUtils;
 import com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.helpers.SharedPreferencesHelper;
 
-import java.util.List;
-
 import butterknife.BindView;
-import butterknife.BindViews;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import co.dift.ui.SwipeToAction;
@@ -42,7 +38,9 @@ import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.
 import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.Analytics.ACTION_SWIPE_LEFT_TO_RIGHT;
 import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.Analytics.ACTION_SWIPE_RIGHT_TO_LEFT;
 import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.Analytics.SCREEN_FAVOURITE_JOURNEYS;
+import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_CONST.I_FIRST_START;
 import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_CONST.I_STATIONS;
+import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.INTENT_CONST.SNACKBAR_ACTIONS;
 import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.components.ViewsUtils.GONE;
 import static com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia.utils.components.ViewsUtils.VISIBLE;
 
@@ -64,8 +62,8 @@ public class FavouriteJourneysActivity extends AppCompatActivity implements Favo
     TextView tvBody;
     @BindView(R.id.fab_search_journey)
     FloatingActionButton fabSearchJourney;
-    @BindViews({R.id.hint_left, R.id.hint_right})
-    List<View> hints;
+//    @BindViews({R.id.hint_left, R.id.hint_right})
+//    List<View> hints;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -78,6 +76,7 @@ public class FavouriteJourneysActivity extends AppCompatActivity implements Favo
         adapter = new FavouriteJourneysAdapter(presenter.getPreferredJourneys());
         rvFavouriteJourneys.setAdapter(adapter);
         rvFavouriteJourneys.setLayoutManager(new LinearLayoutManager(this));
+
 
         new SwipeToAction(rvFavouriteJourneys, new SwipeToAction.SwipeListener<PreferredJourney>() {
             @Override
@@ -131,7 +130,7 @@ public class FavouriteJourneysActivity extends AppCompatActivity implements Favo
     }
 
     @Override
-    public void showSnackbar(String message, INTENT_CONST.SNACKBAR_ACTIONS intent) {
+    public void showSnackbar(String message, SNACKBAR_ACTIONS intent) {
         Log.w(message);
         Snackbar snackbar = Snackbar
                 .make(this.rvFavouriteJourneys, message, Snackbar.LENGTH_LONG);
@@ -156,32 +155,38 @@ public class FavouriteJourneysActivity extends AppCompatActivity implements Favo
     }
 
     @Override
-    public void updateDashboard(Message message) {
+    public void updateDashboard(Message message, ViewsUtils.COLORS titleColor) {
         apply(this.rlDashboard, VISIBLE);
         this.tvTitle.setText(message.getTitle());
+        this.tvTitle.setTextColor(ViewsUtils.getColor(getViewContext(), titleColor));
         this.tvBody.setText(message.getBody());
     }
 
     @Override
     public void displayFavouriteJourneys() {
-        apply(hints, VISIBLE);
+//        apply(hints, VISIBLE);
         apply(rvFavouriteJourneys, VISIBLE);
         apply(llAddFavourite, GONE);
     }
 
     @Override
     public void displayEntryButton() {
-        apply(hints, GONE);
+//        apply(hints, GONE);
         apply(rvFavouriteJourneys, GONE);
         apply(llAddFavourite, VISIBLE);
     }
 
+    @Override
+    public void hideDashboard() {
+        apply(this.rlDashboard, GONE);
+    }
+
     private void checkIntro() {
         Thread t = new Thread(() -> {
-            boolean isFirstStart = SharedPreferencesHelper.getSharedPreferenceBoolean(getViewContext(), "firstStart", true);
+            boolean isFirstStart = SharedPreferencesHelper.getSharedPreferenceBoolean(getViewContext(), I_FIRST_START, true);
             Log.d("checkIntro: ", isFirstStart);
             if (isFirstStart) {
-                SharedPreferencesHelper.setSharedPreferenceBoolean(getViewContext(), "firstStart", false);
+                SharedPreferencesHelper.setSharedPreferenceBoolean(getViewContext(), I_FIRST_START, false);
                 Log.d("checkIntro: set to false");
                 Intent i = new Intent(FavouriteJourneysActivity.this, IntroActivity.class);
                 startActivity(i);

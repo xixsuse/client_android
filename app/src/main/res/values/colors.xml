@@ -35,4 +35,11 @@
     <color name="btn_light_cyan">#E3F2FD</color>
     <color name="btn_dark_cyan">#01579B</color>
     <color name="btn_red">#de294d</color>
+
+    <color name="tut_bg_1">#EB8469</color>
+    <color name="tut_bg_2">#77ECE2</color>
+    <color name="tut_bg_3">#E57063</color>
+    <color name="tut_txt_1">#161A2B</color>
+    <color name="tut_txt_2">#29282D</color>
+    <color name="tut_txt_3">#2A282F</color>
 </resources>

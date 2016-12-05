@@ -18,7 +18,7 @@ public class ViewsUtils {
 
 
     public enum COLORS {
-        WHITE, YELLOW, ORANGE, RED, GREEN, BLACK, GREY_LIGHTER
+        WHITE, YELLOW, ORANGE, RED, GREEN, BLACK, GREY_LIGHTER, BLUE
     }
 
     public static int getColor(Context context, COLORS color) {
@@ -37,6 +37,8 @@ public class ViewsUtils {
                 return ContextCompat.getColor(context, R.color.txt_dark);
             case GREY_LIGHTER:
                 return ContextCompat.getColor(context, R.color.txt_grey_lighter);
+            case BLUE:
+                return ContextCompat.getColor(context, R.color.btn_dark_cyan);
             default:
                 return ContextCompat.getColor(context, R.color.txt_dark);
         }

@@ -74,6 +74,7 @@
                 android:elevation="@dimen/elevation_smaller"
                 android:layout_alignParentTop="true"
                 android:layout_alignParentStart="true"
+                android:visibility="gone"
                 >
 
             <TextView
@@ -81,9 +82,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textStyle="bold"
-                    android:textColor="@color/txt_red"
+                    android:textColor="@color/txt_dark"
                     android:layout_margin="@dimen/margin_small"
-                    android:text="SCIOPERO"
+                    android:text=""
                     />
 
             <TextView
@@ -93,7 +94,7 @@
                     android:layout_toEndOf="@id/tv_message_title"
                     android:textSize="@dimen/text_size_smaller"
                     android:layout_margin="@dimen/margin_small"
-                    android:text="Ci sarà uno sciopero nazionale il 19 dicembre 2016 dalle ore 00:00 alle ore 24:00 dle asdlkòj sddkd asòlkfj asdfòlk jasdòlkj"
+                    android:text=""
                     />
 
         </RelativeLayout>
@@ -101,44 +102,89 @@
         <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/rl_message"
-                android:elevation="@dimen/elevation_default"
-                android:layout_centerHorizontal="true"
                 >
 
             <ImageView
-                    android:id="@+id/hint_left"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_alignParentStart="true"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="2dp"
-                    android:layout_marginBottom="2dp"
-                    app:srcCompat="@drawable/ic_hint_swipe_right"
-                    android:visibility="visible"
+                    android:id="@+id/iv_star"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:srcCompat="@drawable/ic_star_black"
+                    android:layout_centerHorizontal="true"
+                    android:layout_margin="20dp"
+                    android:tint="@color/bg_grey"
                     />
 
-            <ImageView
-                    android:id="@+id/hint_right"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_alignParentEnd="true"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginTop="2dp"
-                    android:layout_marginBottom="2dp"
-                    android:rotation="180"
-                    app:srcCompat="@drawable/ic_hint_swipe_right"
-                    android:visibility="visible"
+            <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginStart="20dp"
+                    android:layout_toStartOf="@id/iv_star"
+                    android:layout_centerVertical="true"
+                    android:background="@color/bg_grey"
                     />
+
+            <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginEnd="20dp"
+                    android:layout_toEndOf="@id/iv_star"
+                    android:layout_centerVertical="true"
+                    android:background="@color/bg_grey"
+                    />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@id/rl_message"
+                android:layout_centerHorizontal="true"
+                >
+
+            <!--<ImageView-->
+            <!--android:id="@+id/hint_left"-->
+            <!--android:layout_width="20dp"-->
+            <!--android:layout_height="20dp"-->
+            <!--android:layout_alignParentStart="true"-->
+            <!--android:layout_marginStart="8dp"-->
+            <!--android:layout_marginTop="2dp"-->
+            <!--android:layout_marginBottom="2dp"-->
+            <!--app:srcCompat="@drawable/ic_hint_swipe_right"-->
+            <!--android:visibility="gone"-->
+            <!--/>-->
+
+            <!--<ImageView-->
+            <!--android:id="@+id/hint_right"-->
+            <!--android:layout_width="20dp"-->
+            <!--android:layout_height="20dp"-->
+            <!--android:layout_alignParentEnd="true"-->
+            <!--android:layout_marginEnd="8dp"-->
+            <!--android:layout_marginTop="2dp"-->
+            <!--android:layout_marginBottom="2dp"-->
+            <!--android:rotation="180"-->
+            <!--app:srcCompat="@drawable/ic_hint_swipe_right"-->
+            <!--android:visibility="gone"-->
+            <!--/>-->
 
             <android.support.v7.widget.RecyclerView
                     android:id="@+id/rv_favourite_journeys"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginTop="26dp"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginTop="0dp"
+                    android:overScrollMode="never"
                     android:visibility="visible"
                     >
             </android.support.v7.widget.RecyclerView>
+
+            <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:elevation="2dp"
+                    android:background="@color/bg_grey_lighter"
+                    android:layout_marginTop="-2dp"
+                    android:layout_below="@id/rv_favourite_journeys"
+                    />
         </RelativeLayout>
 
     </RelativeLayout>
