@@ -30,6 +30,10 @@ public class PreferredStationsHelper {
                 new Gson().toJson(journey));
     }
 
+    public static boolean isPossibleToSaveMore(Context context) {
+        return SharedPreferencesHelper.getAllAsObject(context).size() < 10;
+    }
+
 
 //    public static PreferredJourney getPreferredJourney(Context context, String id1, String id2) {
 //        return new Gson().fromJson(SharedPreferencesHelper.getSharedPreferenceObject(context, buildPrefId(id1, id2)), PreferredJourney.class);

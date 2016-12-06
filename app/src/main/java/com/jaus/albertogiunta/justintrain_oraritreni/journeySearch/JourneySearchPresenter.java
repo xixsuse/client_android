@@ -56,6 +56,9 @@ class JourneySearchPresenter implements JourneySearchContract.Presenter {
             setFavouriteButtonStatus();
             Log.d("onResuming: resuming bundle", journey.toString());
         } else {
+            if (this.departureStation != null && this.arrivalStation != null) {
+                setFavouriteButtonStatus();
+            }
             Log.d("no bundle found");
         }
     }
@@ -142,10 +145,14 @@ class JourneySearchPresenter implements JourneySearchContract.Presenter {
                 setFavouriteButtonStatus();
                 view.showSnackbar("Tratta rimossa dai Preferiti", INTENT_CONST.SNACKBAR_ACTIONS.NONE);
             } else {
-                PreferredStationsHelper.setPreferredJourney(view.getViewContext(),
-                        new PreferredJourney(departureStation, arrivalStation));
-                setFavouriteButtonStatus();
-                view.showSnackbar("Tratta aggiunta ai Preferiti", INTENT_CONST.SNACKBAR_ACTIONS.NONE);
+                if (PreferredStationsHelper.isPossibleToSaveMore(view.getViewContext())) {
+                    PreferredStationsHelper.setPreferredJourney(view.getViewContext(),
+                            new PreferredJourney(departureStation, arrivalStation));
+                    setFavouriteButtonStatus();
+                    view.showSnackbar("Tratta aggiunta ai Preferiti", INTENT_CONST.SNACKBAR_ACTIONS.NONE);
+                } else {
+                    view.showSnackbar("Impossibile salvare più di 10 tratte nei Preferiti!", INTENT_CONST.SNACKBAR_ACTIONS.NONE);
+                }
             }
         }
     }
