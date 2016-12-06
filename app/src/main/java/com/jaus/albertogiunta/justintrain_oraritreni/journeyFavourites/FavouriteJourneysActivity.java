@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -72,6 +73,12 @@ public class FavouriteJourneysActivity extends AppCompatActivity implements Favo
         analytics = Analytics.getInstance(getViewContext());
         Ads.initializeAds(getApplicationContext(), (AdView) findViewById(R.id.adView));
         checkIntro();
+
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setTitle("Tratte Preferite");
+        }
+
         presenter = new FavouritesPresenter(this);
         adapter = new FavouriteJourneysAdapter(presenter.getPreferredJourneys());
         rvFavouriteJourneys.setAdapter(adapter);

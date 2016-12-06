@@ -6,7 +6,7 @@
         android:viewportHeight="48">
 
     <path
-            android:fillColor="@color/btn_cyan"
+            android:fillColor="@color/bg_white_darker"
             android:fillType="evenOdd"
             android:strokeWidth="1"
             android:pathData="M56.4946674,0.5 C54.2884735,0.5 53.5866748,1.92244516 54.9283949,3.67874162

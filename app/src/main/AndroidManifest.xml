@@ -23,7 +23,7 @@
                 android:theme="@style/AppThemeNoShadowActionbar"/>
         <activity
                 android:name="com.jaus.albertogiunta.justintrain_oraritreni.journeyFavourites.FavouriteJourneysActivity"
-                android:label="Tratte preferite"
+                android:label="Just In Train"
                 >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
