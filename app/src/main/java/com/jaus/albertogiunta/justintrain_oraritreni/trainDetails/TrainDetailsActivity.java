@@ -1,5 +1,7 @@
 package com.jaus.albertogiunta.justintrain_oraritreni.trainDetails;
 
+import com.google.android.gms.ads.AdView;
+
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -21,6 +23,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.jaus.albertogiunta.justintrain_oraritreni.R;
+import com.jaus.albertogiunta.justintrain_oraritreni.utils.Ads;
 import com.jaus.albertogiunta.justintrain_oraritreni.utils.Analytics;
 import com.jaus.albertogiunta.justintrain_oraritreni.utils.INTENT_CONST;
 import com.jaus.albertogiunta.justintrain_oraritreni.utils.components.HideShowScrollListener;
@@ -64,6 +67,7 @@ public class TrainDetailsActivity extends AppCompatActivity implements TrainDeta
         setContentView(R.layout.activity_train_details);
         ButterKnife.bind(this);
         analytics = Analytics.getInstance(getViewContext());
+        Ads.initializeAds(getApplicationContext(), (AdView) findViewById(R.id.adView));
         presenter = new TrainDetailsPresenter(this);
         presenter.setState(getIntent().getExtras());
 
@@ -76,7 +80,7 @@ public class TrainDetailsActivity extends AppCompatActivity implements TrainDeta
         rvTrainDetails.addOnScrollListener(new HideShowScrollListener() {
             @Override
             public void onHide() {
-                btnRefresh.animate().setInterpolator(new LinearInterpolator()).translationY(150).setDuration(100);
+                btnRefresh.animate().setInterpolator(new LinearInterpolator()).translationY(200).setDuration(100);
             }
 
             @Override

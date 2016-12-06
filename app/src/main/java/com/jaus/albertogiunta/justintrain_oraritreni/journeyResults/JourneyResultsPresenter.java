@@ -26,7 +26,6 @@ import com.jaus.albertogiunta.justintrain_oraritreni.utils.helpers.ServerConfigs
 import org.joda.time.DateTime;
 
 import java.net.ConnectException;
-import java.net.SocketException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -306,7 +305,7 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
                     } else {
                         view.showErrorMessage("Assicurati di essere connesso a Internet", "Attiva connessione", INTENT_CONST.ERROR_BTN.CONN_SETTINGS);
                     }
-                } else if (exception instanceof SocketException) {
+                } else if (exception.toString().equals("java.net.SocketTimeoutException: timeout")) {
                     view.showErrorMessage("Assicurati di essere connesso a Internet", "Attiva connessione", INTENT_CONST.ERROR_BTN.CONN_SETTINGS);
                 }
             }

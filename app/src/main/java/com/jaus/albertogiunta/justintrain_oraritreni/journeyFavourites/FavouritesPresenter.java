@@ -3,7 +3,6 @@ package com.jaus.albertogiunta.justintrain_oraritreni.journeyFavourites;
 import com.google.gson.Gson;
 
 import android.os.Bundle;
-import android.util.Log;
 
 import com.jaus.albertogiunta.justintrain_oraritreni.data.Message;
 import com.jaus.albertogiunta.justintrain_oraritreni.data.PreferredJourney;
@@ -20,6 +19,7 @@ import java.util.List;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
+import trikita.log.Log;
 
 import static com.jaus.albertogiunta.justintrain_oraritreni.utils.INTENT_CONST.I_SERVER_CONFIG;
 
@@ -64,7 +64,7 @@ class FavouritesPresenter implements FavouritesContract.Presenter {
     }
 
     private void updateServerConfigs() {
-        final String address = "46.101.130.226:8081";
+        final String address = "http://46.101.130.226:8081";
         ConfigsNetworkingFactory.createRetrofitService(ConfigsService.class, ConfigsService.SERVICE_ENDPOINT)
                 .getAllServerConfigs()
                 .subscribeOn(Schedulers.io())
@@ -77,6 +77,7 @@ class FavouritesPresenter implements FavouritesContract.Presenter {
 
                     @Override
                     public void onError(Throwable e) {
+                        Log.d("onError: couldn't retrieve server address, going with ", address);
                         ServerConfig config = new ServerConfig(address, true, 0);
                         SharedPreferencesHelper.setSharedPreferenceObject(view.getViewContext(), I_SERVER_CONFIG, new Gson().toJson(config));
                     }
@@ -85,6 +86,7 @@ class FavouritesPresenter implements FavouritesContract.Presenter {
                     public void onNext(List<ServerConfig> serverConfigs) {
                         ServerConfig config;
                         if (serverConfigs.size() == 0) {
+                            Log.d("onError: couldn't retrieve server address, going with ", address);
                             config = new ServerConfig(address, true, 0);
                         } else {
                             config = serverConfigs.get(0);

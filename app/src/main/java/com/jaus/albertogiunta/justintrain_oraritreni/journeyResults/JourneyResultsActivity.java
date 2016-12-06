@@ -1,5 +1,7 @@
 package com.jaus.albertogiunta.justintrain_oraritreni.journeyResults;
 
+import com.google.android.gms.ads.AdView;
+
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -22,6 +24,7 @@ import android.widget.TextView;
 
 import com.jaus.albertogiunta.justintrain_oraritreni.R;
 import com.jaus.albertogiunta.justintrain_oraritreni.data.Journey;
+import com.jaus.albertogiunta.justintrain_oraritreni.utils.Ads;
 import com.jaus.albertogiunta.justintrain_oraritreni.utils.Analytics;
 import com.jaus.albertogiunta.justintrain_oraritreni.utils.INTENT_CONST;
 import com.jaus.albertogiunta.justintrain_oraritreni.utils.components.HideShowScrollListener;
@@ -86,7 +89,9 @@ public class JourneyResultsActivity extends AppCompatActivity implements Journey
         setContentView(R.layout.activity_journey_results);
         ButterKnife.bind(this);
         analytics = Analytics.getInstance(getViewContext());
+        Ads.initializeAds(getApplicationContext(), (AdView) findViewById(R.id.adView));
         presenter = new JourneyResultsPresenter(this);
+
 
         setSupportActionBar(toolbar);
         //noinspection ConstantConditions
@@ -106,7 +111,7 @@ public class JourneyResultsActivity extends AppCompatActivity implements Journey
         rvJourneySolutions.addOnScrollListener(new HideShowScrollListener() {
             @Override
             public void onHide() {
-                btnRefresh.animate().setInterpolator(new LinearInterpolator()).translationY(150).setDuration(100);
+                btnRefresh.animate().setInterpolator(new LinearInterpolator()).translationY(200).setDuration(100);
             }
 
             @Override

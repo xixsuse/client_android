@@ -6,7 +6,9 @@
         android:baselineAligned="false"
         android:orientation="vertical"
         android:weightSum="4"
+        android:background="@drawable/bg_gradient"
         >
+
 
     <android.support.design.widget.AppBarLayout
             android:id="@+id/appbar"
@@ -35,6 +37,7 @@
             android:background="@color/bg_dark"
             android:orientation="horizontal"
             android:weightSum="2"
+            android:elevation="2dp"
             >
 
         <RelativeLayout

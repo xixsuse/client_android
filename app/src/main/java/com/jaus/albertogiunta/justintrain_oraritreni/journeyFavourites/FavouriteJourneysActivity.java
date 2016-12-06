@@ -1,14 +1,11 @@
 package com.jaus.albertogiunta.justintrain_oraritreni.journeyFavourites;
 
-import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
-import com.google.android.gms.ads.MobileAds;
 import com.google.gson.Gson;
 
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -24,6 +21,7 @@ import com.jaus.albertogiunta.justintrain_oraritreni.data.Message;
 import com.jaus.albertogiunta.justintrain_oraritreni.data.PreferredJourney;
 import com.jaus.albertogiunta.justintrain_oraritreni.journeyResults.JourneyResultsActivity;
 import com.jaus.albertogiunta.justintrain_oraritreni.journeySearch.JourneySearchActivity;
+import com.jaus.albertogiunta.justintrain_oraritreni.utils.Ads;
 import com.jaus.albertogiunta.justintrain_oraritreni.utils.Analytics;
 import com.jaus.albertogiunta.justintrain_oraritreni.utils.components.ViewsUtils;
 import com.jaus.albertogiunta.justintrain_oraritreni.utils.helpers.SharedPreferencesHelper;
@@ -63,8 +61,6 @@ public class FavouriteJourneysActivity extends AppCompatActivity implements Favo
     TextView tvTitle;
     @BindView(R.id.tv_message_body)
     TextView tvBody;
-    @BindView(R.id.fab_search_journey)
-    FloatingActionButton fabSearchJourney;
 //    @BindViews({R.id.hint_left, R.id.hint_right})
 //    List<View> hints;
 
@@ -73,21 +69,13 @@ public class FavouriteJourneysActivity extends AppCompatActivity implements Favo
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_favourite_journeys);
         ButterKnife.bind(this);
-
         analytics = Analytics.getInstance(getViewContext());
-
-        MobileAds.initialize(getApplicationContext(), "ca-app-pub-8963908741443055~4285788324");
-        AdView mAdView = (AdView) findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder().build();
-        mAdView.loadAd(adRequest);
-
+        Ads.initializeAds(getApplicationContext(), (AdView) findViewById(R.id.adView));
         checkIntro();
-
         presenter = new FavouritesPresenter(this);
         adapter = new FavouriteJourneysAdapter(presenter.getPreferredJourneys());
         rvFavouriteJourneys.setAdapter(adapter);
         rvFavouriteJourneys.setLayoutManager(new LinearLayoutManager(this));
-
 
         new SwipeToAction(rvFavouriteJourneys, new SwipeToAction.SwipeListener<PreferredJourney>() {
             @Override

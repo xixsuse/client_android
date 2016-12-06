@@ -102,6 +102,9 @@ class TrainDetailsPresenter implements TrainDetailsContract.Presenter {
         Observable.concatDelayError(Observable.from(searchTrainDetails(trainIdList))).subscribe(new Subscriber<Train>() {
             @Override
             public void onCompleted() {
+                if (view == null) {
+                    return;
+                }
                 getFlatTrainList();
                 view.hideProgress();
                 view.updateTrainDetails();
