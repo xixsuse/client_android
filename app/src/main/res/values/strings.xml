@@ -30,4 +30,9 @@
     <string name="plus_day">+1 gg</string>
     <string name="search">Cerca</string>
 
+    <string name="app_id">ca-app-pub-8963908741443055~4285788324</string>
+    <string name="banner_favourites_id">ca-app-pub-8963908741443055/</string>
+    <string name="banner_test_favourites_id">ca-app-pub-3940256099942544/6300978111</string>
+
+
 </resources>

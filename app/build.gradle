@@ -27,7 +27,7 @@ android {
 //    }
 
     defaultConfig {
-        applicationId "com.jaus.albertogiunta.justintrain_oraripendolaritrenitalia"
+        applicationId "com.jaus.albertogiunta.justintrain_oraritreni"
         minSdkVersion 19
         targetSdkVersion 25
         multiDexEnabled true
