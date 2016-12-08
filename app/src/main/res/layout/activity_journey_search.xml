@@ -364,7 +364,7 @@
                 android:id="@+id/btn_add_new_favourite"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin_smaller"
+                android:layout_gravity="center"
                 android:layout_marginStart="@dimen/margin_default"
                 android:background="@android:color/transparent"
                 android:clickable="true"

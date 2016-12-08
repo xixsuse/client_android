@@ -114,7 +114,7 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
     public void onLoadMoreItemsBefore() {
         new SearchBeforeTimeStrategy().searchJourney(false, departureStation.getStationShortId(),
                 arrivalStation.getStationShortId(),
-                journeySolutions.get(0).getDepartureTime().minusSeconds(1), false, false, this);
+                journeySolutions.get(0).getDepartureTime().minusSeconds(1), false, false, false, this);
     }
 
 //    @Override
@@ -134,12 +134,13 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
             Log.d("Instant Search");
             new SearchInstantlyStrategy().searchJourney(isNewSearch, departureStation.getStationShortId(),
                     arrivalStation.getStationShortId(),
-                    null, true, true, this);
+                    null, true, true, true, this);
         } else {
             Log.d("NON Instant Search", dateTime);
+            boolean includeTrainToBeTaken = dateTime.plusMinutes(15).isAfterNow() || dateTime.plusMinutes(15).isEqualNow();
             new SearchAfterTimeStrategy().searchJourney(isNewSearch, departureStation.getStationShortId(),
                     arrivalStation.getStationShortId(),
-                    dateTime, false, true, this);
+                    dateTime, false, true, includeTrainToBeTaken, this);
         }
     }
 
@@ -176,7 +177,7 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
     public void onLoadMoreItemsAfter() {
         new SearchAfterTimeStrategy().searchJourney(false, departureStation.getStationShortId(),
                 arrivalStation.getStationShortId(),
-                journeySolutions.get(journeySolutions.size() - 1).getDepartureTime().plusMinutes(1), false, false, this);
+                journeySolutions.get(journeySolutions.size() - 1).getDepartureTime().plusMinutes(1), false, false, false, this);
     }
 
     @Override
@@ -357,7 +358,7 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
     private static class SearchInstantlyStrategy implements JourneyResultsContract.View.JourneySearchStrategy {
 
         @Override
-        public void searchJourney(boolean isNewSearch, String departureStationId, String arrivalStationId, DateTime timestamp, boolean isPreemptive, boolean withDelays, OnJourneySearchFinishedListener listener) {
+        public void searchJourney(boolean isNewSearch, String departureStationId, String arrivalStationId, DateTime timestamp, boolean isPreemptive, boolean withDelays, boolean includeTrainToBeTaken, OnJourneySearchFinishedListener listener) {
             Log.d(departureStationId, arrivalStationId, timestamp, isPreemptive, withDelays);
             APINetworkingFactory.createRetrofitService(JourneyService.class, ServerConfigsHelper.getAPIEndpoint(listener.getViewContext())).getJourneyInstant(departureStationId, arrivalStationId, isPreemptive)
                     .subscribeOn(Schedulers.io())
@@ -388,9 +389,10 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
 
     private static class SearchAfterTimeStrategy implements JourneyResultsContract.View.JourneySearchStrategy {
         @Override
-        public void searchJourney(boolean isNewSearch, String departureStationId, String arrivalStationId, DateTime timestamp, boolean isPreemptive, boolean withDelays, OnJourneySearchFinishedListener listener) {
+        public void searchJourney(boolean isNewSearch, String departureStationId, String arrivalStationId, DateTime searchDateTime, boolean isPreemptive, boolean withDelays, boolean includeTrainToBeTaken, OnJourneySearchFinishedListener listener) {
+
             APINetworkingFactory.createRetrofitService(JourneyService.class, ServerConfigsHelper.getAPIEndpoint(listener.getViewContext()))
-                    .getJourneyAfterTime(departureStationId, arrivalStationId, timestamp.toString("yyyy-MM-dd'T'HH:mmZ"), withDelays, isPreemptive)
+                    .getJourneyAfterTime(departureStationId, arrivalStationId, searchDateTime.toString("yyyy-MM-dd'T'HH:mmZ"), withDelays, isPreemptive, includeTrainToBeTaken)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new Subscriber<Journey>() {
@@ -425,7 +427,7 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
     private static class SearchBeforeTimeStrategy implements JourneyResultsContract.View.JourneySearchStrategy {
 
         @Override
-        public void searchJourney(boolean isNewSearch, String departureStationId, String arrivalStationId, DateTime timestamp, boolean isPreemptive, boolean withDelays, OnJourneySearchFinishedListener listener) {
+        public void searchJourney(boolean isNewSearch, String departureStationId, String arrivalStationId, DateTime timestamp, boolean isPreemptive, boolean withDelays, boolean includeTrainToBeTaken, OnJourneySearchFinishedListener listener) {
             Log.d(timestamp);
             APINetworkingFactory.createRetrofitService(JourneyService.class, ServerConfigsHelper.getAPIEndpoint(listener.getViewContext())).getJourneyBeforeTime(departureStationId, arrivalStationId, timestamp.toString("yyyy-MM-dd'T'HH:mmZ"), withDelays, isPreemptive)
                     .subscribeOn(Schedulers.io())

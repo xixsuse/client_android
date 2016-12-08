@@ -22,7 +22,7 @@
     <string name="action_reply">Reply</string>
     <string name="title_favourite_journeys">Tratte Preferite</string>
     <string name="subtitle_favourite_journeys">Scorri a destra o sinistra per i dettagli</string>
-    <string name="btn_favourite_journeys">Aggiungi una tratta ai Preferiti!</string>
+    <string name="btn_favourite_journeys">Cerca e aggiungi una tratta ai Preferiti!</string>
     <string name="notification">Notifica</string>
     <string name="minus_hour">-1 h</string>
     <string name="plus_hour">+1 h</string>
@@ -39,6 +39,10 @@
 
     <string name="banner_details_id">ca-app-pub-8963908741443055/3932534720</string>
     <string name="banner_test_details_id">ca-app-pub-3940256099942544/6300978111</string>
+
+    <string name="static_shortcut_disabled_message">Non ancora disponibile</string>
+    <string name="static_shortcut_long_label">Cerca</string>
+    <string name="static_shortcut_short_label">Cerca</string>
 
 
 </resources>

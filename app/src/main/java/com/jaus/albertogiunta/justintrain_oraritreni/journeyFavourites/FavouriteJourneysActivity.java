@@ -26,6 +26,7 @@ import com.jaus.albertogiunta.justintrain_oraritreni.utils.Ads;
 import com.jaus.albertogiunta.justintrain_oraritreni.utils.Analytics;
 import com.jaus.albertogiunta.justintrain_oraritreni.utils.components.ViewsUtils;
 import com.jaus.albertogiunta.justintrain_oraritreni.utils.helpers.SharedPreferencesHelper;
+import com.jaus.albertogiunta.justintrain_oraritreni.utils.helpers.ShortcutHelper;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -49,7 +50,7 @@ import static com.jaus.albertogiunta.justintrain_oraritreni.utils.components.Vie
 public class FavouriteJourneysActivity extends AppCompatActivity implements FavouritesContract.View {
 
     FavouritesContract.Presenter presenter;
-    Analytics analytics;
+    Analytics                    analytics;
 
     @BindView(R.id.rv_favourite_journeys)
     RecyclerView rvFavouriteJourneys;
@@ -59,9 +60,9 @@ public class FavouriteJourneysActivity extends AppCompatActivity implements Favo
     @BindView(R.id.rl_message)
     RelativeLayout rlDashboard;
     @BindView(R.id.tv_message_title)
-    TextView tvTitle;
+    TextView       tvTitle;
     @BindView(R.id.tv_message_body)
-    TextView tvBody;
+    TextView       tvBody;
 //    @BindViews({R.id.hint_left, R.id.hint_right})
 //    List<View> hints;
 
@@ -74,12 +75,15 @@ public class FavouriteJourneysActivity extends AppCompatActivity implements Favo
         Ads.initializeAds(getApplicationContext(), (AdView) findViewById(R.id.adView));
         checkIntro();
 
+        presenter = new FavouritesPresenter(this);
+
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setTitle("Tratte Preferite");
         }
 
-        presenter = new FavouritesPresenter(this);
+        ShortcutHelper.updateShortcuts(getViewContext());
+
         adapter = new FavouriteJourneysAdapter(presenter.getPreferredJourneys());
         rvFavouriteJourneys.setAdapter(adapter);
         rvFavouriteJourneys.setLayoutManager(new LinearLayoutManager(this));
@@ -89,7 +93,7 @@ public class FavouriteJourneysActivity extends AppCompatActivity implements Favo
             public boolean swipeLeft(PreferredJourney preferredJourney) {
                 analytics.logScreenEvent(SCREEN_FAVOURITE_JOURNEYS, ACTION_SWIPE_RIGHT_TO_LEFT);
                 Intent myIntent = new Intent(FavouriteJourneysActivity.this, JourneyResultsActivity.class);
-                myIntent.putExtras(bundleJourney(preferredJourney.withStationsSwapped()));
+                myIntent.putExtras(bundleJourney(preferredJourney.swapStations()));
                 FavouriteJourneysActivity.this.startActivity(myIntent);
                 return true;
             }

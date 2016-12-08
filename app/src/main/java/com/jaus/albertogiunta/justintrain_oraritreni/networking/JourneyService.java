@@ -34,7 +34,8 @@ public interface JourneyService {
                                             @Path("arrivalStationId") String arrivalId,
                                             @Query("start-from") String time,
                                             @Query("include-delays") boolean includeDelays,
-                                            @Query("preemptive") boolean preemptive);
+                                            @Query("preemptive") boolean preemptive,
+                                            @Query("include-train-to-be-taken") boolean includeTrainToBeTaken);
 
     @GET("/departure/{departureStationId}/arrival/{arrivalStationId}/train/{trainId}/station/{trainDepartureStationId}")
     Observable<TrainHeader> getDelay(@Path("departureStationId") String departureStationId,

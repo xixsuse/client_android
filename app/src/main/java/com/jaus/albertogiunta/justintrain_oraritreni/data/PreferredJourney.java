@@ -21,7 +21,7 @@ public class PreferredJourney {
         version = "";
     }
 
-    public PreferredJourney withStationsSwapped() {
+    public PreferredJourney swapStations() {
         PreferredStation temp = station1;
         station1 = station2;
         station2 = temp;

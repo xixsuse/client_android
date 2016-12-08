@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest package="com.jaus.albertogiunta.justintrain_oraritreni"
-          xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+        package="com.jaus.albertogiunta.justintrain_oraritreni">
 
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
@@ -11,12 +11,12 @@
 
     <application
             android:name="com.jaus.albertogiunta.justintrain_oraritreni.MyApplication"
-        android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
-        android:supportsRtl="true"
-        android:theme="@style/AppTheme"
-        android:windowSoftInputMode="adjustPan|adjustResize">
+            android:allowBackup="true"
+            android:icon="@mipmap/ic_launcher"
+            android:label="@string/app_name"
+            android:supportsRtl="true"
+            android:theme="@style/AppTheme"
+            android:windowSoftInputMode="adjustPan|adjustResize">
         <activity
                 android:name="com.jaus.albertogiunta.justintrain_oraritreni.IntroActivity"
                 android:label="Intro Just In Train"
@@ -27,14 +27,20 @@
                 >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
+
                 <category android:name="android.intent.category.LAUNCHER"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
+
+            <meta-data
+                    android:name="android.app.shortcuts"
+                    android:resource="@xml/shortcuts"/>
         </activity>
         <activity
                 android:name="com.jaus.albertogiunta.justintrain_oraritreni.journeySearch.JourneySearchActivity"
-            android:label="Cerca tratta"
-            android:theme="@style/AppThemeNoShadowActionbar"
-            >
+                android:label="Cerca tratta"
+                android:theme="@style/AppThemeNoShadowActionbar"
+                >
         </activity>
         <activity
                 android:name="com.jaus.albertogiunta.justintrain_oraritreni.journeySearch.StationSearchActivity"
@@ -47,18 +53,21 @@
         </activity>
         <activity
                 android:name="com.jaus.albertogiunta.justintrain_oraritreni.journeyResults.JourneyResultsActivity"
-            android:label="Soluzioni"
-                android:theme="@style/AppThemeNoShadowActionbar"
-            >
+                android:label="Soluzioni"
+                android:theme="@style/AppThemeNoShadowActionbar">
+            <intent-filter>
+                <action android:name="com.jaus.albertogiunta.justintrain_oraritreni.OPEN_DYNAMIC_SHORTCUT"/>
+            </intent-filter>
         </activity>
         <activity
                 android:name="com.jaus.albertogiunta.justintrain_oraritreni.trainDetails.TrainDetailsActivity"
                 android:label="Dettagli Soluzione"
                 android:launchMode="singleTop"
                 />
+
         <service
                 android:name="com.jaus.albertogiunta.justintrain_oraritreni.notification.NotificationService"
-            android:exported="false">
+                android:exported="false">
         </service>
         <service
                 android:name="com.jaus.albertogiunta.justintrain_oraritreni.notification.FirebaseNotificationService">
@@ -66,6 +75,7 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT"/>
             </intent-filter>
         </service>
+
         <meta-data
                 android:name="com.google.firebase.messaging.default_notification_icon"
                 android:resource="@drawable/ic_notification2"/>

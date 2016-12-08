@@ -125,8 +125,8 @@
                 android:textAlignment="textStart"
                 android:textSize="20sp"
                 android:textStyle="bold"
-                android:textAllCaps="true"
                 autofit:minTextSize="17sp"
+                android:textAllCaps="true"
                 />
 
         <me.grantland.widget.AutofitTextView
@@ -136,7 +136,7 @@
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:layout_toRightOf="@id/dummy"
-                android:maxLines="1"
+                android:maxLines="2"
                 android:text="Ciao"
                 android:textAlignment="textEnd"
                 android:textSize="20sp"

@@ -207,6 +207,7 @@ class TrainNotification {
 
         if (!data.getJourneyDepartureStationVisited()) {
             station = data.getJourneyDepartureStationName();
+            station += " (Bin. " + data.getDeparturePlatform() + ")";
         } else if (!data.getJourneyArrivalStationVisited()) {
             station = data.getJourneyArrivalStationName();
         } else {

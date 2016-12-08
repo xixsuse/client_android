@@ -178,6 +178,7 @@ interface JourneyResultsContract {
                                DateTime timestamp,
                                boolean isPreemptive,
                                boolean withDelays,
+                               boolean includeTrainToBeTaken,
                                OnJourneySearchFinishedListener listener);
         }
     }

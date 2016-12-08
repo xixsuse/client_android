@@ -44,6 +44,8 @@ import static com.jaus.albertogiunta.justintrain_oraritreni.utils.Analytics.SCRE
 
 public class JourneyResultsActivity extends AppCompatActivity implements JourneyResultsContract.View {
 
+    public static final String ACTION = "com.jaus.albertogiunta.justintrain_oraritreni.OPEN_DYNAMIC_SHORTCUT";
+
     JourneyResultsContract.Presenter presenter;
     Analytics analytics;
 
