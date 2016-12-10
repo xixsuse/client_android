@@ -12,8 +12,10 @@ public interface JourneyService {
 
 //    String SERVICE_ENDPOINT = "http:///46.101.130.226:8081";
 
+    String version = "v1";
+
     //INSTANT
-    @GET("/departure/{departureStationId}/arrival/{arrivalStationId}/instant")
+    @GET(version + "/departure/{departureStationId}/arrival/{arrivalStationId}/instant")
     Observable<Journey> getJourneyInstant(@Path("departureStationId") String departureId,
                                           @Path("arrivalStationId") String arrivalId,
                                           @Query("preemptive") boolean preemptive);
@@ -21,7 +23,7 @@ public interface JourneyService {
 
     // GET BEFORE TIME
     // http://46.101.130.226:8080/departure/5066/arrival/7104/look-forward?start-from=1463202600
-    @GET("/departure/{departureStationId}/arrival/{arrivalStationId}/look-behind")
+    @GET(version + "/departure/{departureStationId}/arrival/{arrivalStationId}/look-behind")
     Observable<Journey> getJourneyBeforeTime(@Path("departureStationId") String departureId,
                                              @Path("arrivalStationId") String arrivalId,
                                              @Query("end-at") String time,
@@ -29,7 +31,7 @@ public interface JourneyService {
                                              @Query("preemptive") boolean preemptive);
 
     // GET AFTER TIME
-    @GET("/departure/{departureStationId}/arrival/{arrivalStationId}/look-ahead")
+    @GET(version + "/departure/{departureStationId}/arrival/{arrivalStationId}/look-ahead")
     Observable<Journey> getJourneyAfterTime(@Path("departureStationId") String departureId,
                                             @Path("arrivalStationId") String arrivalId,
                                             @Query("start-from") String time,
@@ -37,13 +39,13 @@ public interface JourneyService {
                                             @Query("preemptive") boolean preemptive,
                                             @Query("include-train-to-be-taken") boolean includeTrainToBeTaken);
 
-    @GET("/departure/{departureStationId}/arrival/{arrivalStationId}/train/{trainId}/station/{trainDepartureStationId}")
+    @GET(version + "/departure/{departureStationId}/arrival/{arrivalStationId}/train/{trainId}/station/{trainDepartureStationId}")
     Observable<TrainHeader> getDelay(@Path("departureStationId") String departureStationId,
                                      @Path("arrivalStationId") String arrivalStationId,
                                      @Path("trainId") String trainId,
                                      @Path("trainDepartureStationId") String trainDepartureStationId);
 
-    @GET("/departure/{departureStationId}/arrival/{arrivalStationId}/train/{trainId}")
+    @GET(version + "/departure/{departureStationId}/arrival/{arrivalStationId}/train/{trainId}")
     Observable<TrainHeader> getDelay(@Path("departureStationId") String departureStationId,
                                      @Path("arrivalStationId") String arrivalStationId,
                                      @Path("trainId") String trainId);

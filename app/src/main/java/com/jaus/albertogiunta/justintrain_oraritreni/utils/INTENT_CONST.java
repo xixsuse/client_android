@@ -18,7 +18,7 @@ public class INTENT_CONST {
     public static final String I_NOTIFICATION_PREF_JOURNEY = "notificationPrefJourney";
 
     public enum ERROR_BTN {
-        CONN_SETTINGS, SEND_REPORT, NO_SOLUTIONS
+        CONN_SETTINGS, SEND_REPORT, NO_SOLUTIONS, SERVICE_UNAVAILABLE
     }
 
     public enum SNACKBAR_ACTIONS {

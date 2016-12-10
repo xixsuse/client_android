@@ -23,14 +23,15 @@ public class Analytics {
     public static final String SCREEN_NOTIFICATION = "NOT";
 
     // ERRORS
-    public static final String ERROR_REFRESH = "Error refresh";
-    public static final String ERROR_CONNECTIVITY = "Error connectivity";
-    public static final String ERROR_SERVER = "Error server";
-    public static final String ERROR_NOT_FOUND_JOURNEY = "Error journey not found";
+    public static final String ERROR_REFRESH                  = "Error refresh";
+    public static final String ERROR_CONNECTIVITY             = "Error connectivity";
+    public static final String ERROR_SERVER                   = "Error server";
+    public static final String ERROR_SERVICE_UNAVAILABLE      = "Error service unavailable";
+    public static final String ERROR_NOT_FOUND_JOURNEY        = "Error journey not found";
     public static final String ERROR_NOT_FOUND_JOURNEY_BEFORE = "Error journey before not found";
-    public static final String ERROR_NOT_FOUND_JOURNEY_AFTER = "Error journey after not found";
-    public static final String ERROR_NOT_FOUND_SOLUTION = "Error solution not found";
-    public static final String ERROR_NOT_FOUND_STATION = "Error station not found";
+    public static final String ERROR_NOT_FOUND_JOURNEY_AFTER  = "Error journey after not found";
+    public static final String ERROR_NOT_FOUND_SOLUTION       = "Error solution not found";
+    public static final String ERROR_NOT_FOUND_STATION        = "Error station not found";
 
     // TUTORIAL
     public static final String ACTION_TUTORIAL_NEXT = " Next slide";

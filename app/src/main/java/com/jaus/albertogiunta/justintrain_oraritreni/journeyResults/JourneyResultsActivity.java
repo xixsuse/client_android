@@ -40,6 +40,7 @@ import static com.jaus.albertogiunta.justintrain_oraritreni.utils.Analytics.ACTI
 import static com.jaus.albertogiunta.justintrain_oraritreni.utils.Analytics.ERROR_CONNECTIVITY;
 import static com.jaus.albertogiunta.justintrain_oraritreni.utils.Analytics.ERROR_NOT_FOUND_JOURNEY;
 import static com.jaus.albertogiunta.justintrain_oraritreni.utils.Analytics.ERROR_SERVER;
+import static com.jaus.albertogiunta.justintrain_oraritreni.utils.Analytics.ERROR_SERVICE_UNAVAILABLE;
 import static com.jaus.albertogiunta.justintrain_oraritreni.utils.Analytics.SCREEN_JOURNEY_RESULTS;
 
 public class JourneyResultsActivity extends AppCompatActivity implements JourneyResultsContract.View {
@@ -227,6 +228,12 @@ public class JourneyResultsActivity extends AppCompatActivity implements Journey
                     analytics.logScreenEvent(SCREEN_JOURNEY_RESULTS, ERROR_NOT_FOUND_JOURNEY);
                     Log.d("intent a ricerca");
                     finish();
+                    break;
+                case SERVICE_UNAVAILABLE:
+                    analytics.logScreenEvent(SCREEN_JOURNEY_RESULTS, ERROR_SERVICE_UNAVAILABLE);
+                    Log.d("service unavailable");
+                    analytics.logScreenEvent(SCREEN_JOURNEY_RESULTS, ACTION_REFRESH_JOURNEY);
+                    presenter.searchFromSearch(true);
                     break;
             }
         });

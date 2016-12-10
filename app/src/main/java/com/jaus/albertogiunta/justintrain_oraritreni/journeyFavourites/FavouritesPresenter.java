@@ -64,7 +64,7 @@ class FavouritesPresenter implements FavouritesContract.Presenter {
     }
 
     private void updateServerConfigs() {
-        final String address = "http://46.101.130.226:8081";
+        final String address = "http://justintrain.hopto.org:8081";
         ConfigsNetworkingFactory.createRetrofitService(ConfigsService.class, ConfigsService.SERVICE_ENDPOINT)
                 .getAllServerConfigs()
                 .subscribeOn(Schedulers.io())

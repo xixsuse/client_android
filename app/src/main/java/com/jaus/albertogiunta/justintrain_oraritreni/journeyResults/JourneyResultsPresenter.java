@@ -56,12 +56,12 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
 
     private PreferredStation departureStation;
     private PreferredStation arrivalStation;
-    private DateTime dateTime;
+    private DateTime         dateTime;
 
     JourneyResultsPresenter(JourneyResultsActivity view) {
         this.view = view;
         journeySolutions = new LinkedList<>();
-        this.dateTime = DateTime.now().plusHours(2);
+        this.dateTime = DateTime.now();
     }
 
     @Override
@@ -137,7 +137,8 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
                     null, true, true, true, this);
         } else {
             Log.d("NON Instant Search", dateTime);
-            boolean includeTrainToBeTaken = dateTime.plusMinutes(15).isAfterNow() || dateTime.plusMinutes(15).isEqualNow();
+//            boolean includeTrainToBeTaken = dateTime.plusMinutes(15).isAfterNow() || dateTime.plusMinutes(15).isEqualNow();
+            boolean includeTrainToBeTaken = false;
             new SearchAfterTimeStrategy().searchJourney(isNewSearch, departureStation.getStationShortId(),
                     arrivalStation.getStationShortId(),
                     dateTime, false, true, includeTrainToBeTaken, this);
@@ -192,15 +193,15 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
 
     @Override
     public void onJourneyRefreshRequested(int elementIndex) {
-        RealmResults<Station4Database> stationList = Realm.getDefaultInstance().where(Station4Database.class).findAll();
-        Map<Pair<String, String>, String> m = new HashMap<>();
+        RealmResults<Station4Database>    stationList = Realm.getDefaultInstance().where(Station4Database.class).findAll();
+        Map<Pair<String, String>, String> m           = new HashMap<>();
         if (journeySolutions.get(elementIndex).hasChanges()) {
             for (int changeIndex = 0; changeIndex < journeySolutions.get(elementIndex).getChangesList().size(); changeIndex++) {
                 try {
-                    String departureStationName = journeySolutions.get(elementIndex).getChangesList().get(changeIndex).getDepartureStationName();
-                    String arrivalStationName = journeySolutions.get(elementIndex).getChangesList().get(changeIndex).getArrivalStationName();
+                    String           departureStationName = journeySolutions.get(elementIndex).getChangesList().get(changeIndex).getDepartureStationName();
+                    String           arrivalStationName   = journeySolutions.get(elementIndex).getChangesList().get(changeIndex).getArrivalStationName();
                     Station4Database tempDepartureStation = DatabaseHelper.getStation4DatabaseObject(departureStationName, stationList);
-                    Station4Database tempArrivalStation = DatabaseHelper.getStation4DatabaseObject(arrivalStationName, stationList);
+                    Station4Database tempArrivalStation   = DatabaseHelper.getStation4DatabaseObject(arrivalStationName, stationList);
 
                     m.put(new Pair<>(tempDepartureStation.getStationShortId(), tempArrivalStation.getStationShortId()), journeySolutions.get(elementIndex).getChangesList().get(changeIndex).getTrainId());
                 } catch (Exception e) {
@@ -228,8 +229,8 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
 
             @Override
             public void onNext(TrainHeader trainHeader) {
-                Integer changeIndex = null;
-                Journey.Solution sol = journeySolutions.get(elementIndex);
+                Integer          changeIndex = null;
+                Journey.Solution sol         = journeySolutions.get(elementIndex);
 
                 if (sol.hasChanges()) {
                     List<Journey.Solution.Change> changes = sol.getChangesList();
@@ -290,25 +291,25 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
     @Override
     public void onServerError(Throwable exception) {
         Log.d(exception.getMessage());
+        Log.e(exception.toString());
         if (view != null) {
             if (exception.getMessage().equals("HTTP 404 ")) {
                 onJourneyNotFound();
-            } else {
-                Log.e("onServerError: ", exception.toString());
-                if (exception instanceof HttpException) {
-                    Log.d(((HttpException) exception).response().errorBody(), ((HttpException) exception).response().code());
-                    if (((HttpException) exception).response().code() == 500) {
-                        view.showErrorMessage("Il server sta avendo dei problemi", "Segnala il problema", INTENT_CONST.ERROR_BTN.SEND_REPORT);
-                    }
-                } else if (exception instanceof ConnectException) {
-                    if (NetworkingHelper.isNetworkAvailable(view.getViewContext())) {
-                        view.showErrorMessage("Il server sta avendo dei problemi", "Segnala il problema", INTENT_CONST.ERROR_BTN.SEND_REPORT);
-                    } else {
-                        view.showErrorMessage("Assicurati di essere connesso a Internet", "Attiva connessione", INTENT_CONST.ERROR_BTN.CONN_SETTINGS);
-                    }
-                } else if (exception.toString().equals("java.net.SocketTimeoutException: timeout")) {
+            } else if (exception instanceof HttpException) {
+                Log.d(((HttpException) exception).response().errorBody(), ((HttpException) exception).response().code());
+                if (((HttpException) exception).response().code() == 500) {
+                    view.showErrorMessage("Il server sta avendo dei problemi", "Segnala il problema", INTENT_CONST.ERROR_BTN.SEND_REPORT);
+                } else if (((HttpException) exception).response().code() == 503) {
+                    view.showErrorMessage("Il servizio Viaggiatreno di Trenitalia non è al momento disponibile.\nNon resta che aspettare...", "Aggiorna", INTENT_CONST.ERROR_BTN.SERVICE_UNAVAILABLE);
+                }
+            } else if (exception instanceof ConnectException) {
+                if (NetworkingHelper.isNetworkAvailable(view.getViewContext())) {
+                    view.showErrorMessage("Si è verificato un problema", "Segnala il problema", INTENT_CONST.ERROR_BTN.SEND_REPORT);
+                } else {
                     view.showErrorMessage("Assicurati di essere connesso a Internet", "Attiva connessione", INTENT_CONST.ERROR_BTN.CONN_SETTINGS);
                 }
+            } else if (exception.toString().equals("java.net.SocketTimeoutException: timeout")) {
+                view.showErrorMessage("Assicurati di essere connesso a Internet", "Attiva connessione", INTENT_CONST.ERROR_BTN.CONN_SETTINGS);
             }
         }
     }
@@ -381,18 +382,17 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
                                 listener.onSuccess();
                             } else {
                                 listener.onJourneyNotFound();
-                            }
+                        }
                         }
                     });
-        }
+    }
     }
 
     private static class SearchAfterTimeStrategy implements JourneyResultsContract.View.JourneySearchStrategy {
         @Override
-        public void searchJourney(boolean isNewSearch, String departureStationId, String arrivalStationId, DateTime searchDateTime, boolean isPreemptive, boolean withDelays, boolean includeTrainToBeTaken, OnJourneySearchFinishedListener listener) {
-
+        public void searchJourney(boolean isNewSearch, String departureStationId, String arrivalStationId, DateTime timestamp, boolean isPreemptive, boolean withDelays, boolean includeTrainToBeTaken, OnJourneySearchFinishedListener listener) {
             APINetworkingFactory.createRetrofitService(JourneyService.class, ServerConfigsHelper.getAPIEndpoint(listener.getViewContext()))
-                    .getJourneyAfterTime(departureStationId, arrivalStationId, searchDateTime.toString("yyyy-MM-dd'T'HH:mmZ"), withDelays, isPreemptive, includeTrainToBeTaken)
+                    .getJourneyAfterTime(departureStationId, arrivalStationId, timestamp.toString("yyyy-MM-dd'T'HH:mmZ"), withDelays, isPreemptive, includeTrainToBeTaken)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new Subscriber<Journey>() {
@@ -410,7 +410,7 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
                             Log.d(solutionList.getSolutions().size(), "new solutions found");
                             if (isNewSearch) {
                                 journeySolutions.clear();
-                            }
+                        }
                             journeySolutions.addAll(solutionList.getSolutions());
                             if (journeySolutions.size() > 0) {
                                 listener.onSuccess();
@@ -451,9 +451,9 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
                                 listener.onSuccess();
                             } else {
                                 listener.onJourneyBeforeNotFound();
-                            }
+                        }
                         }
                     });
-        }
+    }
     }
 }

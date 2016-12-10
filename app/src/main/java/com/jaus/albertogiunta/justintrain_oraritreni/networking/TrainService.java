@@ -10,7 +10,9 @@ public interface TrainService {
 
 //    String SERVICE_ENDPOINT = "http:///46.101.130.226:8081";
 
-    @GET("/train/{trainId}")
+    String version = "v1";
+
+    @GET(version + "/train/{trainId}")
     Observable<Train> getTrainDetails(@Path("trainId") String trainId);
 
 }
