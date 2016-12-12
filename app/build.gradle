@@ -1,17 +1,12 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.neenbedankt.android-apt'
+apply plugin: 'com.google.gms.google-services'
 apply plugin: 'me.tatarka.retrolambda'
 apply plugin: 'realm-android'
-apply plugin: 'com.google.gms.google-services'
-
-
-retrolambda {
-    javaVersion JavaVersion.VERSION_1_7
-}
 
 android {
     compileSdkVersion 25
-    buildToolsVersion "25.0.0"
+    buildToolsVersion "25.0.1"
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -28,13 +23,6 @@ android {
         vectorDrawables.useSupportLibrary = true
     }
 
-//    dexOptions {
-//        incremental true
-//        preDexLibraries true
-//        javaMaxHeapSize "12g"
-//        threadCount 8
-//    }
-
     buildTypes {
         debug {
             minifyEnabled false
@@ -42,11 +30,21 @@ android {
                     'proguard-rules.pro'
         }
         release {
+//            signingConfig signingConfigs.release
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'),
                     'proguard-rules.pro'
         }
     }
+
+//    signingConfigs {
+//        release {
+//            storeFile file(RELEASE_STORE_FILE)
+//            storePassword RELEASE_STORE_PASSWORD
+//            keyAlias RELEASE_KEY_ALIAS
+//            keyPassword RELEASE_KEY_PASSWORD
+//        }
+//    }
 
     packagingOptions {
         exclude 'META-INF/notice.txt' // will not include NOTICE file
@@ -55,6 +53,10 @@ android {
         exclude 'META-INF/LICENSE' // will not include LICENSE file
         exclude 'META-INF/LICENSE.txt' // will not include LICENSE file
         exclude 'META-INF/NOTICE.txt' // will not include LICENSE file
+    }
+
+    retrolambda {
+        javaVersion JavaVersion.VERSION_1_7
     }
 }
 

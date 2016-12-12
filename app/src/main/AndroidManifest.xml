@@ -20,10 +20,13 @@
         <activity
                 android:name="com.jaus.albertogiunta.justintrain_oraritreni.IntroActivity"
                 android:label="Intro Just In Train"
-                android:theme="@style/AppThemeNoShadowActionbar"/>
+                android:theme="@style/AppThemeNoShadowActionbar"
+                android:screenOrientation="portrait"
+                />
         <activity
                 android:name="com.jaus.albertogiunta.justintrain_oraritreni.journeyFavourites.FavouriteJourneysActivity"
                 android:label="Just In Train"
+                android:screenOrientation="portrait"
                 >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -40,12 +43,14 @@
                 android:name="com.jaus.albertogiunta.justintrain_oraritreni.journeySearch.JourneySearchActivity"
                 android:label="Cerca tratta"
                 android:theme="@style/AppThemeNoShadowActionbar"
+                android:screenOrientation="portrait"
                 >
         </activity>
         <activity
                 android:name="com.jaus.albertogiunta.justintrain_oraritreni.journeySearch.StationSearchActivity"
                 android:launchMode="singleTop"
                 android:label="Cerca stazione"
+                android:screenOrientation="portrait"
                 >
             <meta-data
                     android:name="android.app.searchable"
@@ -54,7 +59,9 @@
         <activity
                 android:name="com.jaus.albertogiunta.justintrain_oraritreni.journeyResults.JourneyResultsActivity"
                 android:label="Soluzioni"
-                android:theme="@style/AppThemeNoShadowActionbar">
+                android:theme="@style/AppThemeNoShadowActionbar"
+                android:screenOrientation="portrait"
+                >
             <intent-filter>
                 <action android:name="com.jaus.albertogiunta.justintrain_oraritreni.OPEN_DYNAMIC_SHORTCUT"/>
             </intent-filter>
@@ -63,6 +70,7 @@
                 android:name="com.jaus.albertogiunta.justintrain_oraritreni.trainDetails.TrainDetailsActivity"
                 android:label="Dettagli Soluzione"
                 android:launchMode="singleTop"
+                android:screenOrientation="portrait"
                 />
 
         <service

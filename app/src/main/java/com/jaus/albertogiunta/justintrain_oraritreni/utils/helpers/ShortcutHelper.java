@@ -24,15 +24,13 @@ import static com.jaus.albertogiunta.justintrain_oraritreni.utils.INTENT_CONST.I
 public class ShortcutHelper {
 
     public static void updateShortcuts(Context context) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
             ShortcutManager shortcutManager = context.getSystemService(ShortcutManager.class);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
                 shortcutManager.removeAllDynamicShortcuts();
                 List<PreferredJourney> l;
                 if ((l = PreferredStationsHelper.getAllAsObject(context)).size() > 0) {
                     shortcutManager.addDynamicShortcuts(setShortcuts(context, l.get(0)));
                 }
-            }
         }
     }
 

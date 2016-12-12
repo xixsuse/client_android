@@ -157,7 +157,7 @@ class TrainDetailsAdapter extends RecyclerView.Adapter {
 
                 this.tvStatusException.setText("soppresso");
                 this.tvStatusException.setTextColor(getColor(context, COLORS.RED));
-            } else if (train.isDeparted()) {
+            } else if (train.isDeparted() || (!train.isDeparted() && train.getTimeDifference() != null)) {
                 if (train.isArrivedToDestination()) {
                     // arrivato a destinazione
                     apply(tvTrainStatus, VISIBLE);
@@ -364,14 +364,17 @@ class TrainDetailsAdapter extends RecyclerView.Adapter {
 
             switch (stop.getCurrentStopStatusCode()) {
                 case 2:
+                    apply(tvStationException, VISIBLE);
                     tvStationException.setText("Straordinaria");
                     tvStationException.setTextColor(getColor(context, COLORS.ORANGE));
                     break;
                 case 3:
-                    tvStationException.setText("Soppreessa");
+                    apply(tvStationException, VISIBLE);
+                    tvStationException.setText("Soppressa");
                     tvStationException.setTextColor(getColor(context, COLORS.RED));
                     break;
                 default:
+                    apply(tvStationException, GONE);
                     tvStationException.setText("");
                     break;
             }

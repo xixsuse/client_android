@@ -2,10 +2,11 @@ package com.jaus.albertogiunta.justintrain_oraritreni.data;
 
 public class Message {
 
-    private int priority; // 1 2 3
+    private int    priority; // 1 2 3
     private String category; // urgent important ad tip
     private String title;
     private String body;
+    private String optionalDetails;
 
     public int getPriority() {
         return priority;
@@ -39,6 +40,14 @@ public class Message {
         this.body = body;
     }
 
+    public String getOptionalDetails() {
+        return optionalDetails;
+    }
+
+    public void setOptionalDetails(String optionalDetails) {
+        this.optionalDetails = optionalDetails;
+    }
+
     @Override
     public String toString() {
         return "Message{" +
@@ -46,6 +55,7 @@ public class Message {
                 ", category='" + category + '\'' +
                 ", title='" + title + '\'' +
                 ", body='" + body + '\'' +
+                ", optionalDetails='" + optionalDetails + '\'' +
                 '}';
     }
 }

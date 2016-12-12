@@ -93,7 +93,9 @@ class TrainDetailsPresenter implements TrainDetailsContract.Presenter {
         List<String> trainIdList = new LinkedList<>();
         if (solution.hasChanges()) {
             for (Journey.Solution.Change c : solution.getChangesList()) {
-                trainIdList.add(c.getTrainId());
+                if (!c.getTrainCategory().equalsIgnoreCase("BUS")) {
+                    trainIdList.add(c.getTrainId());
+                }
             }
         } else {
             trainIdList.add(solution.getTrainId());

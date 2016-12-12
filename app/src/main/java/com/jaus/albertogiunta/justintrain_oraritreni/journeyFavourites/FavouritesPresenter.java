@@ -108,6 +108,7 @@ class FavouritesPresenter implements FavouritesContract.Presenter {
 
                     @Override
                     public void onError(Throwable e) {
+                        Log.d("onError: ", e.toString());
                     }
 
                     @Override
@@ -127,6 +128,7 @@ class FavouritesPresenter implements FavouritesContract.Presenter {
                                 view.updateDashboard(m, COLORS.GREEN);
                                 break;
                             case "UPDATE":
+                            case "UPGRADE":
                                 view.updateDashboard(m, COLORS.BLUE);
                                 break;
                             default:

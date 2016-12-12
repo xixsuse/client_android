@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
@@ -88,6 +89,9 @@ public class FavouriteJourneysActivity extends AppCompatActivity implements Favo
         rvFavouriteJourneys.setAdapter(adapter);
         rvFavouriteJourneys.setLayoutManager(new LinearLayoutManager(this));
 
+//        tvBody.setMovementMethod(LinkMovementMethod.getInstance());
+//        Linkify.addLinks(this.tvBody, Linkify.ALL);
+
         new SwipeToAction(rvFavouriteJourneys, new SwipeToAction.SwipeListener<PreferredJourney>() {
             @Override
             public boolean swipeLeft(PreferredJourney preferredJourney) {
@@ -166,10 +170,31 @@ public class FavouriteJourneysActivity extends AppCompatActivity implements Favo
 
     @Override
     public void updateDashboard(Message message, ViewsUtils.COLORS titleColor) {
+        Log.d("updateDashboard: ", message.toString());
         apply(this.rlDashboard, VISIBLE);
         this.tvTitle.setText(message.getTitle());
         this.tvTitle.setTextColor(ViewsUtils.getColor(getViewContext(), titleColor));
         this.tvBody.setText(message.getBody());
+
+        if (message.getCategory().equals("UPDATE")) {
+            this.rlDashboard.setOnClickListener(view -> {
+                try {
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + getPackageName())));
+                } catch (android.content.ActivityNotFoundException anfe) {
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + getPackageName())));
+                }
+            });
+        }
+
+        if (message.getCategory().equals("UPGRADE")) {
+            this.rlDashboard.setOnClickListener(view -> {
+                try {
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + message.getOptionalDetails())));
+                } catch (android.content.ActivityNotFoundException anfe) {
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + message.getOptionalDetails())));
+                }
+            });
+        }
     }
 
     @Override

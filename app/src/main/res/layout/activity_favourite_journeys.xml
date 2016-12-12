@@ -102,6 +102,8 @@
                     android:textSize="@dimen/text_size_smaller"
                     android:layout_margin="@dimen/margin_small"
                     android:text=""
+                    android:autoLink="all"
+                    android:linksClickable="true"
                     />
 
         </RelativeLayout>
