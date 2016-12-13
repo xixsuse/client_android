@@ -187,6 +187,7 @@ public class TrainDetailsActivity extends AppCompatActivity implements TrainDeta
                     break;
                 case SEND_REPORT:
                     analytics.logScreenEvent(SCREEN_SOLUTION_DETAILS, ERROR_SERVER);
+                    //TODO comunica in qualche modo tutte le info
                     Log.d("intent a report");
                     break;
                 case NO_SOLUTIONS:

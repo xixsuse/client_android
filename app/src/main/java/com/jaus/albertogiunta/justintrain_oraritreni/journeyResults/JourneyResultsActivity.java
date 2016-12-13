@@ -222,6 +222,7 @@ public class JourneyResultsActivity extends AppCompatActivity implements Journey
                     break;
                 case SEND_REPORT:
                     analytics.logScreenEvent(SCREEN_JOURNEY_RESULTS, ERROR_SERVER);
+                    //TODO comunica in qualche modo tutte le info
                     Log.d("intent a report");
                     break;
                 case NO_SOLUTIONS:
