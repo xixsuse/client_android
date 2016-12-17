@@ -302,11 +302,12 @@ class JourneyResultsAdapter extends RecyclerView.Adapter {
                 }
             }
 
-            if (solution.isArrivesFirst()) {
-                apply(icBolt, VISIBLE);
-            } else {
-                apply(icBolt, GONE);
-            }
+            //TODO NEXT VERSION
+//            if (solution.isArrivesFirst()) {
+//                apply(icBolt, VISIBLE);
+//            } else {
+//                apply(icBolt, GONE);
+//            }
         }
 
         private String setChangesString(Journey.Solution solution) {

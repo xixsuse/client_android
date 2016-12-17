@@ -21,8 +21,8 @@
             android:id="@+id/fab_search_journey"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_marginBottom="16dp"
+            android:layout_gravity="bottom|center"
+            android:layout_marginBottom="66dp"
             android:layout_marginEnd="@dimen/margin_default"
             app:fabSize="normal"
             app:srcCompat="@drawable/ic_search"
@@ -109,49 +109,13 @@
 
         </RelativeLayout>
 
-        <!--<RelativeLayout-->
-        <!--android:id="@+id/rl_star_header"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_below="@id/rl_message"-->
-        <!--&gt;-->
-
-        <!--<ImageView-->
-        <!--android:id="@+id/iv_star"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--app:srcCompat="@drawable/ic_star_black"-->
-        <!--android:layout_centerHorizontal="true"-->
-        <!--android:layout_margin="20dp"-->
-        <!--android:tint="@color/bg_grey"-->
-        <!--/>-->
-
-        <!--<View-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="1dp"-->
-        <!--android:layout_marginStart="20dp"-->
-        <!--android:layout_toStartOf="@id/iv_star"-->
-        <!--android:layout_centerVertical="true"-->
-        <!--android:background="@color/bg_grey"-->
-        <!--/>-->
-
-        <!--<View-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="1dp"-->
-        <!--android:layout_marginEnd="20dp"-->
-        <!--android:layout_toEndOf="@id/iv_star"-->
-        <!--android:layout_centerVertical="true"-->
-        <!--android:background="@color/bg_grey"-->
-        <!--/>-->
-        <!--</RelativeLayout>-->
-
         <RelativeLayout
                 android:id="@+id/rl_ad"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:background="@color/bg_white"
-                android:visibility="gone"
+                android:visibility="visible"
                 >
 
             <com.google.android.gms.ads.AdView
@@ -185,14 +149,6 @@
                     >
             </android.support.v7.widget.RecyclerView>
 
-            <!--<View-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="1dp"-->
-            <!--android:elevation="2dp"-->
-            <!--android:background="@color/bg_white"-->
-            <!--android:layout_marginTop="-2dp"-->
-            <!--android:layout_below="@id/rv_favourite_journeys"-->
-            <!--/>-->
         </RelativeLayout>
 
     </RelativeLayout>

@@ -31,7 +31,8 @@ public class PreferredStationsHelper {
     }
 
     public static boolean isPossibleToSaveMore(Context context) {
-        return SharedPreferencesHelper.getAllAsObject(context).size() < 10;
+        //TODO NEXT VERSION
+        return SharedPreferencesHelper.getAllAsObject(context).size() < 5;
     }
 
 

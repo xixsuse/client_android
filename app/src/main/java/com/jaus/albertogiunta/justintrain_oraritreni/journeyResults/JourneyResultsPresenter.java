@@ -160,7 +160,7 @@ class JourneyResultsPresenter implements JourneyResultsContract.Presenter, OnJou
                 setFavouriteButtonStatus();
                 view.showSnackbar("Tratta aggiunta ai Preferiti", INTENT_CONST.SNACKBAR_ACTIONS.NONE);
             } else {
-                view.showSnackbar("Impossibile salvare più di 10 tratte nei Preferiti!", INTENT_CONST.SNACKBAR_ACTIONS.NONE);
+                view.showSnackbar("Impossibile salvare più di 5 tratte ai Preferiti!", INTENT_CONST.SNACKBAR_ACTIONS.NONE);
             }
         }
     }

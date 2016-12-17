@@ -37,14 +37,14 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:padding="0dp"
-            android:layout_marginBottom="55dp"
+            android:layout_marginBottom="100dp"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             >
+
         <!-- Your scrolling content -->
         <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:padding="0dp"
                 >
 
             <RelativeLayout
@@ -165,7 +165,6 @@
 
             </RelativeLayout>
 
-
             <ProgressBar
                     android:id="@+id/loading_spinner"
                     android:layout_width="wrap_content"
@@ -176,22 +175,11 @@
                     android:visibility="visible"
                     />
 
-            <android.support.v7.widget.RecyclerView
-                    android:id="@+id/rv_journey_solutions"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_below="@id/rl_header_2"
-                    android:background="@drawable/bg_gradient"
-                    android:clickable="true"
-                    android:visibility="gone"
-                    />
-
             <RelativeLayout
                     android:id="@+id/rl_error"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_alignParentTop="true"
-                    android:layout_toEndOf="@+id/rv_journey_solutions"
+                    android:layout_centerInParent="true"
                     >
 
                 <TextView
@@ -217,6 +205,16 @@
                         android:textColor="@color/txt_white"
                         />
             </RelativeLayout>
+
+            <android.support.v7.widget.RecyclerView
+                    android:id="@+id/rv_journey_solutions"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_below="@id/rl_header_2"
+                    android:background="@drawable/bg_gradient"
+                    android:clickable="true"
+                    android:visibility="gone"
+                    />
         </RelativeLayout>
 
         <ImageButton
@@ -224,10 +222,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/btn_height_default"
                 android:layout_alignParentBottom="true"
-                android:layout_marginBottom="16dp"
                 android:layout_marginTop="@dimen/margin_default"
                 android:layout_marginStart="@dimen/margin_default"
                 android:layout_marginEnd="@dimen/margin_default"
+                android:layout_marginBottom="16dp"
                 android:background="@drawable/border_radius"
                 android:clickable="true"
                 android:elevation="@dimen/elevation_default"
@@ -242,7 +240,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             android:background="@color/bg_white"
-            android:visibility="gone"
+            android:visibility="visible"
             >
 
         <com.google.android.gms.ads.AdView

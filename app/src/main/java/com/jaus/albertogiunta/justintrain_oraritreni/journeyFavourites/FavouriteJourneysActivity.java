@@ -27,7 +27,6 @@ import com.jaus.albertogiunta.justintrain_oraritreni.utils.Ads;
 import com.jaus.albertogiunta.justintrain_oraritreni.utils.Analytics;
 import com.jaus.albertogiunta.justintrain_oraritreni.utils.components.ViewsUtils;
 import com.jaus.albertogiunta.justintrain_oraritreni.utils.helpers.SharedPreferencesHelper;
-import com.jaus.albertogiunta.justintrain_oraritreni.utils.helpers.ShortcutHelper;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -83,7 +82,8 @@ public class FavouriteJourneysActivity extends AppCompatActivity implements Favo
             actionBar.setTitle("Tratte Preferite");
         }
 
-        ShortcutHelper.updateShortcuts(getViewContext());
+        //TODO next version
+//        ShortcutHelper.updateShortcuts(getViewContext());
 
         adapter = new FavouriteJourneysAdapter(presenter.getPreferredJourneys());
         rvFavouriteJourneys.setAdapter(adapter);
