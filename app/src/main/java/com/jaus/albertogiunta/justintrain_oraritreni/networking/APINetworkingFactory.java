@@ -3,6 +3,8 @@ package com.jaus.albertogiunta.justintrain_oraritreni.networking;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import com.jaus.albertogiunta.justintrain_oraritreni.BuildConfig;
+
 import org.joda.time.DateTime;
 
 import okhttp3.OkHttpClient;
@@ -32,7 +34,7 @@ public class APINetworkingFactory {
 
                     // Request customization: add request headers
                     Request.Builder requestBuilder = original.newBuilder()
-                            .header("Authorization", "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJQYXNjYWwiLCJ1c2VySWQiOiIxMjMiLCJyb2xlIjoiYWRtaW4ifQ.4D9TUDQAgIWAooyiMN1lV8Y5wVCrIF4rAeGzFzelSE9diqHMik9WE9x4EsNnEcxQXYATjxAZovpp-m72LpFADA")
+                            .header(BuildConfig.AUTH_FIELD_NAME, BuildConfig.AUTH_TOKEN)
                             .method(original.method(), original.body());
 
                     Request request = requestBuilder.build();

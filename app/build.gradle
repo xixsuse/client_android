@@ -1,39 +1,59 @@
 apply plugin: 'com.android.application'
-apply plugin: 'com.neenbedankt.android-apt'
 apply plugin: 'com.google.gms.google-services'
+apply plugin: 'com.neenbedankt.android-apt'
 apply plugin: 'me.tatarka.retrolambda'
 apply plugin: 'realm-android'
+//apply plugin: 'io.fabric'
+
+//repositories {
+//    maven { url 'https://maven.fabric.io/public' }
+//}
 
 android {
+    def keystorePropertiesFile = rootProject.file("keystore.properties")
+    def keystoreProperties = new Properties()
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+
+    signingConfigs {
+        config {
+            keyAlias keystoreProperties['release_key_alias']
+            keyPassword keystoreProperties['release_key_password']
+            storeFile file(keystoreProperties['release_store_file'])
+            storePassword keystoreProperties['release_store_password']
+        }
+    }
     compileSdkVersion 25
     buildToolsVersion "25.0.1"
-
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-
     defaultConfig {
         applicationId "com.jaus.albertogiunta.justintrain_oraritreni"
         minSdkVersion 19
         targetSdkVersion 25
         multiDexEnabled true
         versionCode 1
-        versionName "1.0"
+        versionName "0.6.0"
         vectorDrawables.useSupportLibrary = true
+    }
+
+    buildTypes.each {
+        it.buildConfigField 'String', 'AUTH_FIELD_NAME', keystoreProperties['auth_field_name']
+        it.buildConfigField 'String', 'AUTH_TOKEN', keystoreProperties['auth_token']
     }
 
     buildTypes {
         debug {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'),
-                    'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         release {
 //            signingConfig signingConfigs.release
-            minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'),
-                    'proguard-rules.pro'
+            minifyEnabled false
+            signingConfig signingConfigs.config
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            proguardFile '/Users/albertogiunta/StudioProjects/client_android/app/proguard-rules.pro'
         }
     }
 
@@ -68,28 +88,26 @@ dependencies {
     compile 'com.google.firebase:firebase-messaging:10.0.1'
     compile 'com.google.firebase:firebase-ads:10.0.1'
     compile 'com.google.firebase:firebase-crash:10.0.1'
-    compile 'io.reactivex:rxjava:1.1.2'
-    compile 'io.reactivex:rxandroid:1.1.0'
+    compile 'io.reactivex:rxjava:1.2.4'
+    compile 'io.reactivex:rxandroid:1.2.1'
     compile 'com.jakewharton:butterknife:8.4.0'
-    compile 'net.danlew:android.joda:2.9.3'
-    compile 'com.google.code.gson:gson:2.4'
+    compile 'net.danlew:android.joda:2.9.5.1'
+    compile 'com.google.code.gson:gson:2.8.0'
     compile 'com.github.paolorotolo:appintro:4.1.0'
     compile 'co.dift.ui.swipetoaction:library:1.1'
     compile 'me.grantland:autofittextview:0.2.1'
-//    compile 'com.manolovn:trianglify:1.1.0'
-//    compile 'com.manolovn:colorbrewer:1.0.1'
     compile 'com.android.support:design:25.1.0'
-    //    compile 'com.android.support:support-v4:25.0.1'
-    //    compile 'com.android.support:appcompat-v7:25.0.1'
     compile 'com.android.support:cardview-v7:25.1.0'
     compile 'com.android.support:recyclerview-v7:25.1.0'
-    compile 'com.squareup.retrofit2:retrofit:2.0.1'
+    compile 'com.squareup.retrofit2:retrofit:2.1.0'
     compile 'com.squareup.retrofit2:converter-gson:2.0.0'
     compile 'com.squareup.retrofit2:adapter-rxjava:2.0.0'
     compile 'com.squareup.okhttp3:logging-interceptor:3.3.1'
-    compile 'com.annimon:stream:1.0.9'
+    compile 'com.annimon:stream:1.1.4'
     apt 'com.jakewharton:butterknife-compiler:8.4.0'
     apt 'com.google.auto.value:auto-value:1.2-rc1'
     provided 'com.google.auto.value:auto-value:1.2-rc1'
-    testCompile 'junit:junit:4.12'
+//    compile('com.crashlytics.sdk.android:crashlytics:2.6.5@aar') {
+//        transitive = true;
+//    }
 }

@@ -10,8 +10,6 @@ import rx.Observable;
 
 public interface JourneyService {
 
-//    String SERVICE_ENDPOINT = "http:///46.101.130.226:8081";
-
     String version = "v1";
 
     //INSTANT

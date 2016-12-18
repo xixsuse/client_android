@@ -8,8 +8,6 @@ import rx.Observable;
 
 public interface TrainService {
 
-//    String SERVICE_ENDPOINT = "http:///46.101.130.226:8081";
-
     String version = "v1";
 
     @GET(version + "/train/{trainId}")

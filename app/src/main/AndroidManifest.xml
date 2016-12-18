@@ -6,7 +6,6 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
     <uses-permission android:name="android.permission.VIBRATE"/>
-
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
 
     <application
@@ -92,6 +91,9 @@
         <meta-data
                 android:name="com.google.firebase.messaging.default_notification_color"
                 android:resource="@color/btn_cyan"/>
+        <meta-data
+                android:name="io.fabric.ApiKey"
+                android:value="db856a449715aba125e84a9aee7a9a1da335405f"/>
     </application>
 
 </manifest>

@@ -1,7 +1,5 @@
 package com.jaus.albertogiunta.justintrain_oraritreni.journeyFavourites;
 
-import com.google.gson.Gson;
-
 import android.os.Bundle;
 
 import com.jaus.albertogiunta.justintrain_oraritreni.data.Message;
@@ -11,7 +9,7 @@ import com.jaus.albertogiunta.justintrain_oraritreni.networking.ConfigsNetworkin
 import com.jaus.albertogiunta.justintrain_oraritreni.networking.ConfigsService;
 import com.jaus.albertogiunta.justintrain_oraritreni.utils.components.ViewsUtils.COLORS;
 import com.jaus.albertogiunta.justintrain_oraritreni.utils.helpers.PreferredStationsHelper;
-import com.jaus.albertogiunta.justintrain_oraritreni.utils.helpers.SharedPreferencesHelper;
+import com.jaus.albertogiunta.justintrain_oraritreni.utils.helpers.ServerConfigsHelper;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -20,8 +18,6 @@ import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import trikita.log.Log;
-
-import static com.jaus.albertogiunta.justintrain_oraritreni.utils.INTENT_CONST.I_SERVER_CONFIG;
 
 class FavouritesPresenter implements FavouritesContract.Presenter {
 
@@ -64,7 +60,7 @@ class FavouritesPresenter implements FavouritesContract.Presenter {
     }
 
     private void updateServerConfigs() {
-        final String address = "http://justintrain.hopto.org:8081";
+        final String address = "https://www.justintrain.it";
         ConfigsNetworkingFactory.createRetrofitService(ConfigsService.class, ConfigsService.SERVICE_ENDPOINT)
                 .getAllServerConfigs()
                 .subscribeOn(Schedulers.io())
@@ -79,7 +75,8 @@ class FavouritesPresenter implements FavouritesContract.Presenter {
                     public void onError(Throwable e) {
                         Log.d("onError: couldn't retrieve server address, going with ", address);
                         ServerConfig config = new ServerConfig(address, true, 0);
-                        SharedPreferencesHelper.setSharedPreferenceObject(view.getViewContext(), I_SERVER_CONFIG, new Gson().toJson(config));
+                        ServerConfigsHelper.setAPIEndpoint(view.getViewContext(), config);
+                        Log.d("current configuration", ServerConfigsHelper.getAPIEndpoint(view.getViewContext()));
                     }
 
                     @Override
@@ -89,9 +86,15 @@ class FavouritesPresenter implements FavouritesContract.Presenter {
                             Log.d("onError: couldn't retrieve server address, going with ", address);
                             config = new ServerConfig(address, true, 0);
                         } else {
+                            Log.d("retrieved ", serverConfigs.toString());
                             config = serverConfigs.get(0);
+                            if (config.getAddress() == null) {
+                                onError(null);
+                                return;
+                            }
                         }
-                        SharedPreferencesHelper.setSharedPreferenceObject(view.getViewContext(), I_SERVER_CONFIG, new Gson().toJson(config));
+                        ServerConfigsHelper.setAPIEndpoint(view.getViewContext(), config);
+                        Log.d("current configuration", ServerConfigsHelper.getAPIEndpoint(view.getViewContext()));
                     }
                 });
     }

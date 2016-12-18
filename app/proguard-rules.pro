@@ -17,15 +17,20 @@
 
 # Obfuscation parameters:
 #-dontobfuscate
+
+#-ignorewarnings
 -useuniqueclassmembernames
 -keepattributes SourceFile,LineNumberTable
 -allowaccessmodification
+-dontskipnonpubliclibraryclasses
+-dontskipnonpubliclibraryclassmembers
+
 
 # Ignore warnings:
 #-dontwarn org.mockito.**
 #-dontwarn org.junit.**
 #-dontwarn com.robotium.**
-#-dontwarn org.joda.convert.**
+-dontwarn org.joda.convert.**
 
 # Ignore warnings: We are not using DOM model
 -dontwarn com.fasterxml.jackson.databind.ext.DOMSerializer
@@ -35,6 +40,12 @@
 -dontwarn okio.**
 # Ignore warnings: https://github.com/square/retrofit/issues/435
 -dontwarn com.google.appengine.api.urlfetch.**
+
+-dontwarn retrofit2.Platform$Java8
+-dontwarn sun.misc.Unsafe
+-dontwarn java.lang.invoke.*
+
+#-keep class com.jaus.albertogiunta.justrntrain_oraritreni.** { *; }
 
 # Keep the pojos used by GSON or Jackson
 -keep class com.futurice.project.models.pojo.** { *; }
@@ -53,28 +64,15 @@
 -keepattributes EnclosingMethod
 
 # Keep Retrofit
--keep class retrofit.** { *; }
+-dontwarn retrofit2.**
+-keep class retrofit2.** { *; }
+-keepattributes Signature
+-keepattributes Exceptions
+
 -keepclasseswithmembers class * {
-    @retrofit.** *;
+    @retrofit2.http.* <methods>;
 }
+
 -keepclassmembers class * {
     @retrofit.** *;
 }
-
-# Keep Picasso
--keep class com.squareup.picasso.** { *; }
--keepclasseswithmembers class * {
-    @com.squareup.picasso.** *;
-}
--keepclassmembers class * {
-    @com.squareup.picasso.** *;
-}
-
-# If your project uses WebView with JS, uncomment the following
-# and specify the fully qualified class nameLong to the JavaScript interface
-# class:
-#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
-#   public *;
-#}
-
-

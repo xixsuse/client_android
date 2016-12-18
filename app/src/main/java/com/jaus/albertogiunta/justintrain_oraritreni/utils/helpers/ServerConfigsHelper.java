@@ -6,7 +6,7 @@ import android.content.Context;
 
 import com.jaus.albertogiunta.justintrain_oraritreni.data.ServerConfig;
 
-import java.util.List;
+import static com.jaus.albertogiunta.justintrain_oraritreni.utils.INTENT_CONST.I_SERVER_CONFIG;
 
 public class ServerConfigsHelper {
 
@@ -14,9 +14,9 @@ public class ServerConfigsHelper {
         return new Gson().fromJson(SharedPreferencesHelper.getSharedPreferenceObject(context, "serverConfig"), ServerConfig.class).getAddress();
     }
 
-    public static void setAPIEndpoint(Context context, List<ServerConfig> list) {
-        ServerConfig config = list.get(0);
-        SharedPreferencesHelper.setSharedPreferenceObject(context, "serverConfig", new Gson().toJson(config));
+    public static void setAPIEndpoint(Context context, ServerConfig serverConfig) {
+//        ServerConfig config = list.get(0);
+        SharedPreferencesHelper.setSharedPreferenceObject(context, I_SERVER_CONFIG, new Gson().toJson(serverConfig));
     }
 
 }

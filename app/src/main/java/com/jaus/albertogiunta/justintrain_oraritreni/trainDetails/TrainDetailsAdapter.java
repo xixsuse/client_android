@@ -157,7 +157,7 @@ class TrainDetailsAdapter extends RecyclerView.Adapter {
 
                 this.tvStatusException.setText("soppresso");
                 this.tvStatusException.setTextColor(getColor(context, COLORS.RED));
-            } else if (train.isDeparted() || (!train.isDeparted() && train.getTimeDifference() != null)) {
+            } else if (train.isDeparted() || (!train.isDeparted() && (train.getLastSeenStationName() != null && !train.getLastSeenStationName().equalsIgnoreCase("")))) {
                 if (train.isArrivedToDestination()) {
                     // arrivato a destinazione
                     apply(tvTrainStatus, VISIBLE);

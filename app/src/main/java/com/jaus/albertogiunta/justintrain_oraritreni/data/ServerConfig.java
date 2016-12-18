@@ -35,4 +35,13 @@ public class ServerConfig {
     public void setWeight(float weight) {
         this.weight = weight;
     }
+
+    @Override
+    public String toString() {
+        return "ServerConfig{" +
+                "address='" + address + '\'' +
+                ", isAvailable=" + isAvailable +
+                ", weight=" + weight +
+                '}';
+    }
 }
