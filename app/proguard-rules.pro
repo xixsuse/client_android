@@ -1,69 +1,158 @@
-# Add project specific ProGuard rules here.
-# By default, the flags in this file are appended to flags specified
-# in /Users/albertogiunta/Library/Android/sdk/tools/proguard/proguard-android.txt
-# You can edit the include path and order by changing the proguardFiles
-# directive in build.gradle.
-#
-# For more details, see
-#   http://developer.android.com/guide/developing/tools/proguard.html
+-keep class com.jaus.albertogiunta.justintrain_oraritreni.**
 
-# Add any project specific keep options here:
-#-keep class io.realm.annotations.RealmModule
-#-keep @io.realm.annotations.RealmModule class *
-#-keep class io.realm.internal.Keep
-#-keep @io.realm.internal.Keep class * { *; }
-#-dontwarn javax.**
-#-dontwarn io.realm.**
+# ButterKnife 7
+-keep class butterknife.** { *; }
+-dontwarn butterknife.internal.**
+-keep class **$$ViewBinder { *; }
 
-# Obfuscation parameters:
-#-dontobfuscate
+-keepclasseswithmembernames class * {
+    @butterknife.* <fields>;
+}
 
-#-ignorewarnings
--useuniqueclassmembernames
--keepattributes SourceFile,LineNumberTable
--allowaccessmodification
--dontskipnonpubliclibraryclasses
--dontskipnonpubliclibraryclassmembers
+-keepclasseswithmembernames class * {
+    @butterknife.* <methods>;
+}
 
+## Google AdMob specific rules ##
+## https://developers.google.com/admob/android/quick-start ##
 
-# Ignore warnings:
-#-dontwarn org.mockito.**
-#-dontwarn org.junit.**
-#-dontwarn com.robotium.**
--dontwarn org.joda.convert.**
+-keep public class com.google.ads.** {
+   public *;
+}
 
-# Ignore warnings: We are not using DOM model
--dontwarn com.fasterxml.jackson.databind.ext.DOMSerializer
-# Ignore warnings: https://github.com/square/okhttp/wiki/FAQs
--dontwarn com.squareup.okhttp.internal.huc.**
-# Ignore warnings: https://github.com/square/okio/issues/60
--dontwarn okio.**
-# Ignore warnings: https://github.com/square/retrofit/issues/435
--dontwarn com.google.appengine.api.urlfetch.**
+## Google Analytics 3.0 specific rules ##
 
--dontwarn retrofit2.Platform$Java8
--dontwarn sun.misc.Unsafe
--dontwarn java.lang.invoke.*
+-keep class com.google.analytics.** { *; }
 
-#-keep class com.jaus.albertogiunta.justrntrain_oraritreni.** { *; }
+## Google Play Services 4.3.23 specific rules ##
+## https://developer.android.com/google/play-services/setup.html#Proguard ##
 
-# Keep the pojos used by GSON or Jackson
--keep class com.futurice.project.models.pojo.** { *; }
+-keep class * extends java.util.ListResourceBundle {
+    protected Object[][] getContents();
+}
 
-# Keep GSON stuff
--keep class sun.misc.Unsafe { *; }
--keep class com.google.gson.** { *; }
+-keep public class com.google.android.gms.common.internal.safeparcel.SafeParcelable {
+    public static final *** NULL;
+}
 
-# Keep Jackson stuff
--keep class org.codehaus.** { *; }
--keep class com.fasterxml.jackson.annotation.** { *; }
+-keepnames @com.google.android.gms.common.annotation.KeepName class *
+-keepclassmembernames class * {
+    @com.google.android.gms.common.annotation.KeepName *;
+}
 
-# Keep these for GSON and Jackson
+-keepnames class * implements android.os.Parcelable {
+    public static final ** CREATOR;
+}
+
+## GSON 2.2.4 specific rules ##
+
+# Gson uses generic type information stored in a class file when working with fields. Proguard
+# removes such information by default, so configure it to keep all of it.
 -keepattributes Signature
+
+# For using GSON @Expose annotation
 -keepattributes *Annotation*
+
 -keepattributes EnclosingMethod
 
-# Keep Retrofit
+# Gson specific classes
+-dontwarn sun.misc.Unsafe
+-keep class sun.misc.Unsafe
+-keep class com.google.gson.stream.** { *; }
+
+# Proguard configuration for Jackson 2.x (fasterxml package instead of codehaus package)
+
+-keep class com.fasterxml.jackson.databind.ObjectMapper {
+    public <methods>;
+    protected <methods>;
+}
+-keep class com.fasterxml.jackson.databind.ObjectWriter {
+    public ** writeValueAsString(**);
+}
+
+## Joda Convert 1.6
+
+-keep class org.joda.convert.** { *; }
+-keep interface org.joda.convert.** { *; }
+
+## joda-time-android 2.8.0
+# This is only necessary if you are not including the optional joda-convert dependency
+
+-dontwarn org.joda.convert.FromString
+-dontwarn org.joda.convert.ToString
+
+## Joda Time 2.3
+
+-dontwarn org.joda.convert.**
+-dontwarn org.joda.time.**
+-keep class org.joda.time.** { *; }
+-keep interface org.joda.time.** { *; }
+
+# Proguard Configuration for Realm (http://realm.io)
+# For detailed discussion see: https://groups.google.com/forum/#!topic/realm-java/umqKCc50JGU
+# Additionally you need to keep your Realm Model classes as well
+# For example:
+# -keep class com.yourcompany.realm.** { *; }
+
+-keep class io.realm.annotations.RealmModule
+-keep @io.realm.annotations.RealmModule class *
+-keep class io.realm.internal.Keep
+-keep @io.realm.internal.Keep class *
+-dontwarn javax.**
+-dontwarn io.realm.**
+
+## Retrolambda specific rules ##
+
+# as per official recommendation: https://github.com/evant/gradle-retrolambda#proguard
+-dontwarn java.lang.invoke.*
+
+# RxJava 0.21
+
+-keep class rx.schedulers.Schedulers {
+    public static <methods>;
+}
+-keep class rx.schedulers.ImmediateScheduler {
+    public <methods>;
+}
+-keep class rx.schedulers.TestScheduler {
+    public <methods>;
+}
+-keep class rx.schedulers.Schedulers {
+    public static ** test();
+}
+
+# OkHttp
+-keepattributes Signature
+-keepattributes *Annotation*
+-keep class com.squareup.okhttp.** { *; }
+-keep interface com.squareup.okhttp.** { *; }
+-dontwarn com.squareup.okhttp.**
+
+# OkHttp
+-keepattributes Signature
+-keepattributes *Annotation*
+-keep class okhttp3.** { *; }
+-keep interface okhttp3.** { *; }
+-dontwarn okhttp3.**
+
+# Okio
+-keep class sun.misc.Unsafe { *; }
+-dontwarn java.nio.file.*
+-dontwarn org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement
+-dontwarn okio.**
+
+## Square Otto specific rules ##
+## https://square.github.io/otto/ ##
+
+-keepattributes *Annotation*
+-keepclassmembers class ** {
+    @com.squareup.otto.Subscribe public *;
+    @com.squareup.otto.Produce public *;
+}
+
+# Retrofit 2.X
+## https://square.github.io/retrofit/ ##
+
 -dontwarn retrofit2.**
 -keep class retrofit2.** { *; }
 -keepattributes Signature
@@ -73,6 +162,21 @@
     @retrofit2.http.* <methods>;
 }
 
--keepclassmembers class * {
-    @retrofit.** *;
+# Support Design
+-dontwarn android.support.design.**
+-keep class android.support.design.** { *; }
+-keep interface android.support.design.** { *; }
+-keep public class android.support.design.R$* { *; }
+
+# V7 AppCompat
+-keep public class android.support.v7.widget.** { *; }
+-keep public class android.support.v7.internal.widget.** { *; }
+-keep public class android.support.v7.internal.view.menu.** { *; }
+
+-keep public class * extends android.support.v4.view.ActionProvider {
+    public <init>(android.content.Context);
 }
+
+# v7 CardView
+## http://stackoverflow.com/questions/29679177/cardview-shadow-not-appearing-in-lollipop-after-obfuscate-with-proguard/29698051
+-keep class android.support.v7.widget.RoundRectDrawable { *; }
